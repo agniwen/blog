@@ -5,7 +5,6 @@ import { CornerDownLeftIcon } from 'lucide-react';
 import * as React from 'react';
 import { Button, ButtonGroup } from '~/components/tiptap/ui-primitive/button';
 import { Card, CardBody, CardItemGroup } from '~/components/tiptap/ui-primitive/card';
-import { useIsMobile } from '~/hooks/use-mobile';
 import { Input, InputGroup } from '../../ui-primitive/input';
 
 interface IFramePopoverContentProps {
@@ -16,7 +15,6 @@ interface IFramePopoverContentProps {
 export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentProps) {
   const [code, setCode] = React.useState('');
   const [error, setError] = React.useState('');
-  const isMobile = useIsMobile();
 
   const handleInsert = () => {
     if (!code.trim()) {

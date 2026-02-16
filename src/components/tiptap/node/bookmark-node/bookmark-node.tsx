@@ -3,7 +3,7 @@
 import type { NodeViewProps } from '@tiptap/react';
 import { NodeViewWrapper } from '@tiptap/react';
 import * as React from 'react';
-import './bookmark-node.scss';
+import './bookmark-node.css';
 
 export const BookmarkNodeView: React.FC<NodeViewProps> = React.memo(({ node }) => {
   const { url, title, description, image, siteName, favicon } = node.attrs;

@@ -5,7 +5,7 @@ import { PageContainer } from '~/components/ui/page-container';
 import { PostHeader } from './_components/post-header';
 import { getPost, getPosts } from './actions';
 import { PostContent } from './content';
-import '~/components/features/editor/simple-editor.scss';
+import '~/components/features/editor/simple-editor.css';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -2,7 +2,7 @@
 
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import * as React from 'react';
-import '~/components/tiptap/ui-primitive/dropdown-menu/dropdown-menu.scss';
+import '~/components/tiptap/ui-primitive/dropdown-menu/dropdown-menu.css';
 
 function DropdownMenu({
   modal = false,

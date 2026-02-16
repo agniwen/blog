@@ -4,7 +4,7 @@ import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 import * as React from 'react';
 import { cn } from '~/lib/utils';
 
-import '~/components/tiptap/ui-primitive/popover/popover.scss';
+import '~/components/tiptap/ui-primitive/popover/popover.css';
 
 function Popover({
   ...props

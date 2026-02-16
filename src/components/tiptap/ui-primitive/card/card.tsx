@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { cn } from '~/lib/tiptap-utils';
-import '~/components/tiptap/ui-primitive/card/card.scss';
+import '~/components/tiptap/ui-primitive/card/card.css';
 
 function Card({ ref, className, ...props }: React.ComponentProps<'div'> & { ref?: React.RefObject<HTMLDivElement | null> }) {
   return <div ref={ref} className={cn('tiptap-card', className)} {...props} />;

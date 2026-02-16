@@ -5,7 +5,7 @@ import { parseResponse } from 'hono/client';
 import { isNil } from 'lodash-es';
 import { Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { startTransition, useCallback, useEffect, useEffectEvent, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'sonner';
 import { BannerUpload } from '~/components/features/banner-upload';

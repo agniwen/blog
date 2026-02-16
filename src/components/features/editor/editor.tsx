@@ -50,20 +50,20 @@ import { useIsMobile } from '~/hooks/use-mobile';
 import { useWindowSize } from '~/hooks/use-window-size';
 
 // --- Lib ---
-import '~/components/tiptap/node/blockquote-node/blockquote-node.scss';
-import '~/components/tiptap/node/code-block-node/code-block-node.scss';
+import '~/components/tiptap/node/blockquote-node/blockquote-node.css';
+import '~/components/tiptap/node/code-block-node/code-block-node.css';
 
-import '~/components/tiptap/node/horizontal-rule-node/horizontal-rule-node.scss';
+import '~/components/tiptap/node/horizontal-rule-node/horizontal-rule-node.css';
 
-import '~/components/tiptap/node/list-node/list-node.scss';
+import '~/components/tiptap/node/list-node/list-node.css';
 
-import '~/components/tiptap/node/image-node/image-node.scss';
+import '~/components/tiptap/node/image-node/image-node.css';
 
-import '~/components/tiptap/node/heading-node/heading-node.scss';
-import '~/components/tiptap/node/paragraph-node/paragraph-node.scss';
-import '~/components/tiptap/node/bookmark-node/bookmark-node.scss';
+import '~/components/tiptap/node/heading-node/heading-node.css';
+import '~/components/tiptap/node/paragraph-node/paragraph-node.css';
+import '~/components/tiptap/node/bookmark-node/bookmark-node.css';
 // --- Styles ---
-import '~/components/features/editor/simple-editor.scss';
+import '~/components/features/editor/simple-editor.css';
 
 function MainToolbarContent({
   onHighlighterClick,

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { uploadFileToR2 } from '~/lib/upload';
-import './banner-upload.scss';
+import './banner-upload.css';
 
 interface BannerUploadProps {
   value?: string

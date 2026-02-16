@@ -52,7 +52,7 @@ function PostsLoader() {
 export function Posts() {
   const [deletePostId, setDeletePostId] = useState<string | null>(null);
 
-  const [configDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const { data: posts, isLoading, isFetching, refetch } = useQuery({
     queryFn() {
       return parseResponse(hono.api.posts.$get());
@@ -117,7 +117,7 @@ export function Posts() {
         </div>
       </div>
 
-      <AlertDialog open={configDialogOpen} onOpenChange={setConfirmDialogOpen}>
+      <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>

@@ -18,7 +18,7 @@ import {
   useRole,
 } from '@floating-ui/react';
 import * as React from 'react';
-import '~/components/tiptap/ui-primitive/tooltip/tooltip.scss';
+import '~/components/tiptap/ui-primitive/tooltip/tooltip.css';
 
 interface TooltipProviderProps {
   children: React.ReactNode
