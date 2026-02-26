@@ -2,7 +2,7 @@ import { antfu } from '@antfu/eslint-config';
 
 export default antfu({
   react: true,
-  ignores: ['src/generated/**'],
+  ignores: ['src/generated/**', 'src/routeTree.gen.ts', 'dist/**'],
   rules: {
     '@typescript-eslint/no-redeclare': 'off',
     'style/quotes': ['warn', 'single'],
