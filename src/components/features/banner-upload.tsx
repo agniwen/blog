@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { uploadFileToR2 } from '~/lib/upload';
 import './banner-upload.css';

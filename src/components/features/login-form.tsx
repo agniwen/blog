@@ -1,4 +1,3 @@
-'use client';
 import { Icon } from '@iconify/react';
 import { useForm } from '@tanstack/react-form';
 import { useNavigate } from '@tanstack/react-router';

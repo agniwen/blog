@@ -1,4 +1,3 @@
-'use client';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpIcon } from 'lucide-react';
 import { useState } from 'react';

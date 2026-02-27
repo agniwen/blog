@@ -1,4 +1,3 @@
-'use client';
 import type { PropsWithChildren } from 'react';
 import { domMax, LazyMotion } from 'motion/react';
 

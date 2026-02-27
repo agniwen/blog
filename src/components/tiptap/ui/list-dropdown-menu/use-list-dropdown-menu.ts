@@ -1,5 +1,3 @@
-'use client';
-
 import type { Editor } from '@tiptap/react';
 import type { ListType } from '~/components/tiptap/ui/list-button';
 

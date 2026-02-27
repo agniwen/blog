@@ -1,4 +1,3 @@
-'use client';
 import type { PropsWithChildren } from 'react';
 import { Icon } from '@iconify/react';
 import { Button } from '~/components/ui/button';

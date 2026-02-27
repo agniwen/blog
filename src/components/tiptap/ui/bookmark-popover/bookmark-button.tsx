@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { BookmarkIcon } from '~/components/tiptap/icons/bookmark-icon';
 import { Button } from '~/components/tiptap/ui-primitive/button';

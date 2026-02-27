@@ -13,13 +13,16 @@ export default defineConfig({
     tanstackStart({
       prerender: {
         enabled: true,
-        crawlLinks: true,
+        crawlLinks: false,
         autoStaticPathsDiscovery: false,
         filter: ({ path }) => {
           if (path.startsWith('/api')) {
             return false;
           }
           if (path.startsWith('/studio')) {
+            return false;
+          }
+          if (/^\/blog\/[^/]+$/.test(path)) {
             return false;
           }
           return true;
