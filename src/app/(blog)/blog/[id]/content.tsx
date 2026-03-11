@@ -1,8 +1,8 @@
 'use client';
 /* eslint-disable react-dom/no-dangerously-set-innerhtml */
 import { useQuery } from '@tanstack/react-query';
-import dayjs from 'dayjs';
 import { Calendar } from 'lucide-react';
+import { TimeDisplay } from '~/components/ui/time-display';
 import { getPost } from './actions';
 // --- Lib ---
 import '~/components/tiptap/node/blockquote-node/blockquote-node.css';
@@ -28,7 +28,6 @@ export function PostContent({ id }: { id: string }) {
       return getPost(id);
     },
   });
-  const createdAt = data?.createdAt ? dayjs(data.createdAt).format('YYYY年MM月DD日') : '-';
   return (
     <div className='post-content '>
       {data?.banner
@@ -46,9 +45,7 @@ export function PostContent({ id }: { id: string }) {
             <Calendar className='size-4' />
             创建时间
           </span>
-          <span>
-            {createdAt}
-          </span>
+          <TimeDisplay value={data?.createdAt} options={{ format: 'YYYY年MM月DD日' }} />
         </p>
       </div>
       <div>

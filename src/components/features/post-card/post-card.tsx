@@ -1,6 +1,6 @@
 import type { posts } from '~/db/schema';
 import { Badge } from '~/components/ui/badge';
-import { dayjs } from '~/lib/dayjs';
+import { TimeDisplay } from '~/components/ui/time-display';
 import { cn } from '~/lib/utils';
 
 interface PostCardProps {
@@ -28,7 +28,11 @@ export function PostCard(props: PostCardProps) {
             <Badge className='uppercase' variant='outline'>
               {post.published ? 'Published' : 'Draft'}
             </Badge>
-            <span className='text-xs opacity-50'>{dayjs(post.createdAt).format('YYYY-MM-DD')}</span>
+            <TimeDisplay
+              className='text-xs opacity-50'
+              value={post.createdAt}
+              options={{ format: 'YYYY-MM-DD' }}
+            />
           </div>
         )}
       </div>
