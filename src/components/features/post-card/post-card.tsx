@@ -4,7 +4,7 @@ import { dayjs } from '~/lib/dayjs';
 import { cn } from '~/lib/utils';
 
 interface PostCardProps {
-  post: RPCResponse<typeof posts.$inferSelect> | typeof posts.$inferSelect
+  post: RPCResponse<typeof posts.$inferSelect>
   className?: string
   showMeta?: boolean
 }

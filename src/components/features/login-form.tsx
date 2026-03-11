@@ -1,7 +1,7 @@
 'use client';
 import { Icon } from '@iconify/react';
 import { useForm } from '@tanstack/react-form';
-import { useNavigate } from '@tanstack/react-router';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '~/components/ui/button';
@@ -29,7 +29,7 @@ export function LoginForm({
       callbackURL: location.href,
     });
   }
-  const navigate = useNavigate();
+  const router = useRouter();
   const form = useForm({
     defaultValues: {
       email: '',
@@ -44,7 +44,7 @@ export function LoginForm({
         password: value.password,
       });
       if (res.data?.user) {
-        navigate({ to: '/studio' });
+        router.push('/studio');
       }
       else {
         toast('login failed');

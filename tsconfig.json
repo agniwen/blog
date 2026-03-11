@@ -19,21 +19,24 @@
       ]
     },
     "resolveJsonModule": true,
-    "types": [
-      "vite/client",
-      "node"
-    ],
     "allowJs": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "plugins": []
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
+    "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

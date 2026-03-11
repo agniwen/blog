@@ -1,7 +1,6 @@
 'use client';
-import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useActionState } from 'react';
 import { toast } from 'sonner';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '~/components/ui/input-group';
 import { Separator } from '~/components/ui/separator';
@@ -13,56 +12,47 @@ interface CommentsInputProps {
 }
 export function CommentsInput({ id }: CommentsInputProps) {
   const { data } = authClient.useSession();
-  const queryClient = useQueryClient();
-  const [comment, setComment] = useState('');
-  const [isPending, setIsPending] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setIsPending(true);
-    const inputComment = comment;
+  const [state, action, isPending] = useActionState(async (_: any, form: FormData) => {
+    const comment = form.get('comment') as string;
     if (comment.trim().length === 0) {
       toast.info('请输入评论');
-      setIsPending(false);
-      return;
+      return {
+        comment,
+      };
     }
     if (!data?.user) {
       toast.info('请登陆后评论');
-      setComment('');
-      setIsPending(false);
-      return;
+      return {
+        comment: '',
+      };
     }
     const create = {
       postId: id,
-      content: inputComment,
+      userId: data.user.id,
+      content: comment,
     };
     try {
       await createComment(create);
       toast.success('评论成功');
-      setComment('');
-      queryClient.invalidateQueries({ queryKey: ['comments', id] });
+      return {
+        comment: '',
+      };
     }
     catch (e) {
       console.error(e);
       toast.error('评论失败');
+      return {
+        comment,
+      };
     }
-    finally {
-      setIsPending(false);
-    }
-  }
+  }, { comment: '' });
 
   return (
     <div className='comment-input rounded-xl'>
       <div className='pt-4 relative'>
-        <form onSubmit={handleSubmit}>
+        <form action={action}>
           <InputGroup className='[--radius:16px] pt-2'>
-            <InputGroupTextarea
-              name='comment'
-              value={comment}
-              onChange={e => setComment(e.target.value)}
-              disabled={isPending}
-              placeholder='评论文章是免费的...'
-            />
+            <InputGroupTextarea name='comment' defaultValue={state.comment} disabled={isPending} placeholder='评论文章是免费的...' />
             <InputGroupAddon align='block-end'>
               <Separator className='flex-1 bg-transparent' orientation='vertical' />
               <InputGroupButton

@@ -2,6 +2,8 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { relations } from '~/db/relations';
 import * as schema from '~/db/schema';
 
+import 'server-only';
+
 let drizzleClient: ReturnType<typeof drizzle<typeof schema, typeof relations>> | null = null;
 
 export function db() {
