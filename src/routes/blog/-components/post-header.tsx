@@ -1,3 +1,4 @@
+'use client';
 import { Icon } from '@iconify/react';
 import { Link } from '@tanstack/react-router';
 import { useIsClient } from 'foxact/use-is-client';

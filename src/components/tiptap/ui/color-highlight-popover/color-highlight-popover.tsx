@@ -1,3 +1,5 @@
+'use client';
+
 import type { Editor } from '@tiptap/react';
 // --- UI Primitives ---
 import type { ButtonProps } from '~/components/tiptap/ui-primitive/button';

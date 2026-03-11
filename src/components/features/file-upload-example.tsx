@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { uploadFileToR2 } from '~/lib/upload';
 

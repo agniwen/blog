@@ -1,3 +1,4 @@
+'use client';
 /* eslint-disable react-dom/no-dangerously-set-innerhtml */
 import type { posts } from '~/db/schema';
 import dayjs from 'dayjs';

@@ -1,3 +1,5 @@
+'use client';
+
 import type { VariantProps } from 'class-variance-authority';
 import { Toast as ToastPrimitives } from '@base-ui/react';
 import { cva } from 'class-variance-authority';

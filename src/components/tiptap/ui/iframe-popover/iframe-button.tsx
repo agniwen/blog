@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { IFrameIcon } from '~/components/tiptap/icons/iframe-icon';
 import { Button } from '~/components/tiptap/ui-primitive/button';

@@ -1,3 +1,4 @@
+'use client';
 import type { posts } from '~/db/schema';
 import { Link } from '@tanstack/react-router';
 import { PostCard } from '~/components/features/post-card';

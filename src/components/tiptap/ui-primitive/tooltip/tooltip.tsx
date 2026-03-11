@@ -1,4 +1,6 @@
 /* eslint-disable react/no-clone-element */
+'use client';
+
 import type { Placement, ReferenceType, UseFloatingReturn } from '@floating-ui/react';
 import {
   autoUpdate,

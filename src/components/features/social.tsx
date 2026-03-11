@@ -1,3 +1,4 @@
+'use client';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, m } from 'motion/react';
 import { cn } from '~/lib/utils';

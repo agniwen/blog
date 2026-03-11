@@ -1,3 +1,5 @@
+'use client';
+
 import type { Editor } from '@tiptap/react';
 import { CornerDownLeftIcon } from 'lucide-react';
 import * as React from 'react';

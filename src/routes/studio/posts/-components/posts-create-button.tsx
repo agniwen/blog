@@ -1,3 +1,4 @@
+'use client';
 import { useNavigate } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
 import { toast } from 'sonner';

@@ -1,3 +1,5 @@
+'use client';
+
 import { useIsClient } from 'foxact/use-is-client';
 import { useTheme } from 'next-themes';
 import { useMemo } from 'react';

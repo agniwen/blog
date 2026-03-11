@@ -1,3 +1,5 @@
+'use client';
+
 import type { Editor } from '@tiptap/react';
 import type { Level } from '~/components/tiptap/ui/heading-button';
 
