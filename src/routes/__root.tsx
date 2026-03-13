@@ -3,7 +3,6 @@ import type { PropsWithChildren } from 'react';
 import { Toaster } from 'sonner';
 
 import { QueryClientProvider } from '~/components/provider/query-client-provider';
-import { ThemeProvider } from '~/components/provider/theme-provider';
 
 import appCss from '~/styles/globals.css?url';
 
@@ -37,11 +36,9 @@ function RootDocument({ children }: PropsWithChildren) {
 
 function RootOutlet() {
   return (
-    <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-      <QueryClientProvider>
-        <Outlet />
-      </QueryClientProvider>
+    <QueryClientProvider>
+      <Outlet />
       <Toaster position='top-center' />
-    </ThemeProvider>
+    </QueryClientProvider>
   );
 }

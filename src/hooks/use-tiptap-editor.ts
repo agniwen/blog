@@ -38,6 +38,7 @@ export function useTiptapEditor(providedEditor?: Editor | null): {
       return {
         editor: context.editor,
         editorState: context.editor.state,
+        // oxlint-disable-next-line typescript/unbound-method
         canCommand: context.editor.can,
       };
     },

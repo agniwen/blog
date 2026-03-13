@@ -1,6 +1,6 @@
-import { env } from '~/lib/env';
-
 import type { S3Client } from '@aws-sdk/client-s3';
+
+import { env } from '~/lib/env';
 
 let s3Promise: Promise<S3Client> | undefined;
 

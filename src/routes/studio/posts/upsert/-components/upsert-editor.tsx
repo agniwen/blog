@@ -90,6 +90,7 @@ export function UpsertEditor(props: { id?: string }) {
       );
       if (resp.data.id) {
         toast.success('文章创建成功');
+
         navigate({ to: '/studio/posts/upsert/$id', params: { id: resp.data.id } });
       }
     } catch (err) {
@@ -153,7 +154,7 @@ export function UpsertEditor(props: { id?: string }) {
       clearTimeout(saveTimeoutRef.current);
     }
     saveTimeoutRef.current = setTimeout(() => {
-      autoSave();
+      void autoSave();
     }, 2000);
   }, [autoSave]);
 
@@ -165,7 +166,7 @@ export function UpsertEditor(props: { id?: string }) {
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
-      autoSave();
+      void autoSave();
     },
     {
       enableOnFormTags: true,
@@ -207,7 +208,7 @@ export function UpsertEditor(props: { id?: string }) {
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              form.handleSubmit();
+              void form.handleSubmit();
             }}
           >
             <FieldSet>

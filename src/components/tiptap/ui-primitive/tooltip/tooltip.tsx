@@ -1,5 +1,4 @@
-/* eslint-disable react/no-clone-element */
-import type { Placement, ReferenceType, UseFloatingReturn } from '@floating-ui/react';
+import type { Placement, UseFloatingReturn } from '@floating-ui/react';
 import {
   autoUpdate,
   flip,
@@ -42,7 +41,7 @@ interface TooltipContentProps extends Omit<React.HTMLProps<HTMLDivElement>, 'ref
   portalProps?: Omit<React.ComponentProps<typeof FloatingPortal>, 'children'>;
 }
 
-interface TooltipContextValue extends UseFloatingReturn<ReferenceType> {
+interface TooltipContextValue extends UseFloatingReturn {
   open: boolean;
   setOpen: (open: boolean) => void;
   getReferenceProps: (userProps?: React.HTMLProps<HTMLElement>) => Record<string, unknown>;

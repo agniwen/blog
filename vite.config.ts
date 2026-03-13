@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+
   plugins: [
     tailwindcss(),
     tanstackStart({
@@ -47,6 +48,10 @@ export default defineConfig({
     react(),
   ],
   lint: {
+    options: {
+      typeAware: true,
+      typeCheck: true,
+    },
     plugins: ['typescript', 'react', 'import', 'jsx-a11y', 'unicorn', 'promise', 'node', 'oxc'],
     categories: {
       correctness: 'warn',
@@ -84,9 +89,11 @@ export default defineConfig({
       'jsx-a11y/anchor-is-valid': 'off',
       'react/no-array-index-key': 'off',
       'react/no-children-prop': 'off',
+      'typescript/no-unsafe-type-assertion': 'off',
       'react/react-in-jsx-scope': 'off',
       'typescript/no-empty-object-type': 'warn',
       'typescript/no-use-before-define': 'off',
+      'typescript/no-floating-promises': 'off',
     },
     overrides: [
       {
