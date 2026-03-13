@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
-import { auth } from '~/lib/auth';
+import { getAuth } from '~/lib/auth';
 
 import type { Env } from './env';
 import { betterAuthMiddleware } from './middleware/better-auth';
@@ -23,7 +23,7 @@ export const app = new Hono<Env>()
     }),
   )
   .on(['POST', 'GET'], '/api/auth/*', (c) => {
-    return auth.handler(c.req.raw);
+    return getAuth().handler(c.req.raw);
   })
   .use(drizzleMiddleware, betterAuthMiddleware)
   .basePath('/api')

@@ -1,7 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
-import { env } from '~/lib/env';
+import { getServerEnv } from '~/lib/env';
 import { fail, success } from '~/lib/result';
 import { getS3Client } from '~/lib/s3';
 
@@ -26,6 +26,8 @@ interface OGData {
  */
 async function downloadAndUploadImage(imageUrl: string): Promise<string | undefined> {
   try {
+    const env = getServerEnv();
+
     // Fetch the image
     const response = await fetch(imageUrl, {
       headers: {

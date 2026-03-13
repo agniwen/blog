@@ -1,7 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
-import { env } from '~/lib/env';
+import { getServerEnv } from '~/lib/env';
 import { getS3Client } from '~/lib/s3';
 import { factory } from '~/server/factory';
 
@@ -13,6 +13,7 @@ const presignedUrlSchema = z.object({
 export const s3Router = factory
   .createApp()
   .post('/presigned-url', zValidator('json', presignedUrlSchema), async (c) => {
+    const env = getServerEnv();
     const { fileName, fileType } = c.req.valid('json');
 
     // 生成唯一的文件名，避免冲突
