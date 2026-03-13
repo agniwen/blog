@@ -1,7 +1,6 @@
 'use client';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, m } from 'motion/react';
-import Link from 'next/link';
 import { cn } from '~/lib/utils';
 
 const socials = [
@@ -41,13 +40,14 @@ export function Social({ className }: { className?: string }) {
               animate={{ opacity: 1, x: 0 }}
               key={s.url}
             >
-              <Link
+              <a
                 href={s.url}
                 target='_blank'
+                rel='noreferrer'
                 className='inline-block p-2 cursor-default rounded-full transition-colors text-secondary-foreground hover:bg-secondary  '
               >
                 {s.icon}
-              </Link>
+              </a>
             </m.div>
           );
         })}

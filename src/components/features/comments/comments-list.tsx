@@ -1,7 +1,7 @@
+'use client';
 import type { InferUserFromClient } from 'better-auth';
 import type { CommentWithUser } from './comments-type';
-import { headers } from 'next/headers';
-import { auth } from '~/lib/auth';
+import { authClient } from '~/lib/auth-client';
 import { dayjs } from '~/lib/dayjs';
 import { cn } from '~/lib/utils';
 
@@ -9,10 +9,8 @@ interface CommentListProps {
   list: Array<CommentWithUser>
 }
 
-export async function CommentsList({ list }: CommentListProps) {
-  const data = await auth.api.getSession({
-    headers: await headers(),
-  });
+export function CommentsList({ list }: CommentListProps) {
+  const { data } = authClient.useSession();
   return (
     <div className={cn('comment-list w-full my-12!')}>
       <div>
