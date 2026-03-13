@@ -8,11 +8,11 @@ import { cn } from '~/lib/utils';
 
 export function PostHeader() {
   const ref = useRef<React.ComponentRef<'div'>>(null);
-  const inView = useInView(ref);
+  const inView = useInView(ref, { initial: true });
   const isClient = useIsClient();
   return (
     <>
-      <div className={cn('fixed top-0 z-10 left-0  w-full bg-background/90 backdrop-blur-md transition-all ', inView || !isClient ? 'opacity-0 invisible ' : 'visible opacity-100 ')}>
+      <div className={cn('fixed top-0 z-10 left-0  w-full bg-background/90 backdrop-blur-md transition-all invisible ', inView ? 'opacity-0 invisible ' : 'visible opacity-100 ')}>
         <div className={cn('mx-auto max-w-2xl flex relative items-center justify-between py-0.5 px-4   ')}>
           <Link to='/blog' className='p-1 invisible md:visible'>
             <Button size='icon' className='rounded-full' variant='ghost'>

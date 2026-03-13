@@ -1,7 +1,7 @@
 /* eslint-disable react-dom/no-dangerously-set-innerhtml */
 import type { posts } from '~/db/schema';
-import dayjs from 'dayjs';
 import { Calendar } from 'lucide-react';
+import { TimeDisplay } from '~/components/ui/time-display';
 // --- Lib ---
 import '~/components/tiptap/node/blockquote-node/blockquote-node.css';
 
@@ -24,7 +24,6 @@ interface PostContentProps {
 }
 
 export function PostContent({ post }: PostContentProps) {
-  const createdAt = post?.createdAt ? dayjs(post.createdAt).format('YYYY年MM月DD日') : '-';
   return (
     <div className='post-content '>
       {post?.banner
@@ -43,7 +42,7 @@ export function PostContent({ post }: PostContentProps) {
             创建时间
           </span>
           <span>
-            {createdAt}
+            <TimeDisplay value={post?.createdAt} options={{ format: 'YYYY年MM月DD日' }} />
           </span>
         </p>
       </div>
