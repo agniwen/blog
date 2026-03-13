@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 import { Separator } from '~/components/tiptap/ui-primitive/separator';
 import { useComposedRef } from '~/hooks/use-composed-ref';

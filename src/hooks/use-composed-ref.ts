@@ -1,5 +1,3 @@
-'use client';
-
 import * as React from 'react';
 
 // basically Exclude<React.ClassAttributes<T>["ref"], string>

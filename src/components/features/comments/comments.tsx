@@ -1,4 +1,3 @@
-'use client';
 import type { CommentWithUser } from './comments-type';
 import { useQuery } from '@tanstack/react-query';
 import { getComments } from './actions';

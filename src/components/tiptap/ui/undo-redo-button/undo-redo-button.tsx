@@ -1,5 +1,3 @@
-'use client';
-
 // --- UI Primitives ---
 import type { ButtonProps } from '~/components/tiptap/ui-primitive/button';
 

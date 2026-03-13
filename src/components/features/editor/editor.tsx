@@ -1,5 +1,3 @@
-'use client';
-
 import type { Editor as EditorType } from '@tiptap/react';
 
 import { EditorContent, EditorContext } from '@tiptap/react';
