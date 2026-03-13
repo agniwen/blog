@@ -1,12 +1,15 @@
 import { zValidator } from '@hono/zod-validator';
 import { eq } from 'drizzle-orm';
+
 import { posts } from '~/db/schema';
 import { success } from '~/lib/result';
 import { factory } from '~/server/factory';
 import { authMiddleware } from '~/server/middleware/auth';
+
 import { postsCreateSchema, postsDetailSchema, postsUpdateSchema } from './schema';
 
-export const postsRouter = factory.createApp()
+export const postsRouter = factory
+  .createApp()
   // 获取文章列表
   .get('/', async (c) => {
     const list = await c.var.db.query.posts.findMany({
@@ -53,9 +56,6 @@ export const postsRouter = factory.createApp()
   // 删除文章
   .delete('/:id', authMiddleware, zValidator('param', postsDetailSchema), async (c) => {
     const { id } = c.req.valid('param');
-    const [deleted] = await c.var.db
-      .delete(posts)
-      .where(eq(posts.id, id))
-      .returning();
+    const [deleted] = await c.var.db.delete(posts).where(eq(posts.id, id)).returning();
     return c.json(success(deleted));
   });

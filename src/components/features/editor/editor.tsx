@@ -1,26 +1,19 @@
 import type { Editor as EditorType } from '@tiptap/react';
-
 import { EditorContent, EditorContext } from '@tiptap/react';
 // --- Tiptap Core Extensions ---
-
 import * as React from 'react';
+
 // --- Icons ---
 import { ArrowLeftIcon } from '~/components/tiptap/icons/arrow-left-icon';
 import { HighlighterIcon } from '~/components/tiptap/icons/highlighter-icon';
-
 import { LinkIcon } from '~/components/tiptap/icons/link-icon';
 // --- Tiptap Node ---
 // --- Components ---
 // --- UI Primitives ---
 import { Button } from '~/components/tiptap/ui-primitive/button';
 import { Spacer } from '~/components/tiptap/ui-primitive/spacer';
-import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-} from '~/components/tiptap/ui-primitive/toolbar';
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from '~/components/tiptap/ui-primitive/toolbar';
 import { BlockquoteButton } from '~/components/tiptap/ui/blockquote-button';
-
 // --- Tiptap UI ---
 import { BookmarkButton } from '~/components/tiptap/ui/bookmark-popover';
 import { CodeBlockButton } from '~/components/tiptap/ui/code-block-button';
@@ -32,16 +25,11 @@ import {
 import { HeadingDropdownMenu } from '~/components/tiptap/ui/heading-dropdown-menu';
 import { IFrameButton } from '~/components/tiptap/ui/iframe-popover';
 import { ImageUploadButton } from '~/components/tiptap/ui/image-upload-button';
-import {
-  LinkButton,
-  LinkContent,
-  LinkPopover,
-} from '~/components/tiptap/ui/link-popover';
+import { LinkButton, LinkContent, LinkPopover } from '~/components/tiptap/ui/link-popover';
 import { ListDropdownMenu } from '~/components/tiptap/ui/list-dropdown-menu';
 import { MarkButton } from '~/components/tiptap/ui/mark-button';
 import { TextAlignButton } from '~/components/tiptap/ui/text-align-button';
 import { UndoRedoButton } from '~/components/tiptap/ui/undo-redo-button';
-
 import { useCursorVisibility } from '~/hooks/use-cursor-visibility';
 // --- Hooks ---
 import { useIsMobile } from '~/hooks/use-mobile';
@@ -50,13 +38,9 @@ import { useWindowSize } from '~/hooks/use-window-size';
 // --- Lib ---
 import '~/components/tiptap/node/blockquote-node/blockquote-node.css';
 import '~/components/tiptap/node/code-block-node/code-block-node.css';
-
 import '~/components/tiptap/node/horizontal-rule-node/horizontal-rule-node.css';
-
 import '~/components/tiptap/node/list-node/list-node.css';
-
 import '~/components/tiptap/node/image-node/image-node.css';
-
 import '~/components/tiptap/node/heading-node/heading-node.css';
 import '~/components/tiptap/node/paragraph-node/paragraph-node.css';
 import '~/components/tiptap/node/bookmark-node/bookmark-node.css';
@@ -68,9 +52,9 @@ function MainToolbarContent({
   onLinkClick,
   isMobile,
 }: {
-  onHighlighterClick: () => void
-  onLinkClick: () => void
-  isMobile: boolean
+  onHighlighterClick: () => void;
+  onLinkClick: () => void;
+  isMobile: boolean;
 }) {
   return (
     <>
@@ -85,10 +69,7 @@ function MainToolbarContent({
 
       <ToolbarGroup>
         <HeadingDropdownMenu levels={[1, 2, 3, 4]} portal={isMobile} />
-        <ListDropdownMenu
-          types={['bulletList', 'orderedList', 'taskList']}
-          portal={isMobile}
-        />
+        <ListDropdownMenu types={['bulletList', 'orderedList', 'taskList']} portal={isMobile} />
         <BlockquoteButton />
         <CodeBlockButton />
       </ToolbarGroup>
@@ -101,13 +82,11 @@ function MainToolbarContent({
         <MarkButton type='strike' />
         <MarkButton type='code' />
         <MarkButton type='underline' />
-        {!isMobile
-          ? (
-              <ColorHighlightPopover />
-            )
-          : (
-              <ColorHighlightPopoverButton onClick={onHighlighterClick} />
-            )}
+        {!isMobile ? (
+          <ColorHighlightPopover />
+        ) : (
+          <ColorHighlightPopoverButton onClick={onHighlighterClick} />
+        )}
         {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
       </ToolbarGroup>
 
@@ -146,46 +125,36 @@ function MobileToolbarContent({
   type,
   onBack,
 }: {
-  type: 'highlighter' | 'link'
-  onBack: () => void
+  type: 'highlighter' | 'link';
+  onBack: () => void;
 }) {
   return (
     <>
       <ToolbarGroup>
         <Button data-style='ghost' onClick={onBack}>
           <ArrowLeftIcon className='tiptap-button-icon' />
-          {type === 'highlighter'
-            ? (
-                <HighlighterIcon className='tiptap-button-icon' />
-              )
-            : (
-                <LinkIcon className='tiptap-button-icon' />
-              )}
+          {type === 'highlighter' ? (
+            <HighlighterIcon className='tiptap-button-icon' />
+          ) : (
+            <LinkIcon className='tiptap-button-icon' />
+          )}
         </Button>
       </ToolbarGroup>
 
       <ToolbarSeparator />
 
-      {type === 'highlighter'
-        ? (
-            <ColorHighlightPopoverContent />
-          )
-        : (
-            <LinkContent />
-          )}
+      {type === 'highlighter' ? <ColorHighlightPopoverContent /> : <LinkContent />}
     </>
   );
 }
 
 interface EditorProps {
-  editor: EditorType | null
+  editor: EditorType | null;
 }
 export function Editor({ editor }: EditorProps) {
   const isMobile = useIsMobile();
   const { height } = useWindowSize();
-  const [mobileView, setMobileView] = React.useState<
-    'main' | 'highlighter' | 'link'
-  >('main');
+  const [mobileView, setMobileView] = React.useState<'main' | 'highlighter' | 'link'>('main');
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const rect = useCursorVisibility({
@@ -204,32 +173,28 @@ export function Editor({ editor }: EditorProps) {
       <EditorContext value={{ editor }}>
         <Toolbar
           ref={toolbarRef}
-          style={(isMobile
-            ? {
-                bottom: `calc(100% - ${height - rect.y}px)`,
-              }
-            : {})}
+          style={
+            isMobile
+              ? {
+                  bottom: `calc(100% - ${height - rect.y}px)`,
+                }
+              : {}
+          }
         >
-          {mobileView === 'main'
-            ? (
-                <MainToolbarContent
-                  onHighlighterClick={() => setMobileView('highlighter')}
-                  onLinkClick={() => setMobileView('link')}
-                  isMobile={isMobile}
-                />
-              )
-            : (
-                <MobileToolbarContent
-                  type={mobileView === 'highlighter' ? 'highlighter' : 'link'}
-                  onBack={() => setMobileView('main')}
-                />
-              )}
+          {mobileView === 'main' ? (
+            <MainToolbarContent
+              onHighlighterClick={() => setMobileView('highlighter')}
+              onLinkClick={() => setMobileView('link')}
+              isMobile={isMobile}
+            />
+          ) : (
+            <MobileToolbarContent
+              type={mobileView === 'highlighter' ? 'highlighter' : 'link'}
+              onBack={() => setMobileView('main')}
+            />
+          )}
         </Toolbar>
-        <EditorContent
-          editor={editor}
-          role='presentation'
-          className='simple-editor-content'
-        />
+        <EditorContent editor={editor} role='presentation' className='simple-editor-content' />
       </EditorContext>
     </div>
   );

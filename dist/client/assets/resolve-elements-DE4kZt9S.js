@@ -1,1 +1,11 @@
-function i(r,u,s){if(r==null)return[];if(r instanceof EventTarget)return[r];if(typeof r=="string"){let n=document;const f=s?.[r]??n.querySelectorAll(r);return f?Array.from(f):[]}return Array.from(r).filter(n=>n!=null)}export{i as r};
+function i(r, u, s) {
+  if (r == null) return [];
+  if (r instanceof EventTarget) return [r];
+  if (typeof r == "string") {
+    let n = document;
+    const f = s?.[r] ?? n.querySelectorAll(r);
+    return f ? Array.from(f) : [];
+  }
+  return Array.from(r).filter((n) => n != null);
+}
+export { i as r };

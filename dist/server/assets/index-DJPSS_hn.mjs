@@ -17,7 +17,13 @@ const memoryAdapter = (db, config) => {
       debugLogs: config?.debugLogs || false,
       supportsArrays: true,
       customTransformInput(props) {
-        if ((props.options.advanced?.database?.useNumberId || props.options.advanced?.database?.generateId === "serial") && props.field === "id" && props.action === "create") return db[props.model].length + 1;
+        if (
+          (props.options.advanced?.database?.useNumberId ||
+            props.options.advanced?.database?.generateId === "serial") &&
+          props.field === "id" &&
+          props.action === "create"
+        )
+          return db[props.model].length + 1;
         return props.data;
       },
       transaction: async (cb) => {
@@ -30,7 +36,7 @@ const memoryAdapter = (db, config) => {
           });
           throw error;
         }
-      }
+      },
     },
     adapter: ({ getFieldName, options, getModelName }) => {
       const applySortToRecords = (records, sortBy, model) => {
@@ -38,7 +44,7 @@ const memoryAdapter = (db, config) => {
         return records.sort((a, b) => {
           const field = getFieldName({
             model,
-            field: sortBy.field
+            field: sortBy.field,
           });
           const aValue = a[field];
           const bValue = b[field];
@@ -46,10 +52,14 @@ const memoryAdapter = (db, config) => {
           if (aValue == null && bValue == null) comparison = 0;
           else if (aValue == null) comparison = -1;
           else if (bValue == null) comparison = 1;
-          else if (typeof aValue === "string" && typeof bValue === "string") comparison = aValue.localeCompare(bValue);
-          else if (aValue instanceof Date && bValue instanceof Date) comparison = aValue.getTime() - bValue.getTime();
-          else if (typeof aValue === "number" && typeof bValue === "number") comparison = aValue - bValue;
-          else if (typeof aValue === "boolean" && typeof bValue === "boolean") comparison = aValue === bValue ? 0 : aValue ? 1 : -1;
+          else if (typeof aValue === "string" && typeof bValue === "string")
+            comparison = aValue.localeCompare(bValue);
+          else if (aValue instanceof Date && bValue instanceof Date)
+            comparison = aValue.getTime() - bValue.getTime();
+          else if (typeof aValue === "number" && typeof bValue === "number")
+            comparison = aValue - bValue;
+          else if (typeof aValue === "boolean" && typeof bValue === "boolean")
+            comparison = aValue === bValue ? 0 : aValue ? 1 : -1;
           else comparison = String(aValue).localeCompare(String(bValue));
           return sortBy.direction === "asc" ? comparison : -comparison;
         });
@@ -124,11 +134,17 @@ const memoryAdapter = (db, config) => {
             const joinModelName = getModelName(joinModel);
             const joinTable = db[joinModelName];
             if (!joinTable) {
-              logger.error(`[MemoryAdapter] JoinOption model ${joinModelName} not found in the DB`, Object.keys(db));
+              logger.error(
+                `[MemoryAdapter] JoinOption model ${joinModelName} not found in the DB`,
+                Object.keys(db),
+              );
               throw new Error(`JoinOption model ${joinModelName} not found`);
             }
-            const matchingRecords = joinTable.filter((joinRecord) => joinRecord[joinAttr.on.to] === baseRecord[joinAttr.on.from]);
-            if (joinAttr.relation === "one-to-one") nestedEntry[joinModelName] = matchingRecords[0] || null;
+            const matchingRecords = joinTable.filter(
+              (joinRecord) => joinRecord[joinAttr.on.to] === baseRecord[joinAttr.on.from],
+            );
+            if (joinAttr.relation === "one-to-one")
+              nestedEntry[joinModelName] = matchingRecords[0] || null;
             else {
               const seenSet = seenIds.get(`${baseId}-${joinModel}`);
               const limit = joinAttr.limit ?? 100;
@@ -148,7 +164,11 @@ const memoryAdapter = (db, config) => {
       }
       return {
         create: async ({ model, data }) => {
-          if (options.advanced?.database?.useNumberId || options.advanced?.database?.generateId === "serial") data.id = db[getModelName(model)].length + 1;
+          if (
+            options.advanced?.database?.useNumberId ||
+            options.advanced?.database?.generateId === "serial"
+          )
+            data.id = db[getModelName(model)].length + 1;
           if (!db[model]) db[model] = [];
           db[model].push(data);
           return data;
@@ -213,15 +233,13 @@ const memoryAdapter = (db, config) => {
             Object.assign(record, update);
           });
           return res[0] || null;
-        }
+        },
       };
-    }
+    },
   });
   return (options) => {
     lazyOptions = options;
     return adapterCreator(options);
   };
 };
-export {
-  memoryAdapter
-};
+export { memoryAdapter };

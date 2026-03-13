@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { LogOut } from 'lucide-react';
+
 import { Button } from '~/components/ui/button';
 import { authClient } from '~/lib/auth-client';
 

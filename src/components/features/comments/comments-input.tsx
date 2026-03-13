@@ -2,13 +2,20 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpIcon } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '~/components/ui/input-group';
+
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+} from '~/components/ui/input-group';
 import { Separator } from '~/components/ui/separator';
 import { authClient } from '~/lib/auth-client';
+
 import { createComment } from './actions';
 
 interface CommentsInputProps {
-  id: string
+  id: string;
 }
 export function CommentsInput({ id }: CommentsInputProps) {
   const { data } = authClient.useSession();
@@ -40,25 +47,23 @@ export function CommentsInput({ id }: CommentsInputProps) {
       toast.success('评论成功');
       setComment('');
       queryClient.invalidateQueries({ queryKey: ['comments', id] });
-    }
-    catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
       toast.error('评论失败');
-    }
-    finally {
+    } finally {
       setIsPending(false);
     }
   }
 
   return (
     <div className='comment-input rounded-xl'>
-      <div className='pt-4 relative'>
+      <div className='relative pt-4'>
         <form onSubmit={handleSubmit}>
-          <InputGroup className='[--radius:16px] pt-2'>
+          <InputGroup className='pt-2 [--radius:16px]'>
             <InputGroupTextarea
               name='comment'
               value={comment}
-              onChange={e => setComment(e.target.value)}
+              onChange={(e) => setComment(e.target.value)}
               disabled={isPending}
               placeholder='评论文章是免费的...'
             />

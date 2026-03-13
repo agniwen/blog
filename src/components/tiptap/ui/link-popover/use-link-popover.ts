@@ -3,10 +3,8 @@ import * as React from 'react';
 
 // --- Icons ---
 import { LinkIcon } from '~/components/tiptap/icons/link-icon';
-
 // --- Hooks ---
 import { useTiptapEditor } from '~/hooks/use-tiptap-editor';
-
 // --- Lib ---
 import { isMarkInSchema, sanitizeUrl } from '~/lib/tiptap-utils';
 
@@ -17,16 +15,16 @@ export interface UseLinkPopoverConfig {
   /**
    * The Tiptap editor instance.
    */
-  editor?: Editor | null
+  editor?: Editor | null;
   /**
    * Whether to hide the link popover when not available.
    * @default false
    */
-  hideWhenUnavailable?: boolean
+  hideWhenUnavailable?: boolean;
   /**
    * Callback function called when the link is set.
    */
-  onSetLink?: () => void
+  onSetLink?: () => void;
 }
 
 /**
@@ -36,19 +34,18 @@ export interface LinkHandlerProps {
   /**
    * The Tiptap editor instance.
    */
-  editor: Editor | null
+  editor: Editor | null;
   /**
    * Callback function called when the link is set.
    */
-  onSetLink?: () => void
+  onSetLink?: () => void;
 }
 
 /**
  * Checks if a link can be set in the current editor state
  */
 export function canSetLink(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable)
-    return false;
+  if (!editor || !editor.isEditable) return false;
   return editor.can().setMark('link');
 }
 
@@ -56,8 +53,7 @@ export function canSetLink(editor: Editor | null): boolean {
  * Checks if a link is currently active in the editor
  */
 export function isLinkActive(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable)
-    return false;
+  if (!editor || !editor.isEditable) return false;
   return editor.isActive('link');
 }
 
@@ -65,8 +61,8 @@ export function isLinkActive(editor: Editor | null): boolean {
  * Determines if the link button should be shown
  */
 export function shouldShowLinkButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
+  editor: Editor | null;
+  hideWhenUnavailable: boolean;
 }): boolean {
   const { editor, hideWhenUnavailable } = props;
 
@@ -91,8 +87,7 @@ export function useLinkHandler(props: LinkHandlerProps) {
   const [url, setUrl] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (!editor)
-      return;
+    if (!editor) return;
 
     // Get URL immediately on mount
     const { href } = editor.getAttributes('link');
@@ -103,8 +98,7 @@ export function useLinkHandler(props: LinkHandlerProps) {
   }, [editor, url]);
 
   React.useEffect(() => {
-    if (!editor)
-      return;
+    if (!editor) return;
 
     const updateLinkState = () => {
       const { href } = editor.getAttributes('link');
@@ -118,8 +112,7 @@ export function useLinkHandler(props: LinkHandlerProps) {
   }, [editor]);
 
   const setLink = React.useCallback(() => {
-    if (!url || !editor)
-      return;
+    if (!url || !editor) return;
 
     const { selection } = editor.state;
     const isEmpty = selection.empty;
@@ -140,8 +133,7 @@ export function useLinkHandler(props: LinkHandlerProps) {
   }, [editor, onSetLink, url]);
 
   const removeLink = React.useCallback(() => {
-    if (!editor)
-      return;
+    if (!editor) return;
     editor
       .chain()
       .focus()
@@ -154,8 +146,7 @@ export function useLinkHandler(props: LinkHandlerProps) {
 
   const openLink = React.useCallback(
     (target: string = '_blank', features: string = 'noopener,noreferrer') => {
-      if (!url)
-        return;
+      if (!url) return;
 
       const safeUrl = sanitizeUrl(url, window.location.href);
       if (safeUrl !== '#') {
@@ -177,10 +168,7 @@ export function useLinkHandler(props: LinkHandlerProps) {
 /**
  * Custom hook for link popover state management
  */
-export function useLinkState(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-}) {
+export function useLinkState(props: { editor: Editor | null; hideWhenUnavailable: boolean }) {
   const { editor, hideWhenUnavailable = false } = props;
 
   const canSet = canSetLink(editor);
@@ -189,8 +177,7 @@ export function useLinkState(props: {
   const [isVisible, setIsVisible] = React.useState(false);
 
   React.useEffect(() => {
-    if (!editor)
-      return;
+    if (!editor) return;
 
     const handleSelectionUpdate = () => {
       setIsVisible(
@@ -255,11 +242,7 @@ export function useLinkState(props: {
  * ```
  */
 export function useLinkPopover(config?: UseLinkPopoverConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onSetLink,
-  } = config || {};
+  const { editor: providedEditor, hideWhenUnavailable = false, onSetLink } = config || {};
 
   const { editor } = useTiptapEditor(providedEditor);
 

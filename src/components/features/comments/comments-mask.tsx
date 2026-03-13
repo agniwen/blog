@@ -1,5 +1,6 @@
-import type { PropsWithChildren } from 'react';
 import { Icon } from '@iconify/react';
+import type { PropsWithChildren } from 'react';
+
 import { Button } from '~/components/ui/button';
 import { authClient } from '~/lib/auth-client';
 
@@ -17,21 +18,21 @@ export function CommentsMask({ children }: PropsWithChildren) {
     return children;
   }
   return (
-    <div className=' relative w-full  border border-gray-50 rounded-md p-2'>
-      <div className='absolute z-10 top-0 left-0 h-full w-full bg-white/20 backdrop-blur-sm'>
-        <div className='h-full w-full flex justify-center items-center'>
+    <div className='relative w-full rounded-md border border-gray-50 p-2'>
+      <div className='absolute top-0 left-0 z-10 h-full w-full bg-white/20 backdrop-blur-sm'>
+        <div className='flex h-full w-full items-center justify-center'>
           <div>
-            <div className='text-sm text-center pb-4'>
-              <p className='mb-2!'>
-                使用社交账户登录评论
-              </p>
+            <div className='pb-4 text-center text-sm'>
+              <p className='mb-2!'>使用社交账户登录评论</p>
               <p className='text-xs'>
                 如果你没有以下社交帐户，你可以给我
-                <a className='text-black underline' href='mailto:wisakura@outlook.com'>写信</a>
+                <a className='text-black underline' href='mailto:wisakura@outlook.com'>
+                  写信
+                </a>
                 交流
               </p>
             </div>
-            <div className='flex p items-center justify-center gap-4'>
+            <div className='p flex items-center justify-center gap-4'>
               <Button onClick={githubSignIn}>
                 <Icon className='mr-1 size-4.5' fill='#fff' icon='ri:github-fill' />
                 Github

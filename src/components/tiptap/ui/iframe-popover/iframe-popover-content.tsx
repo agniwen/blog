@@ -1,13 +1,15 @@
 import type { Editor } from '@tiptap/react';
 import { CornerDownLeftIcon } from 'lucide-react';
 import * as React from 'react';
+
 import { Button, ButtonGroup } from '~/components/tiptap/ui-primitive/button';
 import { Card, CardBody, CardItemGroup } from '~/components/tiptap/ui-primitive/card';
+
 import { Input, InputGroup } from '../../ui-primitive/input';
 
 interface IFramePopoverContentProps {
-  editor: Editor
-  onClose?: () => void
+  editor: Editor;
+  onClose?: () => void;
 }
 
 export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentProps) {
@@ -22,11 +24,7 @@ export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentPr
 
     setError('');
 
-    editor
-      .chain()
-      .focus()
-      .setIFrame({ code: code.trim() })
-      .run();
+    editor.chain().focus().setIFrame({ code: code.trim() }).run();
 
     setCode('');
     onClose?.();
@@ -36,17 +34,13 @@ export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentPr
     if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleInsert();
-    }
-    else if (e.key === 'Escape') {
+    } else if (e.key === 'Escape') {
       onClose?.();
     }
   };
 
   return (
-    <Card
-      className='border-none shadow-none!'
-
-    >
+    <Card className='border-none shadow-none!'>
       <CardBody className='w-full'>
         <CardItemGroup orientation='horizontal' className='flex'>
           <InputGroup className='flex-1'>
@@ -54,7 +48,7 @@ export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentPr
               type='url'
               placeholder='Paste a iframe link...'
               value={code}
-              onChange={e => setCode(e.target.value)}
+              onChange={(e) => setCode(e.target.value)}
               onKeyDown={handleKeyDown}
               autoFocus
               autoComplete='off'
@@ -78,7 +72,7 @@ export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentPr
 
         {error && (
           <CardItemGroup orientation='horizontal'>
-            <p className='text-xs text-red-500 px-2'>{error}</p>
+            <p className='px-2 text-xs text-red-500'>{error}</p>
           </CardItemGroup>
         )}
       </CardBody>

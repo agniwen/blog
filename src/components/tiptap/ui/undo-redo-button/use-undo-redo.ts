@@ -3,9 +3,7 @@ import * as React from 'react';
 
 // --- Icons ---
 import { Redo2Icon } from '~/components/tiptap/icons/redo2-icon';
-
 import { Undo2Icon } from '~/components/tiptap/icons/undo2-icon';
-
 // --- Hooks ---
 import { useTiptapEditor } from '~/hooks/use-tiptap-editor';
 // --- Lib ---
@@ -20,20 +18,20 @@ export interface UseUndoRedoConfig {
   /**
    * The Tiptap editor instance.
    */
-  editor?: Editor | null
+  editor?: Editor | null;
   /**
    * The history action to perform (undo or redo).
    */
-  action: UndoRedoAction
+  action: UndoRedoAction;
   /**
    * Whether the button should hide when action is not available.
    * @default false
    */
-  hideWhenUnavailable?: boolean
+  hideWhenUnavailable?: boolean;
   /**
    * Callback function called after a successful action execution.
    */
-  onExecuted?: () => void
+  onExecuted?: () => void;
 }
 
 export const UNDO_REDO_SHORTCUT_KEYS: Record<UndoRedoAction, string> = {
@@ -54,14 +52,9 @@ export const historyIcons = {
 /**
  * Checks if a history action can be executed
  */
-export function canExecuteUndoRedoAction(
-  editor: Editor | null,
-  action: UndoRedoAction,
-): boolean {
-  if (!editor || !editor.isEditable)
-    return false;
-  if (isNodeTypeSelected(editor, ['image']))
-    return false;
+export function canExecuteUndoRedoAction(editor: Editor | null, action: UndoRedoAction): boolean {
+  if (!editor || !editor.isEditable) return false;
+  if (isNodeTypeSelected(editor, ['image'])) return false;
 
   return action === 'undo' ? editor.can().undo() : editor.can().redo();
 }
@@ -69,14 +62,9 @@ export function canExecuteUndoRedoAction(
 /**
  * Executes a history action on the editor
  */
-export function executeUndoRedoAction(
-  editor: Editor | null,
-  action: UndoRedoAction,
-): boolean {
-  if (!editor || !editor.isEditable)
-    return false;
-  if (!canExecuteUndoRedoAction(editor, action))
-    return false;
+export function executeUndoRedoAction(editor: Editor | null, action: UndoRedoAction): boolean {
+  if (!editor || !editor.isEditable) return false;
+  if (!canExecuteUndoRedoAction(editor, action)) return false;
 
   const chain = editor.chain().focus();
   return action === 'undo' ? chain.undo().run() : chain.redo().run();
@@ -86,14 +74,13 @@ export function executeUndoRedoAction(
  * Determines if the history button should be shown
  */
 export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
-  action: UndoRedoAction
+  editor: Editor | null;
+  hideWhenUnavailable: boolean;
+  action: UndoRedoAction;
 }): boolean {
   const { editor, hideWhenUnavailable, action } = props;
 
-  if (!editor || !editor.isEditable)
-    return false;
+  if (!editor || !editor.isEditable) return false;
 
   if (hideWhenUnavailable && !editor.isActive('code')) {
     return canExecuteUndoRedoAction(editor, action);
@@ -139,20 +126,14 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useUndoRedo(config: UseUndoRedoConfig) {
-  const {
-    editor: providedEditor,
-    action,
-    hideWhenUnavailable = false,
-    onExecuted,
-  } = config;
+  const { editor: providedEditor, action, hideWhenUnavailable = false, onExecuted } = config;
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = React.useState<boolean>(true);
   const canExecute = canExecuteUndoRedoAction(editor, action);
 
   React.useEffect(() => {
-    if (!editor)
-      return;
+    if (!editor) return;
 
     const handleUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable, action }));
@@ -168,8 +149,7 @@ export function useUndoRedo(config: UseUndoRedoConfig) {
   }, [editor, hideWhenUnavailable, action]);
 
   const handleAction = React.useCallback(() => {
-    if (!editor)
-      return false;
+    if (!editor) return false;
 
     const success = executeUndoRedoAction(editor, action);
     if (success) {

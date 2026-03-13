@@ -14,9 +14,9 @@ import * as React from 'react';
  * @returns The provided editor or the editor from context, whichever is available
  */
 export function useTiptapEditor(providedEditor?: Editor | null): {
-  editor: Editor | null
-  editorState?: Editor['state']
-  canCommand?: Editor['can']
+  editor: Editor | null;
+  editorState?: Editor['state'];
+  canCommand?: Editor['can'];
 } {
   const { editor: coreEditor } = useCurrentEditor();
   const mainEditor = React.useMemo(

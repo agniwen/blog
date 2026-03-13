@@ -1,26 +1,33 @@
-import type { posts } from '~/db/schema';
 import { Badge } from '~/components/ui/badge';
 import { TimeDisplay } from '~/components/ui/time-display';
+import type { posts } from '~/db/schema';
 import { cn } from '~/lib/utils';
 
 interface PostCardProps {
-  post: RPCResponse<typeof posts.$inferSelect> | typeof posts.$inferSelect
-  className?: string
-  showMeta?: boolean
+  post: RPCResponse<typeof posts.$inferSelect> | typeof posts.$inferSelect;
+  className?: string;
+  showMeta?: boolean;
 }
 
 export function PostCard(props: PostCardProps) {
   const { post, className, showMeta = true } = props;
   return (
     <div
-      className={cn('rounded-xl border shadow-xs overflow-hidden hover:opacity-90 flex flex-col', className)}
+      className={cn(
+        'flex flex-col overflow-hidden rounded-xl border shadow-xs hover:opacity-90',
+        className,
+      )}
     >
-      <div className='w-full '>
-        <img className='w-full h-full min-h-32 md:max-h-48 aspect-video object-fill' src={post.banner || ''} alt='' />
+      <div className='w-full'>
+        <img
+          className='aspect-video h-full min-h-32 w-full object-fill md:max-h-48'
+          src={post.banner || ''}
+          alt=''
+        />
       </div>
-      <div className='bg-background p-2 flex-1 select-none'>
+      <div className='flex-1 bg-background p-2 select-none'>
         <h2 className='text-lg font-bold'>{post.title || 'Untitled'}</h2>
-        <p className='text-xs mb-2 sm:line-clamp-2 lg:line-clamp-2'>
+        <p className='mb-2 text-xs sm:line-clamp-2 lg:line-clamp-2'>
           {post.description || 'No description available'}
         </p>
         {showMeta && (

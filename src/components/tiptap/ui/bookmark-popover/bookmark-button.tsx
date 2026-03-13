@@ -1,12 +1,10 @@
 import * as React from 'react';
+
 import { BookmarkIcon } from '~/components/tiptap/icons/bookmark-icon';
 import { Button } from '~/components/tiptap/ui-primitive/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '~/components/tiptap/ui-primitive/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/tiptap/ui-primitive/popover';
 import { useTiptapEditor } from '~/hooks/use-tiptap-editor';
+
 import { BookmarkPopoverContent } from './bookmark-popover-content';
 
 export function BookmarkButton() {
@@ -21,22 +19,14 @@ export function BookmarkButton() {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         nativeButton
-        render={(
-          <Button
-            data-style='ghost'
-            aria-label='Insert bookmark'
-            title='Insert bookmark'
-          >
+        render={
+          <Button data-style='ghost' aria-label='Insert bookmark' title='Insert bookmark'>
             <BookmarkIcon className='tiptap-button-icon' />
           </Button>
-        )}
-      >
-      </PopoverTrigger>
+        }
+      ></PopoverTrigger>
       <PopoverContent className='p-0'>
-        <BookmarkPopoverContent
-          editor={editor}
-          onClose={() => setOpen(false)}
-        />
+        <BookmarkPopoverContent editor={editor} onClose={() => setOpen(false)} />
       </PopoverContent>
     </Popover>
   );

@@ -12,58 +12,80 @@ const badgeVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
         secondary: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
-        destructive: "bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive dark:bg-destructive/20",
-        outline: "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground bg-input/30",
+        destructive:
+          "bg-destructive/10 [a]:hover:bg-destructive/20 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive dark:bg-destructive/20",
+        outline:
+          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground bg-input/30",
         ghost: "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline"
-      }
+        link: "text-primary underline-offset-4 hover:underline",
+      },
     },
     defaultVariants: {
-      variant: "default"
-    }
-  }
+      variant: "default",
+    },
+  },
 );
-function Badge({
-  className,
-  variant = "default",
-  render,
-  ...props
-}) {
+function Badge({ className, variant = "default", render, ...props }) {
   return useRender({
     defaultTagName: "span",
     props: mergeProps(
       {
-        className: cn(badgeVariants({ className, variant }))
+        className: cn(badgeVariants({ className, variant })),
       },
-      props
+      props,
     ),
     render,
     state: {
       slot: "badge",
-      variant
-    }
+      variant,
+    },
   });
 }
 function PostCard(props) {
   const { post, className, showMeta = true } = props;
-  return /* @__PURE__ */ jsxs(
-    "div",
-    {
-      className: cn("rounded-xl border shadow-xs overflow-hidden hover:opacity-90 flex flex-col", className),
-      children: [
-        /* @__PURE__ */ jsx("div", { className: "w-full ", children: /* @__PURE__ */ jsx("img", { className: "w-full h-full min-h-32 md:max-h-48 aspect-video object-fill", src: post.banner || "", alt: "" }) }),
-        /* @__PURE__ */ jsxs("div", { className: "bg-background p-2 flex-1 select-none", children: [
-          /* @__PURE__ */ jsx("h2", { className: "text-lg font-bold", children: post.title || "Untitled" }),
-          /* @__PURE__ */ jsx("p", { className: "text-xs mb-2 sm:line-clamp-2 lg:line-clamp-2", children: post.description || "No description available" }),
-          showMeta && /* @__PURE__ */ jsxs("div", { className: "flex items-center justify-between", children: [
-            /* @__PURE__ */ jsx(Badge, { className: "uppercase", variant: "outline", children: post.published ? "Published" : "Draft" }),
-            /* @__PURE__ */ jsx("span", { className: "text-xs opacity-50", children: dayjs(post.createdAt).format("YYYY-MM-DD") })
-          ] })
-        ] })
-      ]
-    }
-  );
+  return /* @__PURE__ */ jsxs("div", {
+    className: cn(
+      "rounded-xl border shadow-xs overflow-hidden hover:opacity-90 flex flex-col",
+      className,
+    ),
+    children: [
+      /* @__PURE__ */ jsx("div", {
+        className: "w-full ",
+        children: /* @__PURE__ */ jsx("img", {
+          className: "w-full h-full min-h-32 md:max-h-48 aspect-video object-fill",
+          src: post.banner || "",
+          alt: "",
+        }),
+      }),
+      /* @__PURE__ */ jsxs("div", {
+        className: "bg-background p-2 flex-1 select-none",
+        children: [
+          /* @__PURE__ */ jsx("h2", {
+            className: "text-lg font-bold",
+            children: post.title || "Untitled",
+          }),
+          /* @__PURE__ */ jsx("p", {
+            className: "text-xs mb-2 sm:line-clamp-2 lg:line-clamp-2",
+            children: post.description || "No description available",
+          }),
+          showMeta &&
+            /* @__PURE__ */ jsxs("div", {
+              className: "flex items-center justify-between",
+              children: [
+                /* @__PURE__ */ jsx(Badge, {
+                  className: "uppercase",
+                  variant: "outline",
+                  children: post.published ? "Published" : "Draft",
+                }),
+                /* @__PURE__ */ jsx("span", {
+                  className: "text-xs opacity-50",
+                  children: dayjs(post.createdAt).format("YYYY-MM-DD"),
+                }),
+              ],
+            }),
+        ],
+      }),
+    ],
+  });
 }
-export {
-  PostCard as P
-};
+export { PostCard as P };

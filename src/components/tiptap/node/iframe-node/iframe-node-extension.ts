@@ -1,15 +1,16 @@
 import { Node, ReactNodeViewRenderer } from '@tiptap/react';
+
 import { IFrameNodeView } from '~/components/tiptap/node/iframe-node/iframe-node';
 
 export interface IFrameAttributes {
-  code: string
+  code: string;
 }
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
     iframe: {
-      setIFrame: (attributes: IFrameAttributes) => ReturnType
-    }
+      setIFrame: (attributes: IFrameAttributes) => ReturnType;
+    };
   }
 }
 
@@ -26,7 +27,7 @@ export const IFrameNode = Node.create({
     return {
       code: {
         default: '',
-        parseHTML: element => element.getAttribute('data-code'),
+        parseHTML: (element) => element.getAttribute('data-code'),
       },
     };
   },
@@ -36,14 +37,14 @@ export const IFrameNode = Node.create({
       {
         tag: 'div[data-type="iframe"]',
         getAttrs: (element) => {
-          if (typeof element === 'string')
-            return false;
+          if (typeof element === 'string') return false;
           const container = element.querySelector('.iframe-container');
           // 优先从 data-iframe-html 读取,然后是 innerHTML,最后是 data-code
-          const code = container?.getAttribute('data-iframe-html')
-            || container?.innerHTML
-            || element.getAttribute('data-code')
-            || '';
+          const code =
+            container?.getAttribute('data-iframe-html') ||
+            container?.innerHTML ||
+            element.getAttribute('data-code') ||
+            '';
           return { code };
         },
       },
@@ -65,7 +66,7 @@ export const IFrameNode = Node.create({
       {
         'data-type': 'iframe',
         'data-code': code,
-        'class': 'iframe-node',
+        class: 'iframe-node',
       },
       iframeElement || '',
     ];
@@ -78,13 +79,13 @@ export const IFrameNode = Node.create({
   addCommands() {
     return {
       setIFrame:
-        attributes =>
-          ({ commands }) => {
-            return commands.insertContent({
-              type: this.name,
-              attrs: attributes,
-            });
-          },
+        (attributes) =>
+        ({ commands }) => {
+          return commands.insertContent({
+            type: this.name,
+            attrs: attributes,
+          });
+        },
     };
   },
 });

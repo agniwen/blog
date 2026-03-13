@@ -8,10 +8,7 @@ export async function getComments(postId: string) {
   });
 }
 
-export async function createComment(data: {
-  postId: string
-  content: string
-}) {
+export async function createComment(data: { postId: string; content: string }) {
   return createCommentServerFn({
     data,
   });

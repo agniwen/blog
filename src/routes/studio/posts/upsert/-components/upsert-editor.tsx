@@ -7,25 +7,31 @@ import { Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { toast } from 'sonner';
+
 import { BannerUpload } from '~/components/features/banner-upload';
 import { Editor } from '~/components/features/editor';
 import { Button } from '~/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '~/components/ui/field';
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupTextarea } from '~/components/ui/input-group';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupTextarea,
+} from '~/components/ui/input-group';
 import { NativeSelect, NativeSelectOption } from '~/components/ui/native-select';
 import { Spinner } from '~/components/ui/spinner';
 import { useEditor } from '~/hooks/use-editor';
 import { hono } from '~/lib/hono';
 
 interface PostFormData {
-  title?: string
-  description?: string
-  slug?: string
-  banner?: string
-  summary?: string
-  published?: boolean
-  htmlContent?: string
-  jsonContent?: any
+  title?: string;
+  description?: string;
+  slug?: string;
+  banner?: string;
+  summary?: string;
+  published?: boolean;
+  htmlContent?: string;
+  jsonContent?: any;
 }
 
 export function UpsertEditor(props: { id?: string }) {
@@ -41,9 +47,11 @@ export function UpsertEditor(props: { id?: string }) {
     enabled: !isNil(id),
     queryKey: ['post-detail', id],
     queryFn() {
-      return parseResponse(hono.api.posts[':id'].$get({
-        param: { id: id as string },
-      }));
+      return parseResponse(
+        hono.api.posts[':id'].$get({
+          param: { id: id as string },
+        }),
+      );
     },
   });
   const form = useForm({
@@ -51,7 +59,9 @@ export function UpsertEditor(props: { id?: string }) {
       title: post?.data?.title ?? '',
       description: post?.data?.description ?? '',
       slug: post?.data?.slug ?? '',
-      banner: post?.data?.banner ?? 'https://images.unsplash.com/photo-1604076850742-4c7221f3101b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      banner:
+        post?.data?.banner ??
+        'https://images.unsplash.com/photo-1604076850742-4c7221f3101b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       summary: post?.data?.summary ?? '',
       published: post?.data?.published ?? false,
     },
@@ -65,8 +75,7 @@ export function UpsertEditor(props: { id?: string }) {
       };
       if (id) {
         return handleUpdate(submitData);
-      }
-      else {
+      } else {
         return handleCreate(submitData);
       }
     },
@@ -74,15 +83,16 @@ export function UpsertEditor(props: { id?: string }) {
 
   async function handleCreate(submitData: PostFormData) {
     try {
-      const resp = await parseResponse(hono.api.posts.$post({
-        json: submitData,
-      }));
+      const resp = await parseResponse(
+        hono.api.posts.$post({
+          json: submitData,
+        }),
+      );
       if (resp.data.id) {
         toast.success('文章创建成功');
         navigate({ to: '/studio/posts/upsert/$id', params: { id: resp.data.id } });
       }
-    }
-    catch (err) {
+    } catch (err) {
       toast.error('文章创建失败');
       throw err;
     }
@@ -90,18 +100,19 @@ export function UpsertEditor(props: { id?: string }) {
 
   async function handleUpdate(submitData: PostFormData) {
     try {
-      const resp = await parseResponse(hono.api.posts.$put({
-        json: {
-          ...submitData,
-          id: id as string,
-        },
-      }));
+      const resp = await parseResponse(
+        hono.api.posts.$put({
+          json: {
+            ...submitData,
+            id: id as string,
+          },
+        }),
+      );
       if (resp.data.id) {
         toast.success('文章更新成功');
         queryClient.invalidateQueries({ queryKey: ['post-detail', id] });
       }
-    }
-    catch (err) {
+    } catch (err) {
       toast.error('文章更新失败');
       throw err;
     }
@@ -109,8 +120,7 @@ export function UpsertEditor(props: { id?: string }) {
 
   // 自动保存函数
   const autoSave = useCallback(async () => {
-    if (!id)
-      return; // 只有更新时才自动保存，新建时不自动保存
+    if (!id) return; // 只有更新时才自动保存，新建时不自动保存
 
     const formValues = form.state.values;
     const htmlContent = editor.getHTML();
@@ -118,21 +128,21 @@ export function UpsertEditor(props: { id?: string }) {
 
     try {
       setIsSaving(true);
-      await parseResponse(hono.api.posts.$put({
-        json: {
-          ...formValues,
-          htmlContent,
-          jsonContent,
-          id,
-        },
-      }));
+      await parseResponse(
+        hono.api.posts.$put({
+          json: {
+            ...formValues,
+            htmlContent,
+            jsonContent,
+            id,
+          },
+        }),
+      );
       // 不刷新数据，避免覆盖用户正在编辑的内容
-    }
-    catch (err) {
+    } catch (err) {
       console.error('自动保存失败:', err);
       toast.error('自动保存失败');
-    }
-    finally {
+    } finally {
       setIsSaving(false);
     }
   }, [id, editor, form.state.values]);
@@ -148,31 +158,34 @@ export function UpsertEditor(props: { id?: string }) {
   }, [autoSave]);
 
   // Ctrl+S 快捷键保存
-  useHotkeys('mod+s', (e) => {
-    e.preventDefault();
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    autoSave();
-  }, {
-    enableOnFormTags: true,
-    enableOnContentEditable: true,
-    preventDefault: true,
-  });
+  useHotkeys(
+    'mod+s',
+    (e) => {
+      e.preventDefault();
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      autoSave();
+    },
+    {
+      enableOnFormTags: true,
+      enableOnContentEditable: true,
+      preventDefault: true,
+    },
+  );
 
   // 监听编辑器内容变化
   useEffect(() => {
-    if (!editor || !id)
-      return;
+    if (!editor || !id) return;
 
-    const handleUpdate = () => {
+    const handleEditorUpdate = () => {
       triggerAutoSave();
     };
 
-    editor.on('update', handleUpdate);
+    editor.on('update', handleEditorUpdate);
 
     return () => {
-      editor.off('update', handleUpdate);
+      editor.off('update', handleEditorUpdate);
       if (saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
       }
@@ -187,14 +200,15 @@ export function UpsertEditor(props: { id?: string }) {
   }, [editor, post]);
 
   return (
-    <div className='flex flex-col md:flex-row h-[calc(100vh-82px)] overflow-hidden'>
-      <div className='editor-form w-full md:w-xs overflow-y-auto md:order-2 border-b md:border-b-0 md:border-l border-(--tt-toolbar-border-color)'>
-        <div className='md:sticky md:top-0 p-2 bg-[--tt-background-color]'>
-          <form onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            form.handleSubmit();
-          }}
+    <div className='flex h-[calc(100vh-82px)] flex-col overflow-hidden md:flex-row'>
+      <div className='editor-form w-full overflow-y-auto border-b border-(--tt-toolbar-border-color) md:order-2 md:w-xs md:border-b-0 md:border-l'>
+        <div className='bg-[--tt-background-color] p-2 md:sticky md:top-0'>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
           >
             <FieldSet>
               <FieldGroup>
@@ -209,7 +223,7 @@ export function UpsertEditor(props: { id?: string }) {
                             field.handleChange(value);
                             triggerAutoSave();
                           }}
-                          onError={error => console.error('Banner upload error:', error)}
+                          onError={(error) => console.error('Banner upload error:', error)}
                         />
                         <FieldError errors={field.state.meta.errors} />
                       </Field>
@@ -242,9 +256,7 @@ export function UpsertEditor(props: { id?: string }) {
                     const isValid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
                       <Field data-invalid={isValid}>
-                        <FieldLabel>
-                          Slug
-                        </FieldLabel>
+                        <FieldLabel>Slug</FieldLabel>
                         <InputGroup>
                           <InputGroupInput
                             placeholder='请输入slug'
@@ -299,9 +311,7 @@ export function UpsertEditor(props: { id?: string }) {
                           <InputGroupAddon align='block-end'>
                             <div className='flex w-full justify-end'>
                               <Button variant='ghost' size='sm' className='rounded-full'>
-                                <Sparkles className='size-4' />
-                                {' '}
-                                AI Generate
+                                <Sparkles className='size-4' /> AI Generate
                               </Button>
                             </div>
                           </InputGroupAddon>
@@ -336,9 +346,9 @@ export function UpsertEditor(props: { id?: string }) {
           </form>
         </div>
       </div>
-      <div className='flex-1 overflow-y-auto md:order-1 relative'>
+      <div className='relative flex-1 overflow-y-auto md:order-1'>
         {isSaving && (
-          <div className='fixed top-30 left-0 right-0 w-fit mx-auto z-10 flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-sm text-sm text-muted-foreground'>
+          <div className='fixed top-30 right-0 left-0 z-10 mx-auto flex w-fit items-center gap-2 rounded-full border border-border bg-background/80 px-3 py-1.5 text-sm text-muted-foreground shadow-sm backdrop-blur-sm'>
             <Spinner className='size-3' />
             <span>Saving...</span>
           </div>

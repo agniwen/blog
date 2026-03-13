@@ -1,5 +1,6 @@
 import { Link, useLocation } from '@tanstack/react-router';
 import { CitrusIcon } from 'lucide-react';
+
 import {
   Sidebar,
   SidebarContent,
@@ -13,6 +14,7 @@ import {
   SidebarMenuItem,
 } from '~/components/ui/sidebar';
 import { menus } from '~/const/menu';
+
 import { NavUser } from './app-sidebar-user';
 
 export function AppSidebar() {
@@ -23,18 +25,15 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenuButton
           size='lg'
-          render={(
+          render={
             <a href='#'>
-              <div className='bg-primary/5  flex aspect-square size-8 items-center justify-center rounded-md'>
+              <div className='flex aspect-square size-8 items-center justify-center rounded-md bg-primary/5'>
                 <CitrusIcon className='size-5 text-primary' />
               </div>
-              <div className=' flex-1 text-left font-bold text-sm leading-tight'>
-                BLOG
-              </div>
+              <div className='flex-1 text-left text-sm leading-tight font-bold'>BLOG</div>
             </a>
-          )}
-        >
-        </SidebarMenuButton>
+          }
+        ></SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
         {menus.map((menuGroup) => {
@@ -48,14 +47,15 @@ export function AppSidebar() {
                       <SidebarMenuItem key={menu.label}>
                         <SidebarMenuButton
                           isActive={pathname === menu.href}
-                          render={(
-                            <Link to={menu.href as '/studio' | '/studio/posts' | '/studio/projects'}>
+                          render={
+                            <Link
+                              to={menu.href as '/studio' | '/studio/posts' | '/studio/projects'}
+                            >
                               {menu.icon}
                               {menu.label}
                             </Link>
-                          )}
-                        >
-                        </SidebarMenuButton>
+                          }
+                        ></SidebarMenuButton>
                       </SidebarMenuItem>
                     );
                   })}

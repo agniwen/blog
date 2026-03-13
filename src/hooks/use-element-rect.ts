@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { useThrottledCallback } from './use-throttled-callback';
 
 export type RectState = Omit<DOMRect, 'toJSON'>;
@@ -8,19 +9,19 @@ export interface ElementRectOptions {
    * The element to track. Can be an Element, ref, or selector string.
    * Defaults to document.body if not provided.
    */
-  element?: Element | React.RefObject<Element> | string | null
+  element?: Element | React.RefObject<Element> | string | null;
   /**
    * Whether to enable rect tracking
    */
-  enabled?: boolean
+  enabled?: boolean;
   /**
    * Throttle delay in milliseconds for rect updates
    */
-  throttleMs?: number
+  throttleMs?: number;
   /**
    * Whether to use ResizeObserver for more accurate tracking
    */
-  useResizeObserver?: boolean
+  useResizeObserver?: boolean;
 }
 
 const initialRect: RectState = {
@@ -57,8 +58,7 @@ export function useElementRect({
   const [rect, setRect] = React.useState<RectState>(initialRect);
 
   const getTargetElement = React.useCallback((): Element | null => {
-    if (!enabled || !isClientSide())
-      return null;
+    if (!enabled || !isClientSide()) return null;
 
     if (!element) {
       return document.body;
@@ -77,8 +77,7 @@ export function useElementRect({
 
   const updateRect = useThrottledCallback(
     () => {
-      if (!enabled || !isClientSide())
-        return;
+      if (!enabled || !isClientSide()) return;
 
       const targetElement = getTargetElement();
       if (!targetElement) {
@@ -110,8 +109,7 @@ export function useElementRect({
     }
 
     const targetElement = getTargetElement();
-    if (!targetElement)
-      return;
+    if (!targetElement) return;
 
     updateRect();
 
@@ -138,7 +136,7 @@ export function useElementRect({
     });
 
     return () => {
-      cleanup.forEach(fn => fn());
+      cleanup.forEach((fn) => fn());
       setRect(initialRect);
     };
   }, [enabled, getTargetElement, updateRect, useResizeObserver]);
@@ -149,9 +147,7 @@ export function useElementRect({
 /**
  * Convenience hook for tracking document.body rect
  */
-export function useBodyRect(
-  options: Omit<ElementRectOptions, 'element'> = {},
-): RectState {
+export function useBodyRect(options: Omit<ElementRectOptions, 'element'> = {}): RectState {
   return useElementRect({
     ...options,
     element: isClientSide() ? document.body : null,

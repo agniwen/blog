@@ -1,14 +1,15 @@
 import type { Editor } from '@tiptap/react';
 import { CornerDownLeftIcon } from 'lucide-react';
 import * as React from 'react';
+
 import { Button, ButtonGroup } from '~/components/tiptap/ui-primitive/button';
 import { Card, CardBody, CardItemGroup } from '~/components/tiptap/ui-primitive/card';
 import { Input, InputGroup } from '~/components/tiptap/ui-primitive/input';
 import { hono } from '~/lib/hono';
 
 interface BookmarkPopoverContentProps {
-  editor: Editor
-  onClose?: () => void
+  editor: Editor;
+  onClose?: () => void;
 }
 
 export function BookmarkPopoverContent({ editor, onClose }: BookmarkPopoverContentProps) {
@@ -25,8 +26,7 @@ export function BookmarkPopoverContent({ editor, onClose }: BookmarkPopoverConte
     // Basic URL validation
     try {
       const _ = new URL(url);
-    }
-    catch {
+    } catch {
       setError('Please enter a valid URL');
       return;
     }
@@ -52,19 +52,13 @@ export function BookmarkPopoverContent({ editor, onClose }: BookmarkPopoverConte
       // Debug: log the data being inserted
       console.warn('Bookmark data to insert:', result.data);
 
-      editor
-        .chain()
-        .focus()
-        .setBookmark(result.data)
-        .run();
+      editor.chain().focus().setBookmark(result.data).run();
 
       setUrl('');
       onClose?.();
-    }
-    catch (err) {
+    } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to insert bookmark');
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -73,16 +67,13 @@ export function BookmarkPopoverContent({ editor, onClose }: BookmarkPopoverConte
     if (e.key === 'Enter') {
       e.preventDefault();
       handleInsert();
-    }
-    else if (e.key === 'Escape') {
+    } else if (e.key === 'Escape') {
       onClose?.();
     }
   };
 
   return (
-    <Card
-      className='border-none shadow-none!'
-    >
+    <Card className='border-none shadow-none!'>
       <CardBody className='w-full'>
         <CardItemGroup orientation='horizontal' className='flex'>
           <InputGroup className='flex-1'>
@@ -90,7 +81,7 @@ export function BookmarkPopoverContent({ editor, onClose }: BookmarkPopoverConte
               type='url'
               placeholder='Paste a bookmark link...'
               value={url}
-              onChange={e => setUrl(e.target.value)}
+              onChange={(e) => setUrl(e.target.value)}
               onKeyDown={handleKeyDown}
               autoFocus
               autoComplete='off'
@@ -115,7 +106,7 @@ export function BookmarkPopoverContent({ editor, onClose }: BookmarkPopoverConte
 
         {error && (
           <CardItemGroup orientation='horizontal'>
-            <p className='text-xs text-red-500 px-2'>{error}</p>
+            <p className='px-2 text-xs text-red-500'>{error}</p>
           </CardItemGroup>
         )}
       </CardBody>

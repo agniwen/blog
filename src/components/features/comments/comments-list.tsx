@@ -1,55 +1,75 @@
 import type { InferUserFromClient } from 'better-auth';
-import type { CommentWithUser } from './comments-type';
+
 import { TimeDisplay } from '~/components/ui/time-display';
 import { authClient } from '~/lib/auth-client';
 import { cn } from '~/lib/utils';
 
+import type { CommentWithUser } from './comments-type';
+
 interface CommentListProps {
-  list: Array<CommentWithUser>
+  list: Array<CommentWithUser>;
 }
 
 export function CommentsList({ list }: CommentListProps) {
   const { data } = authClient.useSession();
   return (
-    <div className={cn('comment-list w-full my-12!')}>
+    <div className={cn('comment-list my-12! w-full')}>
       <div>
-        {
-          list.map((comment, index) => {
-            return (
-              <CommentsListItem user={data?.user} index={index} key={comment.id} comment={comment} />
-            );
-          })
-        }
+        {list.map((comment, index) => {
+          return (
+            <CommentsListItem user={data?.user} index={index} key={comment.id} comment={comment} />
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function CommentsListItem({ comment, index, user }: { comment: CommentWithUser, index: number, user?: InferUserFromClient<any> }) {
+function CommentsListItem({
+  comment,
+  index,
+  user,
+}: {
+  comment: CommentWithUser;
+  index: number;
+  user?: InferUserFromClient<any>;
+}) {
   const isSelfComment = comment.userId === user?.id;
 
   return (
-    <div className={cn('comment-list-item gap-4 flex items-end mb-4! ', { 'flex-row-reverse': isSelfComment })}>
-      <div className='shrink-0'>
-        <img className='rounded-full size-8' src={comment.user?.image || '/default-avatar.svg'} alt='avatar' />
-      </div>
-      <div className={cn({
-        'text-right': isSelfComment,
+    <div
+      className={cn('comment-list-item mb-4! flex items-end gap-4', {
+        'flex-row-reverse': isSelfComment,
       })}
+    >
+      <div className='shrink-0'>
+        <img
+          className='size-8 rounded-full'
+          src={comment.user?.image || '/default-avatar.svg'}
+          alt='avatar'
+        />
+      </div>
+      <div
+        className={cn({
+          'text-right': isSelfComment,
+        })}
       >
-        <div className='pl-1 space-x-2 pb-1 '>
+        <div className='space-x-2 pb-1 pl-1'>
           <span className='text-sm font-bold'>{comment.user?.name}</span>
-          <span className='text-gray-500 text-[10px]'>
-            #
-            {index + 1}
-            {' '}
+          <span className='text-[10px] text-gray-500'>
+            #{index + 1}{' '}
             <TimeDisplay value={comment.createdAt} options={{ format: 'YYYY-MM-DD HH:mm:ss' }} />
           </span>
-          <TimeDisplay className='text-gray-500 text-[10px]' value={comment.createdAt} options={{ relative: true }} />
+          <TimeDisplay
+            className='text-[10px] text-gray-500'
+            value={comment.createdAt}
+            options={{ relative: true }}
+          />
         </div>
-        <p className={cn('inline-block text-left text-sm bg-gray-100 p-2', [
-          isSelfComment ? 'rounded-t-xl rounded-bl-xl' : 'rounded-t-xl rounded-br-xl',
-        ])}
+        <p
+          className={cn('inline-block bg-gray-100 p-2 text-left text-sm', [
+            isSelfComment ? 'rounded-t-xl rounded-bl-xl' : 'rounded-t-xl rounded-br-xl',
+          ])}
         >
           {comment.content}
         </p>

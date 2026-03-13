@@ -1,7 +1,9 @@
-import type { Env } from './env';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+
 import { auth } from '~/lib/auth';
+
+import type { Env } from './env';
 import { betterAuthMiddleware } from './middleware/better-auth';
 import { drizzleMiddleware } from './middleware/drizzle';
 import { bookmarkRouter } from './routes/bookmark';

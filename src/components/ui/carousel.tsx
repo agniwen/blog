@@ -1,8 +1,8 @@
 import type { UseEmblaCarouselType } from 'embla-carousel-react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-
 import * as React from 'react';
+
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 
@@ -12,19 +12,19 @@ type CarouselOptions = UseCarouselParameters[0];
 type CarouselPlugin = UseCarouselParameters[1];
 
 interface CarouselProps {
-  opts?: CarouselOptions
-  plugins?: CarouselPlugin
-  orientation?: 'horizontal' | 'vertical'
-  setApi?: (api: CarouselApi) => void
+  opts?: CarouselOptions;
+  plugins?: CarouselPlugin;
+  orientation?: 'horizontal' | 'vertical';
+  setApi?: (api: CarouselApi) => void;
 }
 
 type CarouselContextProps = {
-  carouselRef: ReturnType<typeof useEmblaCarousel>[0]
-  api: ReturnType<typeof useEmblaCarousel>[1]
-  scrollPrev: () => void
-  scrollNext: () => void
-  canScrollPrev: boolean
-  canScrollNext: boolean
+  carouselRef: ReturnType<typeof useEmblaCarousel>[0];
+  api: ReturnType<typeof useEmblaCarousel>[1];
+  scrollPrev: () => void;
+  scrollNext: () => void;
+  canScrollPrev: boolean;
+  canScrollNext: boolean;
 } & CarouselProps;
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null);
@@ -58,11 +58,10 @@ function Carousel({
   const [canScrollPrev, setCanScrollPrev] = React.useState(false);
   const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api)
-      return;
-    setCanScrollPrev(api.canScrollPrev());
-    setCanScrollNext(api.canScrollNext());
+  const onSelect = React.useCallback((carouselApi: CarouselApi) => {
+    if (!carouselApi) return;
+    setCanScrollPrev(carouselApi.canScrollPrev());
+    setCanScrollNext(carouselApi.canScrollNext());
   }, []);
 
   const scrollPrev = React.useCallback(() => {
@@ -78,8 +77,7 @@ function Carousel({
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
         scrollPrev();
-      }
-      else if (event.key === 'ArrowRight') {
+      } else if (event.key === 'ArrowRight') {
         event.preventDefault();
         scrollNext();
       }
@@ -88,14 +86,12 @@ function Carousel({
   );
 
   React.useEffect(() => {
-    if (!api || !setApi)
-      return;
+    if (!api || !setApi) return;
     setApi(api);
   }, [api, setApi]);
 
   React.useEffect(() => {
-    if (!api)
-      return;
+    if (!api) return;
     onSelect(api);
     api.on('reInit', onSelect);
     api.on('select', onSelect);
@@ -111,8 +107,7 @@ function Carousel({
         carouselRef,
         api,
         opts,
-        orientation:
-          orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
+        orientation: orientation || (opts?.axis === 'y' ? 'vertical' : 'horizontal'),
         scrollPrev,
         scrollNext,
         canScrollPrev,
@@ -137,17 +132,9 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   const { carouselRef, orientation } = useCarousel();
 
   return (
-    <div
-      ref={carouselRef}
-      className='overflow-hidden'
-      data-slot='carousel-content'
-    >
+    <div ref={carouselRef} className='overflow-hidden' data-slot='carousel-content'>
       <div
-        className={cn(
-          'flex',
-          orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col',
-          className,
-        )}
+        className={cn('flex', orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col', className)}
         {...props}
       />
     </div>
@@ -186,7 +173,7 @@ function CarouselPrevious({
       variant={variant}
       size={size}
       className={cn(
-        'rounded-full absolute touch-manipulation',
+        'absolute touch-manipulation rounded-full',
         orientation === 'horizontal'
           ? 'top-1/2 -left-12 -translate-y-1/2'
           : '-top-12 left-1/2 -translate-x-1/2 rotate-90',
@@ -216,7 +203,7 @@ function CarouselNext({
       variant={variant}
       size={size}
       className={cn(
-        'rounded-full absolute touch-manipulation',
+        'absolute touch-manipulation rounded-full',
         orientation === 'horizontal'
           ? 'top-1/2 -right-12 -translate-y-1/2'
           : '-bottom-12 left-1/2 -translate-x-1/2 rotate-90',

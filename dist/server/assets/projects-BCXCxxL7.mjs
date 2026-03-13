@@ -31,8 +31,8 @@ import "@t3-oss/env-core";
 import "zod/v4-mini";
 import "next-themes";
 function StudioProjectsPage() {
-  return /* @__PURE__ */ jsx(StudioShell, { children: /* @__PURE__ */ jsx(AdminContainer, { children: "projects" }) });
+  return /* @__PURE__ */ jsx(StudioShell, {
+    children: /* @__PURE__ */ jsx(AdminContainer, { children: "projects" }),
+  });
 }
-export {
-  StudioProjectsPage as component
-};
+export { StudioProjectsPage as component };

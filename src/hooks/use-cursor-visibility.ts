@@ -1,17 +1,19 @@
 import type { Editor } from '@tiptap/react';
 import * as React from 'react';
+
 import { useWindowSize } from '~/hooks/use-window-size';
+
 import { useBodyRect } from './use-element-rect';
 
 export interface CursorVisibilityOptions {
   /**
    * The Tiptap editor instance
    */
-  editor?: Editor | null
+  editor?: Editor | null;
   /**
    * Reference to the toolbar element that may obscure the cursor
    */
-  overlayHeight?: number
+  overlayHeight?: number;
 }
 
 /**
@@ -20,10 +22,7 @@ export interface CursorVisibilityOptions {
  *
  * @returns The bounding rect of the body
  */
-export function useCursorVisibility({
-  editor,
-  overlayHeight = 0,
-}: CursorVisibilityOptions) {
+export function useCursorVisibility({ editor, overlayHeight = 0 }: CursorVisibilityOptions) {
   const { height: windowHeight } = useWindowSize();
   const rect = useBodyRect({
     enabled: true,
@@ -33,12 +32,10 @@ export function useCursorVisibility({
 
   React.useEffect(() => {
     const ensureCursorVisibility = () => {
-      if (!editor)
-        return;
+      if (!editor) return;
 
       const { state, view } = editor;
-      if (!view.hasFocus())
-        return;
+      if (!view.hasFocus()) return;
 
       // Get current cursor position coordinates
       const { from } = state.selection;

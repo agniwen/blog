@@ -1,16 +1,26 @@
 import * as React from 'react';
+
 import '~/components/tiptap/ui-primitive/badge/badge-colors.css';
 import '~/components/tiptap/ui-primitive/badge/badge-group.css';
 import '~/components/tiptap/ui-primitive/badge/badge.css';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'ghost' | 'white' | 'gray' | 'green' | 'default'
-  size?: 'default' | 'small'
-  appearance?: 'default' | 'subdued' | 'emphasized'
-  trimText?: boolean
+  variant?: 'ghost' | 'white' | 'gray' | 'green' | 'default';
+  size?: 'default' | 'small';
+  appearance?: 'default' | 'subdued' | 'emphasized';
+  trimText?: boolean;
 }
 
-export function Badge({ ref, variant, size = 'default', appearance = 'default', trimText = false, className, children, ...props }: BadgeProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
+export function Badge({
+  ref,
+  variant,
+  size = 'default',
+  appearance = 'default',
+  trimText = false,
+  className,
+  children,
+  ...props
+}: BadgeProps & { ref?: React.RefObject<HTMLDivElement | null> }) {
   return (
     <div
       ref={ref}

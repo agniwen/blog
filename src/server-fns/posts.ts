@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
+
 import { db } from '~/lib/db';
 
 export const getPublishedPostsServerFn = createServerFn({ method: 'GET' }).handler(async () => {
@@ -11,7 +12,7 @@ export const getPublishedPostsServerFn = createServerFn({ method: 'GET' }).handl
       createdAt: 'desc',
     },
   });
-  return posts.map(post => ({
+  return posts.map((post) => ({
     ...post,
     jsonContent: (post.jsonContent ?? {}) as Record<string, object>,
   }));

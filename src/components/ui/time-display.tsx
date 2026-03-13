@@ -1,22 +1,26 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { dayjs } from '~/lib/dayjs';
 
 interface TimeDisplayFormatOptions {
-  format?: string
-  relative?: boolean
+  format?: string;
+  relative?: boolean;
 }
 
 interface TimeDisplayProps {
-  value?: Date | number | string | null
-  fallback?: string
-  options?: TimeDisplayFormatOptions
-  className?: string
+  value?: Date | number | string | null;
+  fallback?: string;
+  options?: TimeDisplayFormatOptions;
+  className?: string;
 }
 
-function formatTime(value: Date | number | string | null | undefined, options?: TimeDisplayFormatOptions) {
-  if (value == null) {
+function formatTime(
+  value: Date | number | string | null | undefined,
+  options?: TimeDisplayFormatOptions,
+) {
+  if (value === null || value === undefined) {
     return null;
   }
 
@@ -34,7 +38,7 @@ function formatTime(value: Date | number | string | null | undefined, options?: 
 }
 
 function getDateTime(value: Date | number | string | null | undefined) {
-  if (value == null) {
+  if (value === null || value === undefined) {
     return undefined;
   }
 

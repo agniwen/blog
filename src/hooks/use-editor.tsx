@@ -1,4 +1,3 @@
-import type { UseEditorOptions } from '@tiptap/react';
 import { Highlight } from '@tiptap/extension-highlight';
 import { Image } from '@tiptap/extension-image';
 import { TaskItem, TaskList } from '@tiptap/extension-list';
@@ -7,13 +6,14 @@ import { Superscript } from '@tiptap/extension-superscript';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { Typography } from '@tiptap/extension-typography';
 import { Selection } from '@tiptap/extensions';
+import type { UseEditorOptions } from '@tiptap/react';
 import { useEditor as useTipTapEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
+
 import { BookmarkNode } from '~/components/tiptap/node/bookmark-node/bookmark-node-extension';
 import { HorizontalRule } from '~/components/tiptap/node/horizontal-rule-node/horizontal-rule-node-extension';
 import { IFrameNode } from '~/components/tiptap/node/iframe-node/iframe-node-extension';
 import { ImageUploadNode } from '~/components/tiptap/node/image-upload-node/image-upload-node-extension';
-
 import { handleImageUpload, MAX_FILE_SIZE } from '~/lib/tiptap-utils';
 
 export const defaultEditorOptions = {
@@ -21,11 +21,11 @@ export const defaultEditorOptions = {
   shouldRerenderOnTransaction: false,
   editorProps: {
     attributes: {
-      'autocomplete': 'off',
-      'autocorrect': 'off',
-      'autocapitalize': 'off',
+      autocomplete: 'off',
+      autocorrect: 'off',
+      autocapitalize: 'off',
       'aria-label': 'Main content area, start typing to enter text.',
-      'class': 'simple-editor',
+      class: 'simple-editor',
     },
   },
   extensions: [
@@ -51,7 +51,7 @@ export const defaultEditorOptions = {
       maxSize: MAX_FILE_SIZE,
       limit: 3,
       upload: handleImageUpload,
-      onError: error => console.error('Upload failed:', error),
+      onError: (error) => console.error('Upload failed:', error),
     }),
     BookmarkNode,
     IFrameNode,

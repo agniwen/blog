@@ -1,4 +1,10 @@
-import { C as CompiledQuery, D as DefaultQueryCompiler, d as DEFAULT_MIGRATION_TABLE, e as DEFAULT_MIGRATION_LOCK_TABLE, s as sql } from "./auth-BaGll2Xr.mjs";
+import {
+  C as CompiledQuery,
+  D as DefaultQueryCompiler,
+  d as DEFAULT_MIGRATION_TABLE,
+  e as DEFAULT_MIGRATION_LOCK_TABLE,
+  s as sql,
+} from "./auth-BaGll2Xr.mjs";
 import "drizzle-orm";
 import "zod";
 import "./db-a0rvcoi6.mjs";
@@ -17,10 +23,8 @@ var BunSqliteAdapter = class {
   get supportsReturning() {
     return true;
   }
-  async acquireMigrationLock() {
-  }
-  async releaseMigrationLock() {
-  }
+  async acquireMigrationLock() {}
+  async releaseMigrationLock() {}
   get supportsOutput() {
     return true;
   }
@@ -97,8 +101,16 @@ var BunSqliteIntrospector = class {
     return [];
   }
   async getTables(options = { withInternalKyselyTables: false }) {
-    let query = this.#db.selectFrom("sqlite_schema").where("type", "=", "table").where("name", "not like", "sqlite_%").select("name").$castTo();
-    if (!options.withInternalKyselyTables) query = query.where("name", "!=", DEFAULT_MIGRATION_TABLE).where("name", "!=", DEFAULT_MIGRATION_LOCK_TABLE);
+    let query = this.#db
+      .selectFrom("sqlite_schema")
+      .where("type", "=", "table")
+      .where("name", "not like", "sqlite_%")
+      .select("name")
+      .$castTo();
+    if (!options.withInternalKyselyTables)
+      query = query
+        .where("name", "!=", DEFAULT_MIGRATION_TABLE)
+        .where("name", "!=", DEFAULT_MIGRATION_LOCK_TABLE);
     const tables = await query.execute();
     return Promise.all(tables.map(({ name }) => this.#getTableMetadata(name)));
   }
@@ -107,22 +119,33 @@ var BunSqliteIntrospector = class {
   }
   async #getTableMetadata(table) {
     const db = this.#db;
-    const autoIncrementCol = (await db.selectFrom("sqlite_master").where("name", "=", table).select("sql").$castTo().execute())[0]?.sql?.split(/[\(\),]/)?.find((it) => it.toLowerCase().includes("autoincrement"))?.split(/\s+/)?.[0]?.replace(/["`]/g, "");
+    const autoIncrementCol = (
+      await db
+        .selectFrom("sqlite_master")
+        .where("name", "=", table)
+        .select("sql")
+        .$castTo()
+        .execute()
+    )[0]?.sql
+      ?.split(/[(),]/)
+      ?.find((it) => it.toLowerCase().includes("autoincrement"))
+      ?.split(/\s+/)?.[0]
+      ?.replace(/["`]/g, "");
     return {
       name: table,
-      columns: (await db.selectFrom(sql`pragma_table_info(${table})`.as("table_info")).select([
-        "name",
-        "type",
-        "notnull",
-        "dflt_value"
-      ]).execute()).map((col) => ({
+      columns: (
+        await db
+          .selectFrom(sql`pragma_table_info(${table})`.as("table_info"))
+          .select(["name", "type", "notnull", "dflt_value"])
+          .execute()
+      ).map((col) => ({
         name: col.name,
         dataType: col.type,
         isNullable: !col.notnull,
         isAutoIncrementing: col.name === autoIncrementCol,
-        hasDefaultValue: col.dflt_value != null
+        hasDefaultValue: col.dflt_value != null,
       })),
-      isView: true
+      isView: true,
     };
   }
 };
@@ -158,6 +181,4 @@ var BunSqliteDialect = class {
     return new BunSqliteIntrospector(db);
   }
 };
-export {
-  BunSqliteDialect
-};
+export { BunSqliteDialect };

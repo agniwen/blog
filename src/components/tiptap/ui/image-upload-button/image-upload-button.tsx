@@ -1,14 +1,11 @@
-// --- UI Primitives ---
-import type { ButtonProps } from '~/components/tiptap/ui-primitive/button';
-
-// --- Tiptap UI ---
-import type { UseImageUploadConfig } from '~/components/tiptap/ui/image-upload-button';
-
 import * as React from 'react';
 
 import { Badge } from '~/components/tiptap/ui-primitive/badge';
+// --- UI Primitives ---
+import type { ButtonProps } from '~/components/tiptap/ui-primitive/button';
 import { Button } from '~/components/tiptap/ui-primitive/button';
-
+// --- Tiptap UI ---
+import type { UseImageUploadConfig } from '~/components/tiptap/ui/image-upload-button';
 import {
   IMAGE_UPLOAD_SHORTCUT_KEY,
   useImageUpload,
@@ -18,24 +15,22 @@ import { useTiptapEditor } from '~/hooks/use-tiptap-editor';
 // --- Lib ---
 import { parseShortcutKeys } from '~/lib/tiptap-utils';
 
-export interface ImageUploadButtonProps
-  extends Omit<ButtonProps, 'type'>,
-  UseImageUploadConfig {
+export interface ImageUploadButtonProps extends Omit<ButtonProps, 'type'>, UseImageUploadConfig {
   /**
    * Optional text to display alongside the icon.
    */
-  text?: string
+  text?: string;
   /**
    * Optional show shortcut keys in the button.
    * @default false
    */
-  showShortcut?: boolean
+  showShortcut?: boolean;
 }
 
 export function ImageShortcutBadge({
   shortcutKeys = IMAGE_UPLOAD_SHORTCUT_KEY,
 }: {
-  shortcutKeys?: string
+  shortcutKeys?: string;
 }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
@@ -45,27 +40,30 @@ export function ImageShortcutBadge({
  *
  * For custom button implementations, use the `useImage` hook instead.
  */
-export function ImageUploadButton({ ref, editor: providedEditor, text, hideWhenUnavailable = false, onInserted, showShortcut = false, onClick, children, ...buttonProps }: ImageUploadButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+export function ImageUploadButton({
+  ref,
+  editor: providedEditor,
+  text,
+  hideWhenUnavailable = false,
+  onInserted,
+  showShortcut = false,
+  onClick,
+  children,
+  ...buttonProps
+}: ImageUploadButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
   const { editor } = useTiptapEditor(providedEditor);
-  const {
-    isVisible,
-    canInsert,
-    handleImage,
-    label,
-    isActive,
-    shortcutKeys,
-    Icon,
-  } = useImageUpload({
-    editor,
-    hideWhenUnavailable,
-    onInserted,
-  });
+  const { isVisible, canInsert, handleImage, label, isActive, shortcutKeys, Icon } = useImageUpload(
+    {
+      editor,
+      hideWhenUnavailable,
+      onInserted,
+    },
+  );
 
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(event);
-      if (event.defaultPrevented)
-        return;
+      if (event.defaultPrevented) return;
       handleImage();
     },
     [handleImage, onClick],

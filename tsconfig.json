@@ -3,39 +3,23 @@
     "incremental": true,
     "target": "ES2017",
     "jsx": "react-jsx",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "module": "esnext",
     "moduleResolution": "bundler",
     "paths": {
-      "~/*": [
-        "./src/*"
-      ],
-      "drizzle/*": [
-        "./drizzle/*"
-      ]
+      "~/*": ["./src/*"],
+      "drizzle/*": ["./drizzle/*"],
     },
     "resolveJsonModule": true,
-    "types": [
-      "vite/client",
-      "node"
-    ],
+    "types": ["vite-plus/client", "node"],
     "allowJs": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "plugins": []
+    "plugins": [],
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
 }

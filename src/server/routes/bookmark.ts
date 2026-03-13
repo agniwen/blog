@@ -1,9 +1,11 @@
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
+
 import { env } from '~/lib/env';
 import { fail, success } from '~/lib/result';
 import { s3 } from '~/lib/s3';
+
 import { factory } from '../factory';
 
 const urlSchema = z.object({
@@ -11,12 +13,12 @@ const urlSchema = z.object({
 });
 
 interface OGData {
-  title?: string
-  description?: string
-  image?: string
-  url: string
-  siteName?: string
-  favicon?: string
+  title?: string;
+  description?: string;
+  image?: string;
+  url: string;
+  siteName?: string;
+  favicon?: string;
 }
 
 /**
@@ -61,8 +63,7 @@ async function downloadAndUploadImage(imageUrl: string): Promise<string | undefi
 
     // Return the CDN URL
     return `${env.CLOUDFLARE_CDN_URL}/${key}`;
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error downloading and uploading image:', error);
     return undefined;
   }
@@ -90,18 +91,17 @@ async function fetchOGData(url: string): Promise<OGData> {
 
     // Fallback to regular meta tags
     const title = ogTitle || html.match(/<title>([^<]*)<\/title>/i)?.[1];
-    const description = ogDescription || html.match(/<meta\s+name="description"\s+content="([^"]*)"/i)?.[1];
+    const description =
+      ogDescription || html.match(/<meta\s+name="description"\s+content="([^"]*)"/i)?.[1];
     const favicon = html.match(/<link\s+rel="(?:icon|shortcut icon)"\s+href="([^"]*)"/i)?.[1];
 
     // Resolve relative URLs
     const baseUrl = new URL(url);
     const resolveUrl = (relativeUrl?: string) => {
-      if (!relativeUrl)
-        return undefined;
+      if (!relativeUrl) return undefined;
       try {
         return new URL(relativeUrl, baseUrl).href;
-      }
-      catch {
+      } catch {
         return relativeUrl;
       }
     };
@@ -130,29 +130,22 @@ async function fetchOGData(url: string): Promise<OGData> {
     console.error('Fetched OG data:', { ogImage, resolvedImageUrl, proxyImageUrl, result });
 
     return result;
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error fetching OG data:', error);
     throw error;
   }
 }
 
-export const bookmarkRouter = factory.createApp().post(
-  '/fetch-og-data',
-  zValidator('json', urlSchema),
-  async (c) => {
+export const bookmarkRouter = factory
+  .createApp()
+  .post('/fetch-og-data', zValidator('json', urlSchema), async (c) => {
     const { url } = c.req.valid('json');
 
     try {
       const ogData = await fetchOGData(url);
       return c.json(success(ogData));
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Failed to fetch OG data:', error);
-      return c.json(
-        fail(error instanceof Error ? error.message : 'Failed to fetch OG data'),
-        500,
-      );
+      return c.json(fail(error instanceof Error ? error.message : 'Failed to fetch OG data'), 500);
     }
-  },
-);
+  });

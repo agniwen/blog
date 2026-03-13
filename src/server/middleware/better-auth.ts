@@ -1,4 +1,5 @@
 import { auth } from '~/lib/auth';
+
 import { factory } from '../factory';
 
 export const betterAuthMiddleware = factory.createMiddleware(async (c, next) => {

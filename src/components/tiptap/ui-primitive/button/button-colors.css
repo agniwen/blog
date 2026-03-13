@@ -10,9 +10,7 @@
   --tt-button-active-bg-color-emphasized: var(
     --tt-brand-color-100
   ); /* more important active state */
-  --tt-button-active-bg-color-subdued: var(
-    --tt-gray-light-a-200
-  ); /* less important active state */
+  --tt-button-active-bg-color-subdued: var(--tt-gray-light-a-200); /* less important active state */
   --tt-button-active-hover-bg-color: var(--tt-gray-light-300);
   --tt-button-active-hover-bg-color-emphasized: var(
     --tt-brand-color-200
@@ -117,9 +115,7 @@
   --tt-button-default-dropdown-arrows-color: var(--tt-gray-light-a-600);
   --tt-button-hover-dropdown-arrows-color: var(--tt-gray-light-a-700);
   --tt-button-active-dropdown-arrows-color: var(--tt-gray-light-a-600);
-  --tt-button-active-dropdown-arrows-color-emphasized: var(
-    --tt-gray-light-a-700
-  );
+  --tt-button-active-dropdown-arrows-color-emphasized: var(--tt-gray-light-a-700);
   --tt-button-active-dropdown-arrows-color-subdued: var(--tt-gray-light-a-600);
   --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-light-a-400);
 
@@ -128,9 +124,7 @@
     --tt-button-default-dropdown-arrows-color: var(--tt-gray-dark-a-600);
     --tt-button-hover-dropdown-arrows-color: var(--tt-gray-dark-a-700);
     --tt-button-active-dropdown-arrows-color: var(--tt-gray-dark-a-600);
-    --tt-button-active-dropdown-arrows-color-emphasized: var(
-      --tt-gray-dark-a-700
-    );
+    --tt-button-active-dropdown-arrows-color-emphasized: var(--tt-gray-dark-a-700);
     --tt-button-active-dropdown-arrows-color-subdued: var(--tt-gray-dark-a-600);
     --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-dark-a-400);
   }
@@ -139,7 +133,7 @@
       --------------------------- GHOST BUTTON --------------------------
       ---------------------------------------------------------------- */
 
-  &[data-style="ghost"] {
+  &[data-style='ghost'] {
     /************************************************** 
         Ghost button background color 
     **************************************************/
@@ -258,12 +252,8 @@
     --tt-button-default-dropdown-arrows-color: var(--tt-gray-light-a-600);
     --tt-button-hover-dropdown-arrows-color: var(--tt-gray-light-a-700);
     --tt-button-active-dropdown-arrows-color: var(--tt-gray-light-a-600);
-    --tt-button-active-dropdown-arrows-color-emphasized: var(
-      --tt-gray-light-a-700
-    );
-    --tt-button-active-dropdown-arrows-color-subdued: var(
-      --tt-gray-light-a-600
-    );
+    --tt-button-active-dropdown-arrows-color-emphasized: var(--tt-gray-light-a-700);
+    --tt-button-active-dropdown-arrows-color-subdued: var(--tt-gray-light-a-600);
     --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-light-a-400);
 
     /* Dark mode */
@@ -271,12 +261,8 @@
       --tt-button-default-dropdown-arrows-color: var(--tt-gray-dark-a-600);
       --tt-button-hover-dropdown-arrows-color: var(--tt-gray-dark-a-700);
       --tt-button-active-dropdown-arrows-color: var(--tt-gray-dark-a-600);
-      --tt-button-active-dropdown-arrows-color-emphasized: var(
-        --tt-gray-dark-a-700
-      );
-      --tt-button-active-dropdown-arrows-color-subdued: var(
-        --tt-gray-dark-a-600
-      );
+      --tt-button-active-dropdown-arrows-color-emphasized: var(--tt-gray-dark-a-700);
+      --tt-button-active-dropdown-arrows-color-subdued: var(--tt-gray-dark-a-600);
       --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-dark-a-400);
     }
   }
@@ -285,7 +271,7 @@
       -------------------------- PRIMARY BUTTON -------------------------
       ---------------------------------------------------------------- */
 
-  &[data-style="primary"] {
+  &[data-style='primary'] {
     /************************************************** 
         Primary button background color 
     **************************************************/
@@ -404,12 +390,8 @@
     --tt-button-default-dropdown-arrows-color: var(--white);
     --tt-button-hover-dropdown-arrows-color: var(--white);
     --tt-button-active-dropdown-arrows-color: var(--tt-gray-light-a-700);
-    --tt-button-active-dropdown-arrows-color-emphasized: var(
-      --tt-gray-light-a-700
-    );
-    --tt-button-active-dropdown-arrows-color-subdued: var(
-      --tt-gray-light-a-700
-    );
+    --tt-button-active-dropdown-arrows-color-emphasized: var(--tt-gray-light-a-700);
+    --tt-button-active-dropdown-arrows-color-subdued: var(--tt-gray-light-a-700);
     --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-light-a-400);
 
     /* Dark mode */
@@ -417,12 +399,8 @@
       --tt-button-default-dropdown-arrows-color: var(--white);
       --tt-button-hover-dropdown-arrows-color: var(--white);
       --tt-button-active-dropdown-arrows-color: var(--tt-gray-dark-a-600);
-      --tt-button-active-dropdown-arrows-color-emphasized: var(
-        --tt-gray-dark-a-600
-      );
-      --tt-button-active-dropdown-arrows-color-subdued: var(
-        --tt-gray-dark-a-600
-      );
+      --tt-button-active-dropdown-arrows-color-emphasized: var(--tt-gray-dark-a-600);
+      --tt-button-active-dropdown-arrows-color-subdued: var(--tt-gray-dark-a-600);
       --tt-button-disabled-dropdown-arrows-color: var(--tt-gray-dark-a-400);
     }
   }

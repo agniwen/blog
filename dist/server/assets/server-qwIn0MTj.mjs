@@ -14,5 +14,5 @@ export {
   g as getRequestHeaders,
   b as getResponse,
   r as requestHandler,
-  setCookie
+  setCookie,
 };

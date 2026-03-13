@@ -1,11 +1,14 @@
-import { ClientOnly, createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
+
 import { Comments } from '~/components/features/comments';
 import { PostLoader } from '~/components/features/post-loader/post-loader';
 import { PageContainer } from '~/components/ui/page-container';
 import { getCommentsServerFn } from '~/server-fns/comments';
 import { getPublishedPostServerFn } from '~/server-fns/posts';
+
 import { PostHeader } from './-components/post-header';
 import { PostContent } from './-content';
+
 import '~/components/features/editor/simple-editor.css';
 
 export const Route = createFileRoute('/blog/$id')({
@@ -36,7 +39,7 @@ function BlogDetailPage() {
   const { post, comments } = Route.useLoaderData();
 
   return (
-    <PageContainer className='pt-12 px-4 max-w-2xl mx-auto'>
+    <PageContainer className='mx-auto max-w-2xl px-4 pt-12'>
       <PostHeader />
       <PostContent post={post} />
       <Comments id={id} initialComments={comments} />
@@ -46,7 +49,7 @@ function BlogDetailPage() {
 
 function BlogDetailPendingPage() {
   return (
-    <PageContainer className='pt-12 px-4 max-w-2xl mx-auto'>
+    <PageContainer className='mx-auto max-w-2xl px-4 pt-12'>
       <PostHeader />
       <PostLoader />
     </PageContainer>

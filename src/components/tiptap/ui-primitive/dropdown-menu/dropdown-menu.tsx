@@ -1,47 +1,33 @@
 import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import * as React from 'react';
+
 import '~/components/tiptap/ui-primitive/dropdown-menu/dropdown-menu.css';
 
-function DropdownMenu({
-  modal = false,
-  ...props
-}: MenuPrimitive.Root.Props) {
+function DropdownMenu({ modal = false, ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root modal={modal} {...props} />;
 }
 
-function DropdownMenuPortal({
-  ...props
-}: MenuPrimitive.Portal.Props) {
+function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal {...props} />;
 }
 
-function DropdownMenuTrigger({
-  ...props
-}: MenuPrimitive.Trigger.Props) {
+function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
   return <MenuPrimitive.Trigger {...props} />;
 }
 
-function DropdownMenuGroup({
-  ...props
-}: MenuPrimitive.Group.Props) {
+function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
   return <MenuPrimitive.Group {...props} />;
 }
 
-function DropdownMenuSub({
-  ...props
-}: MenuPrimitive.SubmenuRoot.Props) {
+function DropdownMenuSub({ ...props }: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot {...props} />;
 }
 
-function DropdownMenuRadioGroup({
-  ...props
-}: MenuPrimitive.RadioGroup.Props) {
+function DropdownMenuRadioGroup({ ...props }: MenuPrimitive.RadioGroup.Props) {
   return <MenuPrimitive.RadioGroup {...props} />;
 }
 
-function DropdownMenuItem({
-  ...props
-}: MenuPrimitive.Item.Props) {
+function DropdownMenuItem({ ...props }: MenuPrimitive.Item.Props) {
   return <MenuPrimitive.Item {...props} />;
 }
 
@@ -76,11 +62,10 @@ function DropdownMenuSubContent({
   sideOffset = 0,
   portal = true,
   ...props
-}: MenuPrimitive.Popup.Props
-  & Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>
-  & {
-    ref?: React.RefObject<HTMLDivElement | null>
-    portal?: boolean
+}: MenuPrimitive.Popup.Props &
+  Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> & {
+    ref?: React.RefObject<HTMLDivElement | null>;
+    portal?: boolean;
   }) {
   const content = (
     <MenuPrimitive.Positioner
@@ -117,11 +102,10 @@ function DropdownMenuContent({
   sideOffset = 4,
   portal = false,
   ...props
-}: MenuPrimitive.Popup.Props
-  & Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>
-  & {
-    ref?: React.RefObject<HTMLDivElement | null>
-    portal?: boolean
+}: MenuPrimitive.Popup.Props &
+  Pick<MenuPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'> & {
+    ref?: React.RefObject<HTMLDivElement | null>;
+    portal?: boolean;
   }) {
   const content = (
     <MenuPrimitive.Positioner

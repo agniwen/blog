@@ -1,12 +1,7 @@
 import * as React from 'react';
 
 // --- Tiptap UI Primitive ---
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '~/components/tiptap/ui-primitive/tooltip';
-
+import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/tiptap/ui-primitive/tooltip';
 // --- Lib ---
 import { cn, parseShortcutKeys } from '~/lib/tiptap-utils';
 
@@ -14,19 +9,15 @@ import '~/components/tiptap/ui-primitive/button/button-colors.css';
 import '~/components/tiptap/ui-primitive/button/button-group.css';
 import '~/components/tiptap/ui-primitive/button/button.css';
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  className?: string
-  showTooltip?: boolean
-  tooltip?: React.ReactNode
-  shortcutKeys?: string
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  className?: string;
+  showTooltip?: boolean;
+  tooltip?: React.ReactNode;
+  shortcutKeys?: string;
 }
 
-export const ShortcutDisplay: React.FC<{ shortcuts: string[] }> = ({
-  shortcuts,
-}) => {
-  if (shortcuts.length === 0)
-    return null;
+export const ShortcutDisplay: React.FC<{ shortcuts: string[] }> = ({ shortcuts }) => {
+  if (shortcuts.length === 0) return null;
 
   return (
     <div>
@@ -40,11 +31,17 @@ export const ShortcutDisplay: React.FC<{ shortcuts: string[] }> = ({
   );
 };
 
-export function Button({ ref, className, children, tooltip, showTooltip = true, shortcutKeys, 'aria-label': ariaLabel, ...props }: ButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
-  const shortcuts = React.useMemo(
-    () => parseShortcutKeys({ shortcutKeys }),
-    [shortcutKeys],
-  );
+export function Button({
+  ref,
+  className,
+  children,
+  tooltip,
+  showTooltip = true,
+  shortcutKeys,
+  'aria-label': ariaLabel,
+  ...props
+}: ButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+  const shortcuts = React.useMemo(() => parseShortcutKeys({ shortcutKeys }), [shortcutKeys]);
 
   if (!tooltip || !showTooltip) {
     return (
@@ -80,8 +77,14 @@ export function Button({ ref, className, children, tooltip, showTooltip = true, 
 
 Button.displayName = 'Button';
 
-export function ButtonGroup({ ref, className, children, orientation = 'vertical', ...props }: React.ComponentProps<'div'> & {
-  orientation?: 'horizontal' | 'vertical'
+export function ButtonGroup({
+  ref,
+  className,
+  children,
+  orientation = 'vertical',
+  ...props
+}: React.ComponentProps<'div'> & {
+  orientation?: 'horizontal' | 'vertical';
 } & { ref?: React.RefObject<HTMLDivElement | null> }) {
   return (
     <div

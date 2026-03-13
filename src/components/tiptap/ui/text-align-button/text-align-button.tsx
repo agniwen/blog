@@ -1,21 +1,12 @@
-// --- UI Primitives ---
-import type { ButtonProps } from '~/components/tiptap/ui-primitive/button';
-
-// --- Tiptap UI ---
-import type {
-  TextAlign,
-  UseTextAlignConfig,
-} from '~/components/tiptap/ui/text-align-button';
-
 import * as React from 'react';
 
 import { Badge } from '~/components/tiptap/ui-primitive/badge';
+// --- UI Primitives ---
+import type { ButtonProps } from '~/components/tiptap/ui-primitive/button';
 import { Button } from '~/components/tiptap/ui-primitive/button';
-
-import {
-  TEXT_ALIGN_SHORTCUT_KEYS,
-  useTextAlign,
-} from '~/components/tiptap/ui/text-align-button';
+// --- Tiptap UI ---
+import type { TextAlign, UseTextAlignConfig } from '~/components/tiptap/ui/text-align-button';
+import { TEXT_ALIGN_SHORTCUT_KEYS, useTextAlign } from '~/components/tiptap/ui/text-align-button';
 // --- Hooks ---
 import { useTiptapEditor } from '~/hooks/use-tiptap-editor';
 // --- Lib ---
@@ -24,30 +15,28 @@ import { parseShortcutKeys } from '~/lib/tiptap-utils';
 type IconProps = React.SVGProps<SVGSVGElement>;
 type IconComponent = ({ className, ...props }: IconProps) => React.ReactElement;
 
-export interface TextAlignButtonProps
-  extends Omit<ButtonProps, 'type'>,
-  UseTextAlignConfig {
+export interface TextAlignButtonProps extends Omit<ButtonProps, 'type'>, UseTextAlignConfig {
   /**
    * Optional text to display alongside the icon.
    */
-  text?: string
+  text?: string;
   /**
    * Optional show shortcut keys in the button.
    * @default false
    */
-  showShortcut?: boolean
+  showShortcut?: boolean;
   /**
    * Optional custom icon component to render instead of the default.
    */
-  icon?: React.MemoExoticComponent<IconComponent> | React.FC<IconProps>
+  icon?: React.MemoExoticComponent<IconComponent> | React.FC<IconProps>;
 }
 
 export function TextAlignShortcutBadge({
   align,
   shortcutKeys = TEXT_ALIGN_SHORTCUT_KEYS[align],
 }: {
-  align: TextAlign
-  shortcutKeys?: string
+  align: TextAlign;
+  shortcutKeys?: string;
 }) {
   return <Badge>{parseShortcutKeys({ shortcutKeys })}</Badge>;
 }
@@ -57,28 +46,32 @@ export function TextAlignShortcutBadge({
  *
  * For custom button implementations, use the `useTextAlign` hook instead.
  */
-export function TextAlignButton({ ref, editor: providedEditor, align, text, hideWhenUnavailable = false, onAligned, showShortcut = false, onClick, icon: CustomIcon, children, ...buttonProps }: TextAlignButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+export function TextAlignButton({
+  ref,
+  editor: providedEditor,
+  align,
+  text,
+  hideWhenUnavailable = false,
+  onAligned,
+  showShortcut = false,
+  onClick,
+  icon: CustomIcon,
+  children,
+  ...buttonProps
+}: TextAlignButtonProps & { ref?: React.RefObject<HTMLButtonElement | null> }) {
   const { editor } = useTiptapEditor(providedEditor);
-  const {
-    isVisible,
-    handleTextAlign,
-    label,
-    canAlign,
-    isActive,
-    Icon,
-    shortcutKeys,
-  } = useTextAlign({
-    editor,
-    align,
-    hideWhenUnavailable,
-    onAligned,
-  });
+  const { isVisible, handleTextAlign, label, canAlign, isActive, Icon, shortcutKeys } =
+    useTextAlign({
+      editor,
+      align,
+      hideWhenUnavailable,
+      onAligned,
+    });
 
   const handleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(event);
-      if (event.defaultPrevented)
-        return;
+      if (event.defaultPrevented) return;
       handleTextAlign();
     },
     [handleTextAlign, onClick],
@@ -110,12 +103,7 @@ export function TextAlignButton({ ref, editor: providedEditor, align, text, hide
         <>
           <RenderIcon className='tiptap-button-icon' />
           {text && <span className='tiptap-button-text'>{text}</span>}
-          {showShortcut && (
-            <TextAlignShortcutBadge
-              align={align}
-              shortcutKeys={shortcutKeys}
-            />
-          )}
+          {showShortcut && <TextAlignShortcutBadge align={align} shortcutKeys={shortcutKeys} />}
         </>
       )}
     </Button>

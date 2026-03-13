@@ -1,4 +1,5 @@
 import { redirect } from '@tanstack/react-router';
+
 import { getSessionServerFn } from '~/server-fns/auth';
 
 export async function requireAdmin() {

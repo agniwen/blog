@@ -1,13 +1,11 @@
-import type { Editor } from '@tiptap/react';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
+import type { Editor } from '@tiptap/react';
 import * as React from 'react';
 
 // --- Icons ---
 import { CodeBlockIcon } from '~/components/tiptap/icons/code-block-icon';
-
 // --- Hooks ---
 import { useTiptapEditor } from '~/hooks/use-tiptap-editor';
-
 // --- Lib ---
 import {
   findNodePosition,
@@ -25,31 +23,24 @@ export interface UseCodeBlockConfig {
   /**
    * The Tiptap editor instance.
    */
-  editor?: Editor | null
+  editor?: Editor | null;
   /**
    * Whether the button should hide when code block is not available.
    * @default false
    */
-  hideWhenUnavailable?: boolean
+  hideWhenUnavailable?: boolean;
   /**
    * Callback function called after a successful code block toggle.
    */
-  onToggled?: () => void
+  onToggled?: () => void;
 }
 
 /**
  * Checks if code block can be toggled in the current editor state
  */
-export function canToggle(
-  editor: Editor | null,
-  turnInto: boolean = true,
-): boolean {
-  if (!editor || !editor.isEditable)
-    return false;
-  if (
-    !isNodeInSchema('codeBlock', editor)
-    || isNodeTypeSelected(editor, ['image'])
-  ) {
+export function canToggle(editor: Editor | null, turnInto: boolean = true): boolean {
+  if (!editor || !editor.isEditable) return false;
+  if (!isNodeInSchema('codeBlock', editor) || isNodeTypeSelected(editor, ['image'])) {
     return false;
   }
 
@@ -67,13 +58,11 @@ export function canToggle(
         editor,
         node: state.selection.$anchor.node(1),
       })?.pos;
-      if (!isValidPosition(pos))
-        return false;
+      if (!isValidPosition(pos)) return false;
     }
 
     return true;
-  }
-  catch {
+  } catch {
     return false;
   }
 }
@@ -82,10 +71,8 @@ export function canToggle(
  * Toggles code block in the editor
  */
 export function toggleCodeBlock(editor: Editor | null): boolean {
-  if (!editor || !editor.isEditable)
-    return false;
-  if (!canToggle(editor))
-    return false;
+  if (!editor || !editor.isEditable) return false;
+  if (!canToggle(editor)) return false;
 
   try {
     const view = editor.view;
@@ -98,8 +85,7 @@ export function toggleCodeBlock(editor: Editor | null): boolean {
         editor,
         node: state.selection.$anchor.node(1),
       })?.pos;
-      if (!isValidPosition(pos))
-        return false;
+      if (!isValidPosition(pos)) return false;
 
       tr = tr.setSelection(NodeSelection.create(state.doc, pos));
       view.dispatch(tr);
@@ -115,13 +101,9 @@ export function toggleCodeBlock(editor: Editor | null): boolean {
       const firstChild = selection.node.firstChild?.firstChild;
       const lastChild = selection.node.lastChild?.lastChild;
 
-      const from = firstChild
-        ? selection.from + firstChild.nodeSize
-        : selection.from + 1;
+      const from = firstChild ? selection.from + firstChild.nodeSize : selection.from + 1;
 
-      const to = lastChild
-        ? selection.to - lastChild.nodeSize
-        : selection.to - 1;
+      const to = lastChild ? selection.to - lastChild.nodeSize : selection.to - 1;
 
       chain = chain.setTextSelection({ from, to }).clearNodes();
     }
@@ -135,8 +117,7 @@ export function toggleCodeBlock(editor: Editor | null): boolean {
     editor.chain().focus().selectTextblockEnd().run();
 
     return true;
-  }
-  catch {
+  } catch {
     return false;
   }
 }
@@ -145,15 +126,13 @@ export function toggleCodeBlock(editor: Editor | null): boolean {
  * Determines if the code block button should be shown
  */
 export function shouldShowButton(props: {
-  editor: Editor | null
-  hideWhenUnavailable: boolean
+  editor: Editor | null;
+  hideWhenUnavailable: boolean;
 }): boolean {
   const { editor, hideWhenUnavailable } = props;
 
-  if (!editor || !editor.isEditable)
-    return false;
-  if (!isNodeInSchema('codeBlock', editor))
-    return false;
+  if (!editor || !editor.isEditable) return false;
+  if (!isNodeInSchema('codeBlock', editor)) return false;
 
   if (hideWhenUnavailable && !editor.isActive('code')) {
     return canToggle(editor);
@@ -206,11 +185,7 @@ export function shouldShowButton(props: {
  * ```
  */
 export function useCodeBlock(config?: UseCodeBlockConfig) {
-  const {
-    editor: providedEditor,
-    hideWhenUnavailable = false,
-    onToggled,
-  } = config || {};
+  const { editor: providedEditor, hideWhenUnavailable = false, onToggled } = config || {};
 
   const { editor } = useTiptapEditor(providedEditor);
   const [isVisible, setIsVisible] = React.useState<boolean>(true);
@@ -218,8 +193,7 @@ export function useCodeBlock(config?: UseCodeBlockConfig) {
   const isActive = editor?.isActive('codeBlock') || false;
 
   React.useEffect(() => {
-    if (!editor)
-      return;
+    if (!editor) return;
 
     const handleSelectionUpdate = () => {
       setIsVisible(shouldShowButton({ editor, hideWhenUnavailable }));
@@ -235,8 +209,7 @@ export function useCodeBlock(config?: UseCodeBlockConfig) {
   }, [editor, hideWhenUnavailable]);
 
   const handleToggle = React.useCallback(() => {
-    if (!editor)
-      return false;
+    if (!editor) return false;
 
     const success = toggleCodeBlock(editor);
     if (success) {

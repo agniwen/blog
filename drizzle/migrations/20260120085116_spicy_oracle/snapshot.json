@@ -2,9 +2,7 @@
   "version": "8",
   "dialect": "postgres",
   "id": "45ab8592-7d12-4db9-bb51-8e88b0d9e3dc",
-  "prevIds": [
-    "6815bac6-45fe-4898-bd3a-5a73b775a672"
-  ],
+  "prevIds": ["6815bac6-45fe-4898-bd3a-5a73b775a672"],
   "ddl": [
     {
       "name": "drizzle",
@@ -1008,14 +1006,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "accounts_user_id_users_id_fkey",
@@ -1025,14 +1019,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "comments_user_id_users_id_fkey",
@@ -1042,14 +1032,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "post_id"
-      ],
+      "columns": ["post_id"],
       "schemaTo": "public",
       "tableTo": "posts",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "post_tags_post_id_posts_id_fkey",
@@ -1059,14 +1045,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "tag_id"
-      ],
+      "columns": ["tag_id"],
       "schemaTo": "public",
       "tableTo": "tags",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "post_tags_tag_id_tags_id_fkey",
@@ -1076,14 +1058,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "sessions_user_id_users_id_fkey",
@@ -1092,10 +1070,7 @@
       "table": "sessions"
     },
     {
-      "columns": [
-        "post_id",
-        "tag_id"
-      ],
+      "columns": ["post_id", "tag_id"],
       "nameExplicit": true,
       "name": "post_tags_pkey",
       "entityType": "pks",
@@ -1103,9 +1078,7 @@
       "table": "post_tags"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "accounts_pkey",
       "schema": "public",
@@ -1113,9 +1086,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "comments_pkey",
       "schema": "public",
@@ -1123,9 +1094,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "__drizzle_migrations_pkey",
       "schema": "drizzle",
@@ -1133,9 +1102,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "posts_pkey",
       "schema": "public",
@@ -1143,9 +1110,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "sessions_pkey",
       "schema": "public",
@@ -1153,9 +1118,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "tags_pkey",
       "schema": "public",
@@ -1163,9 +1126,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "users_pkey",
       "schema": "public",
@@ -1173,9 +1134,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "verifications_pkey",
       "schema": "public",

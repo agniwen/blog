@@ -3,13 +3,9 @@ import { useForm } from '@tanstack/react-form';
 import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { z } from 'zod';
+
 import { Button } from '~/components/ui/button';
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldSeparator,
-} from '~/components/ui/field';
+import { Field, FieldGroup, FieldLabel, FieldSeparator } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
 import { authClient } from '~/lib/auth-client';
 import { cn } from '~/lib/utils';
@@ -18,10 +14,7 @@ const loginFormSchema = z.object({
   email: z.email(),
   password: z.string().min(8),
 });
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<'form'>) {
+export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
   function githubSignIn() {
     authClient.signIn.social({
       provider: 'github',
@@ -44,8 +37,7 @@ export function LoginForm({
       });
       if (res.data?.user) {
         navigate({ to: '/studio' });
-      }
-      else {
+      } else {
         toast('login failed');
       }
     },
@@ -64,7 +56,7 @@ export function LoginForm({
       <FieldGroup>
         <div className='flex flex-col items-center gap-1 text-center'>
           <h1 className='text-2xl font-bold'>Login to your account</h1>
-          <p className='text-muted-foreground text-sm text-balance'>
+          <p className='text-sm text-balance text-muted-foreground'>
             Enter your email below to login to your account
           </p>
         </div>
@@ -81,7 +73,7 @@ export function LoginForm({
                   required
                   value={field.state.value}
                   onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                 />
               </Field>
             );
@@ -99,7 +91,7 @@ export function LoginForm({
                   required
                   value={field.state.value}
                   onBlur={field.handleBlur}
-                  onChange={e => field.handleChange(e.target.value)}
+                  onChange={(e) => field.handleChange(e.target.value)}
                 />
               </Field>
             );
@@ -110,9 +102,7 @@ export function LoginForm({
             {(state) => {
               return (
                 <Button disabled={state.isSubmitting} type='submit'>
-                  {
-                    state.isSubmitting ? 'Loading...' : 'Login'
-                  }
+                  {state.isSubmitting ? 'Loading...' : 'Login'}
                 </Button>
               );
             }}

@@ -7,9 +7,7 @@ function HoverCard({ ...props }: PreviewCardPrimitive.Root.Props) {
 }
 
 function HoverCardTrigger({ ...props }: PreviewCardPrimitive.Trigger.Props) {
-  return (
-    <PreviewCardPrimitive.Trigger data-slot='hover-card-trigger' {...props} />
-  );
+  return <PreviewCardPrimitive.Trigger data-slot='hover-card-trigger' {...props} />;
 }
 
 function HoverCardContent({
@@ -19,11 +17,8 @@ function HoverCardContent({
   align = 'center',
   alignOffset = 4,
   ...props
-}: PreviewCardPrimitive.Popup.Props
-  & Pick<
-    PreviewCardPrimitive.Positioner.Props,
-    'align' | 'alignOffset' | 'side' | 'sideOffset'
-  >) {
+}: PreviewCardPrimitive.Popup.Props &
+  Pick<PreviewCardPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>) {
   return (
     <PreviewCardPrimitive.Portal data-slot='hover-card-portal'>
       <PreviewCardPrimitive.Positioner
@@ -36,7 +31,7 @@ function HoverCardContent({
         <PreviewCardPrimitive.Popup
           data-slot='hover-card-content'
           className={cn(
-            'data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 ring-foreground/5 bg-popover text-popover-foreground w-72 rounded-2xl p-4 text-sm shadow-2xl ring-1 duration-100 z-50 origin-(--transform-origin) outline-hidden',
+            'z-50 w-72 origin-(--transform-origin) rounded-2xl bg-popover p-4 text-sm text-popover-foreground shadow-2xl ring-1 ring-foreground/5 outline-hidden duration-100 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
             className,
           )}
           {...props}

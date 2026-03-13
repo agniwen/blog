@@ -1,4 +1,5 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
+
 import { MotionProvider } from '~/components/provider/motion-provider';
 import { ScrollArea } from '~/components/ui/scroll-area';
 

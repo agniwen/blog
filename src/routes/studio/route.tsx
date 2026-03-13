@@ -1,5 +1,7 @@
 import { createFileRoute, Outlet, useLocation } from '@tanstack/react-router';
+
 import { requireAdmin } from '~/lib/route-guards';
+
 import { StudioShell } from './-components/studio-shell';
 
 export const Route = createFileRoute('/studio')({

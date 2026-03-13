@@ -1,20 +1,21 @@
 import { Node, ReactNodeViewRenderer } from '@tiptap/react';
+
 import { BookmarkNodeView } from '~/components/tiptap/node/bookmark-node/bookmark-node';
 
 export interface BookmarkAttributes {
-  url: string
-  title?: string
-  description?: string
-  image?: string
-  siteName?: string
-  favicon?: string
+  url: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  siteName?: string;
+  favicon?: string;
 }
 
 declare module '@tiptap/react' {
   interface Commands<ReturnType> {
     bookmark: {
-      setBookmark: (attributes: BookmarkAttributes) => ReturnType
-    }
+      setBookmark: (attributes: BookmarkAttributes) => ReturnType;
+    };
   }
 }
 
@@ -31,27 +32,27 @@ export const BookmarkNode = Node.create({
     return {
       url: {
         default: null,
-        parseHTML: element => element.getAttribute('data-url'),
+        parseHTML: (element) => element.getAttribute('data-url'),
       },
       title: {
         default: null,
-        parseHTML: element => element.getAttribute('data-title'),
+        parseHTML: (element) => element.getAttribute('data-title'),
       },
       description: {
         default: null,
-        parseHTML: element => element.getAttribute('data-description'),
+        parseHTML: (element) => element.getAttribute('data-description'),
       },
       image: {
         default: null,
-        parseHTML: element => element.getAttribute('data-image'),
+        parseHTML: (element) => element.getAttribute('data-image'),
       },
       siteName: {
         default: null,
-        parseHTML: element => element.getAttribute('data-site-name'),
+        parseHTML: (element) => element.getAttribute('data-site-name'),
       },
       favicon: {
         default: null,
-        parseHTML: element => element.getAttribute('data-favicon'),
+        parseHTML: (element) => element.getAttribute('data-favicon'),
       },
     };
   },
@@ -69,7 +70,13 @@ export const BookmarkNode = Node.create({
 
     const children = [
       'a',
-      { class: 'bookmark-card h-30 block ', style: 'text-decoration:none', href: url, target: '_blank', rel: 'noopener noreferrer' },
+      {
+        class: 'bookmark-card h-30 block ',
+        style: 'text-decoration:none',
+        href: url,
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      },
       [
         'div',
         { class: 'bookmark-content' },
@@ -84,14 +91,18 @@ export const BookmarkNode = Node.create({
                   [
                     'div',
                     { class: 'bookmark-site' },
-                    ...(favicon ? [['img', { src: favicon, alt: '', class: 'bookmark-favicon' }]] : []),
+                    ...(favicon
+                      ? [['img', { src: favicon, alt: '', class: 'bookmark-favicon' }]]
+                      : []),
                     ...(siteName ? [['span', { class: 'bookmark-site-name' }, siteName]] : []),
                   ],
                 ]
               : []),
             ...(title ? [['div', { class: 'bookmark-title ' }, title]] : []),
           ],
-          ...(description ? [['div', { class: 'bookmark-description text-xs! ' }, description]] : []),
+          ...(description
+            ? [['div', { class: 'bookmark-description text-xs! ' }, description]]
+            : []),
           ['div', { class: 'bookmark-url' }, url],
         ],
         ...(image
@@ -116,7 +127,7 @@ export const BookmarkNode = Node.create({
         'data-image': image,
         'data-site-name': siteName,
         'data-favicon': favicon,
-        'class': 'bookmark-node',
+        class: 'bookmark-node',
       },
       children,
     ];
@@ -129,13 +140,13 @@ export const BookmarkNode = Node.create({
   addCommands() {
     return {
       setBookmark:
-        attributes =>
-          ({ commands }) => {
-            return commands.insertContent({
-              type: this.name,
-              attrs: attributes,
-            });
-          },
+        (attributes) =>
+        ({ commands }) => {
+          return commands.insertContent({
+            type: this.name,
+            attrs: attributes,
+          });
+        },
     };
   },
 });

@@ -38,26 +38,25 @@ function UmamiDashboard() {
     const activeTheme = theme === "system" ? resolvedTheme : theme;
     return {
       src: umamiShareUrl,
-      isDark: activeTheme === "dark"
+      isDark: activeTheme === "dark",
     };
   }, [theme, resolvedTheme]);
   const isClient = useIsClient();
   if (!isClient) {
     return null;
   }
-  return /* @__PURE__ */ jsx(
-    "iframe",
-    {
-      title: "Umami Dashboard",
-      src,
-      className: "h-[calc(100vh-4rem)] w-full rounded-md",
-      style: isDark ? { filter: "invert(1) hue-rotate(180deg)" } : void 0
-    }
-  );
+  return /* @__PURE__ */ jsx("iframe", {
+    title: "Umami Dashboard",
+    src,
+    className: "h-[calc(100vh-4rem)] w-full rounded-md",
+    style: isDark ? { filter: "invert(1) hue-rotate(180deg)" } : void 0,
+  });
 }
 function StudioDashboardPage() {
-  return /* @__PURE__ */ jsx(StudioShell, { children: /* @__PURE__ */ jsx(AdminContainer, { children: /* @__PURE__ */ jsx(UmamiDashboard, {}) }) });
+  return /* @__PURE__ */ jsx(StudioShell, {
+    children: /* @__PURE__ */ jsx(AdminContainer, {
+      children: /* @__PURE__ */ jsx(UmamiDashboard, {}),
+    }),
+  });
 }
-export {
-  StudioDashboardPage as component
-};
+export { StudioDashboardPage as component };

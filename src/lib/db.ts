@@ -1,4 +1,5 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
+
 import { relations } from '~/db/relations';
 import * as schema from '~/db/schema';
 

@@ -1,13 +1,23 @@
-import { h as hasPermission, u as userAc, i as adminAc, j as getBaseURL, k as createFetch, m as defu, f as env } from "./auth-BaGll2Xr.mjs";
+import {
+  h as hasPermission,
+  u as userAc,
+  i as adminAc,
+  j as getBaseURL,
+  k as createFetch,
+  m as defu,
+  f as env,
+} from "./auth-BaGll2Xr.mjs";
 import { useRef, useCallback, useSyncExternalStore } from "react";
 function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 const PROTO_POLLUTION_PATTERNS = {
-  proto: /"(?:_|\\u0{2}5[Ff]){2}(?:p|\\u0{2}70)(?:r|\\u0{2}72)(?:o|\\u0{2}6[Ff])(?:t|\\u0{2}74)(?:o|\\u0{2}6[Ff])(?:_|\\u0{2}5[Ff]){2}"\s*:/,
-  constructor: /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/,
+  proto:
+    /"(?:_|\\u0{2}5[Ff]){2}(?:p|\\u0{2}70)(?:r|\\u0{2}72)(?:o|\\u0{2}6[Ff])(?:t|\\u0{2}74)(?:o|\\u0{2}6[Ff])(?:_|\\u0{2}5[Ff]){2}"\s*:/,
+  constructor:
+    /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/,
   protoShort: /"__proto__"\s*:/,
-  constructorShort: /"constructor"\s*:/
+  constructorShort: /"constructor"\s*:/,
 };
 const JSON_SIGNATURE = /^\s*["[{]|^\s*-?\d{1,16}(\.\d{1,17})?([Ee][+-]?\d+)?\s*$/;
 const SPECIAL_VALUES = {
@@ -17,19 +27,32 @@ const SPECIAL_VALUES = {
   undefined: void 0,
   nan: NaN,
   infinity: Number.POSITIVE_INFINITY,
-  "-infinity": Number.NEGATIVE_INFINITY
+  "-infinity": Number.NEGATIVE_INFINITY,
 };
-const ISO_DATE_REGEX = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,7}))?(?:Z|([+-])(\d{2}):(\d{2}))$/;
+const ISO_DATE_REGEX =
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,7}))?(?:Z|([+-])(\d{2}):(\d{2}))$/;
 function isValidDate(date) {
   return date instanceof Date && !isNaN(date.getTime());
 }
 function parseISODate(value) {
   const match = ISO_DATE_REGEX.exec(value);
   if (!match) return null;
-  const [, year, month, day, hour, minute, second, ms, offsetSign, offsetHour, offsetMinute] = match;
-  const date = new Date(Date.UTC(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10), parseInt(hour, 10), parseInt(minute, 10), parseInt(second, 10), ms ? parseInt(ms.padEnd(3, "0"), 10) : 0));
+  const [, year, month, day, hour, minute, second, ms, offsetSign, offsetHour, offsetMinute] =
+    match;
+  const date = new Date(
+    Date.UTC(
+      parseInt(year, 10),
+      parseInt(month, 10) - 1,
+      parseInt(day, 10),
+      parseInt(hour, 10),
+      parseInt(minute, 10),
+      parseInt(second, 10),
+      ms ? parseInt(ms.padEnd(3, "0"), 10) : 0,
+    ),
+  );
   if (offsetSign) {
-    const offset = (parseInt(offsetHour, 10) * 60 + parseInt(offsetMinute, 10)) * (offsetSign === "+" ? -1 : 1);
+    const offset =
+      (parseInt(offsetHour, 10) * 60 + parseInt(offsetMinute, 10)) * (offsetSign === "+" ? -1 : 1);
     date.setUTCMinutes(date.getUTCMinutes() + offset);
   }
   return isValidDate(date) ? date : null;
@@ -38,22 +61,39 @@ function betterJSONParse(value, options = {}) {
   const { strict = false, warnings = false, reviver, parseDates = true } = options;
   if (typeof value !== "string") return value;
   const trimmed = value.trim();
-  if (trimmed.length > 0 && trimmed[0] === '"' && trimmed.endsWith('"') && !trimmed.slice(1, -1).includes('"')) return trimmed.slice(1, -1);
+  if (
+    trimmed.length > 0 &&
+    trimmed[0] === '"' &&
+    trimmed.endsWith('"') &&
+    !trimmed.slice(1, -1).includes('"')
+  )
+    return trimmed.slice(1, -1);
   const lowerValue = trimmed.toLowerCase();
   if (lowerValue.length <= 9 && lowerValue in SPECIAL_VALUES) return SPECIAL_VALUES[lowerValue];
   if (!JSON_SIGNATURE.test(trimmed)) {
     if (strict) throw new SyntaxError("[better-json] Invalid JSON");
     return value;
   }
-  if (Object.entries(PROTO_POLLUTION_PATTERNS).some(([key, pattern]) => {
-    const matches = pattern.test(trimmed);
-    if (matches && warnings) console.warn(`[better-json] Detected potential prototype pollution attempt using ${key} pattern`);
-    return matches;
-  }) && strict) throw new Error("[better-json] Potential prototype pollution attempt detected");
+  if (
+    Object.entries(PROTO_POLLUTION_PATTERNS).some(([key, pattern]) => {
+      const matches = pattern.test(trimmed);
+      if (matches && warnings)
+        console.warn(
+          `[better-json] Detected potential prototype pollution attempt using ${key} pattern`,
+        );
+      return matches;
+    }) &&
+    strict
+  )
+    throw new Error("[better-json] Potential prototype pollution attempt detected");
   try {
     const secureReviver = (key, value$1) => {
-      if (key === "__proto__" || key === "constructor" && value$1 && typeof value$1 === "object" && "prototype" in value$1) {
-        if (warnings) console.warn(`[better-json] Dropping "${key}" key to prevent prototype pollution`);
+      if (
+        key === "__proto__" ||
+        (key === "constructor" && value$1 && typeof value$1 === "object" && "prototype" in value$1)
+      ) {
+        if (warnings)
+          console.warn(`[better-json] Dropping "${key}" key to prevent prototype pollution`);
         return;
       }
       if (parseDates && typeof value$1 === "string") {
@@ -75,25 +115,29 @@ const adminClient = (options) => {
   const roles = {
     admin: adminAc,
     user: userAc,
-    ...options?.roles
+    ...options?.roles,
   };
   return {
     id: "admin-client",
     $InferServerPlugin: {},
-    getActions: () => ({ admin: { checkRolePermission: (data) => {
-      return hasPermission({
-        role: data.role,
-        options: {
-          ac: options?.ac,
-          roles
+    getActions: () => ({
+      admin: {
+        checkRolePermission: (data) => {
+          return hasPermission({
+            role: data.role,
+            options: {
+              ac: options?.ac,
+              roles,
+            },
+            permissions: data.permissions ?? data.permission,
+          });
         },
-        permissions: data.permissions ?? data.permission
-      });
-    } } }),
+      },
+    }),
     pathMethods: {
       "/admin/list-users": "GET",
-      "/admin/stop-impersonating": "POST"
-    }
+      "/admin/stop-impersonating": "POST",
+    },
   };
 };
 let listenerQueue = [];
@@ -104,8 +148,7 @@ let atom = (initialValue) => {
   let $atom = {
     get() {
       if (!$atom.lc) {
-        $atom.listen(() => {
-        })();
+        $atom.listen(() => {})();
       }
       return $atom.value;
     },
@@ -137,7 +180,7 @@ let atom = (initialValue) => {
           listenerQueue[lqIndex](
             listenerQueue[lqIndex + 1],
             listenerQueue[lqIndex + 2],
-            listenerQueue[lqIndex + 3]
+            listenerQueue[lqIndex + 3],
           );
         }
         listenerQueue.length = 0;
@@ -145,8 +188,7 @@ let atom = (initialValue) => {
     },
     /* It will be called on last listener unsubscribing.
        We will redefine it in onMount and onStop. */
-    off() {
-    },
+    off() {},
     set(newValue) {
       let oldValue = $atom.value;
       if (oldValue !== newValue) {
@@ -159,7 +201,7 @@ let atom = (initialValue) => {
       listener($atom.value);
       return unbind;
     },
-    value: initialValue
+    value: initialValue,
   };
   return $atom;
 };
@@ -172,7 +214,7 @@ let on = (object, listener, eventKey, mutateStore) => {
     object.events[eventKey + REVERT_MUTATION] = mutateStore((eventProps) => {
       object.events[eventKey].reduceRight((event, l) => (l(event), event), {
         shared: {},
-        ...eventProps
+        ...eventProps,
       });
     });
   }
@@ -237,20 +279,23 @@ const useAuthQuery = (initializedAtom, path, $fetch, options) => {
     error: null,
     isPending: true,
     isRefetching: false,
-    refetch: (queryParams) => fn(queryParams)
+    refetch: (queryParams) => fn(queryParams),
   });
   const fn = async (queryParams) => {
     return new Promise((resolve) => {
-      const opts = typeof options === "function" ? options({
-        data: value.get().data,
-        error: value.get().error,
-        isPending: value.get().isPending
-      }) : options;
+      const opts =
+        typeof options === "function"
+          ? options({
+              data: value.get().data,
+              error: value.get().error,
+              isPending: value.get().isPending,
+            })
+          : options;
       $fetch(path, {
         ...opts,
         query: {
           ...opts?.query,
-          ...queryParams?.query
+          ...queryParams?.query,
         },
         async onSuccess(context) {
           value.set({
@@ -258,13 +303,14 @@ const useAuthQuery = (initializedAtom, path, $fetch, options) => {
             error: null,
             isPending: false,
             isRefetching: false,
-            refetch: value.value.refetch
+            refetch: value.value.refetch,
           });
           await opts?.onSuccess?.(context);
         },
         async onError(context) {
           const { request } = context;
-          const retryAttempts = typeof request.retry === "number" ? request.retry : request.retry?.attempts;
+          const retryAttempts =
+            typeof request.retry === "number" ? request.retry : request.retry?.attempts;
           const retryAttempt = request.retryAttempt || 0;
           if (retryAttempts && retryAttempt < retryAttempts) return;
           value.set({
@@ -272,7 +318,7 @@ const useAuthQuery = (initializedAtom, path, $fetch, options) => {
             data: null,
             isPending: false,
             isRefetching: false,
-            refetch: value.value.refetch
+            refetch: value.value.refetch,
           });
           await opts?.onError?.(context);
         },
@@ -283,42 +329,46 @@ const useAuthQuery = (initializedAtom, path, $fetch, options) => {
             data: currentValue.data,
             error: null,
             isRefetching: true,
-            refetch: value.value.refetch
+            refetch: value.value.refetch,
           });
           await opts?.onRequest?.(context);
-        }
-      }).catch((error) => {
-        value.set({
-          error,
-          data: null,
-          isPending: false,
-          isRefetching: false,
-          refetch: value.value.refetch
+        },
+      })
+        .catch((error) => {
+          value.set({
+            error,
+            data: null,
+            isPending: false,
+            isRefetching: false,
+            refetch: value.value.refetch,
+          });
+        })
+        .finally(() => {
+          resolve(void 0);
         });
-      }).finally(() => {
-        resolve(void 0);
-      });
     });
   };
   initializedAtom = Array.isArray(initializedAtom) ? initializedAtom : [initializedAtom];
   let isMounted = false;
-  for (const initAtom of initializedAtom) initAtom.subscribe(async () => {
-    if (isServer()) return;
-    if (isMounted) await fn();
-    else onMount(value, () => {
-      const timeoutId = setTimeout(async () => {
-        if (!isMounted) {
-          await fn();
-          isMounted = true;
-        }
-      }, 0);
-      return () => {
-        value.off();
-        initAtom.off();
-        clearTimeout(timeoutId);
-      };
+  for (const initAtom of initializedAtom)
+    initAtom.subscribe(async () => {
+      if (isServer()) return;
+      if (isMounted) await fn();
+      else
+        onMount(value, () => {
+          const timeoutId = setTimeout(async () => {
+            if (!isMounted) {
+              await fn();
+              isMounted = true;
+            }
+          }, 0);
+          return () => {
+            value.off();
+            initAtom.off();
+            clearTimeout(timeoutId);
+          };
+        });
     });
-  });
   return value;
 };
 const kBroadcastChannel = /* @__PURE__ */ Symbol.for("better-auth:broadcast-channel");
@@ -338,16 +388,18 @@ var WindowBroadcastChannel = class {
   post(message) {
     if (typeof window === "undefined") return;
     try {
-      localStorage.setItem(this.name, JSON.stringify({
-        ...message,
-        timestamp: now$1()
-      }));
-    } catch {
-    }
+      localStorage.setItem(
+        this.name,
+        JSON.stringify({
+          ...message,
+          timestamp: now$1(),
+        }),
+      );
+    } catch {}
   }
   setup() {
-    if (typeof window === "undefined" || typeof window.addEventListener === "undefined") return () => {
-    };
+    if (typeof window === "undefined" || typeof window.addEventListener === "undefined")
+      return () => {};
     const handler = (event) => {
       if (event.key !== this.name) return;
       const message = JSON.parse(event.newValue ?? "{}");
@@ -361,7 +413,8 @@ var WindowBroadcastChannel = class {
   }
 };
 function getGlobalBroadcastChannel(name = "better-auth.message") {
-  if (!globalThis[kBroadcastChannel]) globalThis[kBroadcastChannel] = new WindowBroadcastChannel(name);
+  if (!globalThis[kBroadcastChannel])
+    globalThis[kBroadcastChannel] = new WindowBroadcastChannel(name);
   return globalThis[kBroadcastChannel];
 }
 const kFocusManager = /* @__PURE__ */ Symbol.for("better-auth:focus-manager");
@@ -377,8 +430,12 @@ var WindowFocusManager = class {
     this.listeners.forEach((listener) => listener(focused));
   }
   setup() {
-    if (typeof window === "undefined" || typeof document === "undefined" || typeof window.addEventListener === "undefined") return () => {
-    };
+    if (
+      typeof window === "undefined" ||
+      typeof document === "undefined" ||
+      typeof window.addEventListener === "undefined"
+    )
+      return () => {};
     const visibilityHandler = () => {
       if (document.visibilityState === "visible") this.setFocused(true);
     };
@@ -407,8 +464,8 @@ var WindowOnlineManager = class {
     this.listeners.forEach((listener) => listener(online));
   }
   setup() {
-    if (typeof window === "undefined" || typeof window.addEventListener === "undefined") return () => {
-    };
+    if (typeof window === "undefined" || typeof window.addEventListener === "undefined")
+      return () => {};
     const onOnline = () => this.setOnline(true);
     const onOffline = () => this.setOnline(false);
     window.addEventListener("online", onOnline, false);
@@ -433,7 +490,7 @@ function createSessionRefreshManager(opts) {
   const state = {
     lastSync: 0,
     lastSessionRequest: 0,
-    cachedSession: void 0
+    cachedSession: void 0,
   };
   const shouldRefetch = () => {
     return refetchWhenOffline || getGlobalOnlineManager().isOnline;
@@ -448,28 +505,35 @@ function createSessionRefreshManager(opts) {
     const currentSession = sessionAtom.get();
     if (event?.event === "poll") {
       state.lastSessionRequest = now();
-      $fetch("/get-session").then((res) => {
-        if (res.error) sessionAtom.set({
-          ...currentSession,
-          data: null,
-          error: res.error
-        });
-        else sessionAtom.set({
-          ...currentSession,
-          data: res.data,
-          error: null
-        });
-        state.lastSync = now();
-        sessionSignal.set(!sessionSignal.get());
-      }).catch(() => {
-      });
+      $fetch("/get-session")
+        .then((res) => {
+          if (res.error)
+            sessionAtom.set({
+              ...currentSession,
+              data: null,
+              error: res.error,
+            });
+          else
+            sessionAtom.set({
+              ...currentSession,
+              data: res.data,
+              error: null,
+            });
+          state.lastSync = now();
+          sessionSignal.set(!sessionSignal.get());
+        })
+        .catch(() => {});
       return;
     }
     if (event?.event === "visibilitychange") {
       if (now() - state.lastSessionRequest < FOCUS_REFETCH_RATE_LIMIT_SECONDS) return;
       state.lastSessionRequest = now();
     }
-    if (currentSession?.data === null || currentSession?.data === void 0 || event?.event === "visibilitychange") {
+    if (
+      currentSession?.data === null ||
+      currentSession?.data === void 0 ||
+      event?.event === "visibilitychange"
+    ) {
       state.lastSync = now();
       sessionSignal.set(!sessionSignal.get());
     }
@@ -478,13 +542,14 @@ function createSessionRefreshManager(opts) {
     getGlobalBroadcastChannel().post({
       event: "session",
       data: { trigger },
-      clientId: Math.random().toString(36).substring(7)
+      clientId: Math.random().toString(36).substring(7),
     });
   };
   const setupPolling = () => {
-    if (refetchInterval && refetchInterval > 0) state.pollInterval = setInterval(() => {
-      if (sessionAtom.get()?.data) triggerRefetch({ event: "poll" });
-    }, refetchInterval * 1e3);
+    if (refetchInterval && refetchInterval > 0)
+      state.pollInterval = setInterval(() => {
+        if (sessionAtom.get()?.data) triggerRefetch({ event: "poll" });
+      }, refetchInterval * 1e3);
   };
   const setupBroadcast = () => {
     state.unsubscribeBroadcast = getGlobalBroadcastChannel().subscribe(() => {
@@ -536,22 +601,24 @@ function createSessionRefreshManager(opts) {
     init,
     cleanup,
     triggerRefetch,
-    broadcastSessionUpdate
+    broadcastSessionUpdate,
   };
 }
 const redirectPlugin = {
   id: "redirect",
   name: "Redirect",
-  hooks: { onSuccess(context) {
-    if (context.data?.url && context.data?.redirect) {
-      if (typeof window !== "undefined" && window.location) {
-        if (window.location) try {
-          window.location.href = context.data.url;
-        } catch {
+  hooks: {
+    onSuccess(context) {
+      if (context.data?.url && context.data?.redirect) {
+        if (typeof window !== "undefined" && window.location) {
+          if (window.location)
+            try {
+              window.location.href = context.data.url;
+            } catch {}
         }
       }
-    }
-  } }
+    },
+  },
 };
 function getSessionAtom($fetch, options) {
   const $signal = atom(false);
@@ -561,7 +628,7 @@ function getSessionAtom($fetch, options) {
       sessionAtom: session,
       sessionSignal: $signal,
       $fetch,
-      options
+      options,
     });
     refreshManager.init();
     return () => {
@@ -570,13 +637,14 @@ function getSessionAtom($fetch, options) {
   });
   return {
     session,
-    $sessionSignal: $signal
+    $sessionSignal: $signal,
   };
 }
 const getClientConfig = (options, loadEnv) => {
   const isCredentialsSupported = "credentials" in Request.prototype;
   const baseURL = getBaseURL(options?.baseURL, options?.basePath, void 0) ?? "/api/auth";
-  const pluginsFetchPlugins = options?.plugins?.flatMap((plugin) => plugin.fetchPlugins).filter((pl) => pl !== void 0) || [];
+  const pluginsFetchPlugins =
+    options?.plugins?.flatMap((plugin) => plugin.fetchPlugins).filter((pl) => pl !== void 0) || [];
   const lifeCyclePlugin = {
     id: "lifecycle-hooks",
     name: "lifecycle-hooks",
@@ -584,13 +652,19 @@ const getClientConfig = (options, loadEnv) => {
       onSuccess: options?.fetchOptions?.onSuccess,
       onError: options?.fetchOptions?.onError,
       onRequest: options?.fetchOptions?.onRequest,
-      onResponse: options?.fetchOptions?.onResponse
-    }
+      onResponse: options?.fetchOptions?.onResponse,
+    },
   };
-  const { onSuccess: _onSuccess, onError: _onError, onRequest: _onRequest, onResponse: _onResponse, ...restOfFetchOptions } = options?.fetchOptions || {};
+  const {
+    onSuccess: _onSuccess,
+    onError: _onError,
+    onRequest: _onRequest,
+    onResponse: _onResponse,
+    ...restOfFetchOptions
+  } = options?.fetchOptions || {};
   const $fetch = createFetch({
     baseURL,
-    ...isCredentialsSupported ? { credentials: "include" } : {},
+    ...(isCredentialsSupported ? { credentials: "include" } : {}),
     method: "GET",
     jsonParser(text) {
       if (!text) return null;
@@ -600,30 +674,42 @@ const getClientConfig = (options, loadEnv) => {
     ...restOfFetchOptions,
     plugins: [
       lifeCyclePlugin,
-      ...restOfFetchOptions.plugins || [],
-      ...options?.disableDefaultFetchPlugins ? [] : [redirectPlugin],
-      ...pluginsFetchPlugins
-    ]
+      ...(restOfFetchOptions.plugins || []),
+      ...(options?.disableDefaultFetchPlugins ? [] : [redirectPlugin]),
+      ...pluginsFetchPlugins,
+    ],
   });
   const { $sessionSignal, session } = getSessionAtom($fetch, options);
   const plugins = options?.plugins || [];
   let pluginsActions = {};
   const pluginsAtoms = {
     $sessionSignal,
-    session
+    session,
   };
   const pluginPathMethods = {
     "/sign-out": "POST",
     "/revoke-sessions": "POST",
     "/revoke-other-sessions": "POST",
-    "/delete-user": "POST"
+    "/delete-user": "POST",
   };
-  const atomListeners = [{
-    signal: "$sessionSignal",
-    matcher(path) {
-      return path === "/sign-out" || path === "/update-user" || path === "/sign-up/email" || path === "/sign-in/email" || path === "/delete-user" || path === "/verify-email" || path === "/revoke-sessions" || path === "/revoke-session" || path === "/change-email";
-    }
-  }];
+  const atomListeners = [
+    {
+      signal: "$sessionSignal",
+      matcher(path) {
+        return (
+          path === "/sign-out" ||
+          path === "/update-user" ||
+          path === "/sign-up/email" ||
+          path === "/sign-in/email" ||
+          path === "/delete-user" ||
+          path === "/verify-email" ||
+          path === "/revoke-sessions" ||
+          path === "/revoke-session" ||
+          path === "/change-email"
+        );
+      },
+    },
+  ];
   for (const plugin of plugins) {
     if (plugin.getAtoms) Object.assign(pluginsAtoms, plugin.getAtoms?.($fetch));
     if (plugin.pathMethods) Object.assign(pluginPathMethods, plugin.pathMethods);
@@ -636,9 +722,11 @@ const getClientConfig = (options, loadEnv) => {
     listen: (signal, listener) => {
       pluginsAtoms[signal].subscribe(listener);
     },
-    atoms: pluginsAtoms
+    atoms: pluginsAtoms,
   };
-  for (const plugin of plugins) if (plugin.getActions) pluginsActions = defu(plugin.getActions?.($fetch, $store, options) ?? {}, pluginsActions);
+  for (const plugin of plugins)
+    if (plugin.getActions)
+      pluginsActions = defu(plugin.getActions?.($fetch, $store, options) ?? {}, pluginsActions);
   return {
     get baseURL() {
       return baseURL;
@@ -648,11 +736,18 @@ const getClientConfig = (options, loadEnv) => {
     pluginPathMethods,
     atomListeners,
     $fetch,
-    $store
+    $store,
   };
 };
 function isAtom(value) {
-  return typeof value === "object" && value !== null && "get" in value && typeof value.get === "function" && "lc" in value && typeof value.lc === "number";
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "get" in value &&
+    typeof value.get === "function" &&
+    "lc" in value &&
+    typeof value.lc === "number"
+  );
 }
 function getMethod(path, knownPathMethods, args) {
   const method = knownPathMethods[path];
@@ -664,38 +759,46 @@ function getMethod(path, knownPathMethods, args) {
 }
 function createDynamicPathProxy(routes, client, knownPathMethods, atoms, atomListeners) {
   function createProxy(path = []) {
-    return new Proxy(function() {
-    }, {
+    return new Proxy(function () {}, {
       get(_, prop) {
         if (typeof prop !== "string") return;
         if (prop === "then" || prop === "catch" || prop === "finally") return;
         const fullPath = [...path, prop];
         let current = routes;
-        for (const segment of fullPath) if (current && typeof current === "object" && segment in current) current = current[segment];
-        else {
-          current = void 0;
-          break;
-        }
+        for (const segment of fullPath)
+          if (current && typeof current === "object" && segment in current)
+            current = current[segment];
+          else {
+            current = void 0;
+            break;
+          }
         if (typeof current === "function") return current;
         if (isAtom(current)) return current;
         return createProxy(fullPath);
       },
       apply: async (_, __, args) => {
-        const routePath = "/" + path.map((segment) => segment.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)).join("/");
+        const routePath =
+          "/" +
+          path
+            .map((segment) => segment.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`))
+            .join("/");
         const arg = args[0] || {};
         const fetchOptions = args[1] || {};
         const { query, fetchOptions: argFetchOptions, ...body } = arg;
         const options = {
           ...fetchOptions,
-          ...argFetchOptions
+          ...argFetchOptions,
         };
         const method = getMethod(routePath, knownPathMethods, arg);
         return await client(routePath, {
           ...options,
-          body: method === "GET" ? void 0 : {
-            ...body,
-            ...options?.body || {}
-          },
+          body:
+            method === "GET"
+              ? void 0
+              : {
+                  ...body,
+                  ...options?.body,
+                },
           query: query || options?.query,
           method,
           async onSuccess(context) {
@@ -714,9 +817,9 @@ function createDynamicPathProxy(routes, client, knownPathMethods, atoms, atomLis
                 signal.set(!val);
               }, 10);
             }
-          }
+          },
         });
-      }
+      },
     });
   }
   return createProxy();
@@ -741,22 +844,27 @@ function getAtomKey(str) {
   return `use${capitalizeFirstLetter(str)}`;
 }
 function createAuthClient(options) {
-  const { pluginPathMethods, pluginsActions, pluginsAtoms, $fetch, $store, atomListeners } = getClientConfig(options);
+  const { pluginPathMethods, pluginsActions, pluginsAtoms, $fetch, $store, atomListeners } =
+    getClientConfig(options);
   const resolvedHooks = {};
-  for (const [key, value] of Object.entries(pluginsAtoms)) resolvedHooks[getAtomKey(key)] = () => useStore(value);
-  return createDynamicPathProxy({
-    ...pluginsActions,
-    ...resolvedHooks,
+  for (const [key, value] of Object.entries(pluginsAtoms))
+    resolvedHooks[getAtomKey(key)] = () => useStore(value);
+  return createDynamicPathProxy(
+    {
+      ...pluginsActions,
+      ...resolvedHooks,
+      $fetch,
+      $store,
+    },
     $fetch,
-    $store
-  }, $fetch, pluginPathMethods, pluginsAtoms, atomListeners);
+    pluginPathMethods,
+    pluginsAtoms,
+    atomListeners,
+  );
 }
 const authClient = createAuthClient({
-  ...env.NEXT_PUBLIC_BETTER_AUTH_URL ? { baseURL: env.NEXT_PUBLIC_BETTER_AUTH_URL } : {},
-  plugins: [adminClient()]
+  ...(env.NEXT_PUBLIC_BETTER_AUTH_URL ? { baseURL: env.NEXT_PUBLIC_BETTER_AUTH_URL } : {}),
+  plugins: [adminClient()],
 });
 const { signIn, signUp, useSession } = authClient;
-export {
-  authClient as a,
-  useSession as u
-};
+export { authClient as a, useSession as u };

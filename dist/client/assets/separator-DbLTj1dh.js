@@ -1,1 +1,287 @@
-import{r,f as J,j as C}from"./main-Cq61YlVT.js";import{N as d,x as K,E as F,u as W,y as k,z as h,d as q,a as G,c as L}from"./utils-8lG47UID.js";import{o as H,c as Q,n as X,S as Z}from"./auth-client-BbRWIRUF.js";import{a as A,b as ee}from"./element-CMmi1D3q.js";let P=(function(e){return e.disabled="data-disabled",e.valid="data-valid",e.invalid="data-invalid",e.touched="data-touched",e.dirty="data-dirty",e.filled="data-filled",e.focused="data-focused",e})({});const te={badInput:!1,customError:!1,patternMismatch:!1,rangeOverflow:!1,rangeUnderflow:!1,stepMismatch:!1,tooLong:!1,tooShort:!1,typeMismatch:!1,valid:null,valueMissing:!1},ne={valid(e){return e===null?null:e?{[P.valid]:""}:{[P.invalid]:""}}},ae=r.createContext({invalid:void 0,name:void 0,validityData:{state:te,errors:[],error:"",value:"",initialValue:null},setValidityData:d,disabled:void 0,touched:!1,setTouched:d,dirty:!1,setDirty:d,filled:!1,setFilled:d,focused:!1,setFocused:d,validate:()=>null,validationMode:"onSubmit",validationDebounceTime:0,shouldValidateOnChange:()=>!1,state:{disabled:!1,valid:null,touched:!1,dirty:!1,filled:!1,focused:!1},markedDirtyRef:{current:!1},validation:{getValidationProps:(e=F)=>e,getInputValidationProps:(e=F)=>e,inputRef:{current:null},commit:async()=>{}}});function N(e=!0){const t=r.useContext(ae);if(t.setValidityData===d&&!e)throw new Error(K(28));return t}const re=r.createContext({formRef:{current:{fields:new Map}},errors:{},clearErrors:d,validationMode:"onSubmit",submitAttemptedRef:{current:!1}});function ie(){return r.useContext(re)}const le=r.createContext({controlId:void 0,registerControlId:d,labelId:void 0,setLabelId:d,messageIds:[],setMessageIds:d,getDescriptionProps:e=>e});function U(){return r.useContext(le)}function oe(e,t){return{...e,state:{...e.state,valid:!t&&e.state.valid}}}function se({controlled:e,default:t,name:n,state:f="value"}){const{current:b}=r.useRef(e!==void 0),[o,s]=r.useState(t),a=b?e:o,m=r.useCallback(v=>{b||s(v)},[]);return[a,m]}function ue(e={}){const{id:t,implicit:n=!1,controlRef:f}=e,{controlId:b,registerControlId:o}=U(),s=A(t),a=n?b:void 0,m=W(()=>Symbol("labelable-control")),v=r.useRef(!1),p=r.useRef(t!=null),u=k(()=>{!v.current||o===d||(v.current=!1,o(m.current,void 0))});return h(()=>{if(o===d)return;let i;if(n){const l=f?.current;q(l)&&l.closest("label")!=null?i=t??null:i=a??s}else if(t!=null)p.current=!0,i=t;else if(p.current)i=s;else{u();return}if(i===void 0){u();return}v.current=!0,o(m.current,i)},[t,f,a,o,n,s,m,u]),r.useEffect(()=>u,[u]),b??s}function de(e){const{enabled:t=!0,value:n,id:f,name:b,controlRef:o,commit:s}=e,{formRef:a}=ie(),{invalid:m,markedDirtyRef:v,validityData:p,setValidityData:u}=N(),i=k(e.getValue);h(()=>{if(!t)return;let l=n;l===void 0&&(l=i()),p.initialValue===null&&l!==null&&u(x=>({...x,initialValue:l}))},[t,u,n,p.initialValue,i]),h(()=>{!t||!f||a.current.fields.set(f,{getValue:i,name:b,controlRef:o,validityData:oe(p,m),validate(l=!0){let x=n;x===void 0&&(x=i()),v.current=!0,l?J.flushSync(()=>s(x)):s(x)}})},[s,o,t,a,i,f,m,v,b,p,n]),h(()=>{const l=a.current.fields;return()=>{f&&l.delete(f)}},[a,f])}const fe=r.forwardRef(function(t,n){const{render:f,className:b,id:o,name:s,value:a,disabled:m=!1,onValueChange:v,defaultValue:p,autoFocus:u=!1,...i}=t,{state:l,name:x,disabled:j,setTouched:E,setDirty:O,validityData:z,setFocused:R,setFilled:I,validationMode:B,validation:g}=N(),w=j||m,S=x??s,_={...l,disabled:w},{labelId:Y}=U(),T=ue({id:o});h(()=>{const c=a!=null;g.inputRef.current?.value||c&&a!==""?I(!0):c&&a===""&&I(!1)},[g.inputRef,I,a]);const y=r.useRef(null);h(()=>{u&&y.current===ee(H(y.current))&&R(!0)},[u,R]);const[$]=se({controlled:a,default:p,name:"FieldControl",state:"value"}),D=a!==void 0,M=D?$:void 0;return de({id:T,name:S,commit:g.commit,value:M,getValue:()=>g.inputRef.current?.value,controlRef:g.inputRef}),G("input",t,{ref:[n,y],state:_,props:[{id:T,disabled:w,name:S,ref:g.inputRef,"aria-labelledby":Y,autoFocus:u,...D?{value:M}:{defaultValue:p},onChange(c){const V=c.currentTarget.value;v?.(V,Q(X,c.nativeEvent)),O(V!==z.initialValue),I(V!=="")},onFocus(){R(!0)},onBlur(c){E(!0),R(!1),B==="onBlur"&&g.commit(c.currentTarget.value)},onKeyDown(c){c.currentTarget.tagName==="INPUT"&&c.key==="Enter"&&(E(!0),g.commit(c.currentTarget.value))}},g.getInputValidationProps(),i],stateAttributesMapping:ne})}),ce=r.forwardRef(function(t,n){return C.jsx(fe,{ref:n,...t})});function xe({className:e,type:t,...n}){return C.jsx(ce,{type:t,"data-slot":"input",className:L("bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-4xl border px-3 py-1 text-base transition-colors file:h-7 file:text-sm file:font-medium focus-visible:ring-[3px] aria-invalid:ring-[3px] md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",e),...n})}function he({className:e,orientation:t="horizontal",...n}){return C.jsx(Z,{"data-slot":"separator",orientation:t,className:L("bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch",e),...n})}export{xe as I,he as S};
+import { r, f as J, j as C } from "./main-Cq61YlVT.js";
+import {
+  N as d,
+  x as K,
+  E as F,
+  u as W,
+  y as k,
+  z as h,
+  d as q,
+  a as G,
+  c as L,
+} from "./utils-8lG47UID.js";
+import { o as H, c as Q, n as X, S as Z } from "./auth-client-BbRWIRUF.js";
+import { a as A, b as ee } from "./element-CMmi1D3q.js";
+let P = (function (e) {
+  return (
+    (e.disabled = "data-disabled"),
+    (e.valid = "data-valid"),
+    (e.invalid = "data-invalid"),
+    (e.touched = "data-touched"),
+    (e.dirty = "data-dirty"),
+    (e.filled = "data-filled"),
+    (e.focused = "data-focused"),
+    e
+  );
+})({});
+const te = {
+    badInput: !1,
+    customError: !1,
+    patternMismatch: !1,
+    rangeOverflow: !1,
+    rangeUnderflow: !1,
+    stepMismatch: !1,
+    tooLong: !1,
+    tooShort: !1,
+    typeMismatch: !1,
+    valid: null,
+    valueMissing: !1,
+  },
+  ne = {
+    valid(e) {
+      return e === null ? null : e ? { [P.valid]: "" } : { [P.invalid]: "" };
+    },
+  },
+  ae = r.createContext({
+    invalid: void 0,
+    name: void 0,
+    validityData: { state: te, errors: [], error: "", value: "", initialValue: null },
+    setValidityData: d,
+    disabled: void 0,
+    touched: !1,
+    setTouched: d,
+    dirty: !1,
+    setDirty: d,
+    filled: !1,
+    setFilled: d,
+    focused: !1,
+    setFocused: d,
+    validate: () => null,
+    validationMode: "onSubmit",
+    validationDebounceTime: 0,
+    shouldValidateOnChange: () => !1,
+    state: { disabled: !1, valid: null, touched: !1, dirty: !1, filled: !1, focused: !1 },
+    markedDirtyRef: { current: !1 },
+    validation: {
+      getValidationProps: (e = F) => e,
+      getInputValidationProps: (e = F) => e,
+      inputRef: { current: null },
+      commit: async () => {},
+    },
+  });
+function N(e = !0) {
+  const t = r.useContext(ae);
+  if (t.setValidityData === d && !e) throw new Error(K(28));
+  return t;
+}
+const re = r.createContext({
+  formRef: { current: { fields: new Map() } },
+  errors: {},
+  clearErrors: d,
+  validationMode: "onSubmit",
+  submitAttemptedRef: { current: !1 },
+});
+function ie() {
+  return r.useContext(re);
+}
+const le = r.createContext({
+  controlId: void 0,
+  registerControlId: d,
+  labelId: void 0,
+  setLabelId: d,
+  messageIds: [],
+  setMessageIds: d,
+  getDescriptionProps: (e) => e,
+});
+function U() {
+  return r.useContext(le);
+}
+function oe(e, t) {
+  return { ...e, state: { ...e.state, valid: !t && e.state.valid } };
+}
+function se({ controlled: e, default: t, name: n, state: f = "value" }) {
+  const { current: b } = r.useRef(e !== void 0),
+    [o, s] = r.useState(t),
+    a = b ? e : o,
+    m = r.useCallback((v) => {
+      b || s(v);
+    }, []);
+  return [a, m];
+}
+function ue(e = {}) {
+  const { id: t, implicit: n = !1, controlRef: f } = e,
+    { controlId: b, registerControlId: o } = U(),
+    s = A(t),
+    a = n ? b : void 0,
+    m = W(() => Symbol("labelable-control")),
+    v = r.useRef(!1),
+    p = r.useRef(t != null),
+    u = k(() => {
+      !v.current || o === d || ((v.current = !1), o(m.current, void 0));
+    });
+  return (
+    h(() => {
+      if (o === d) return;
+      let i;
+      if (n) {
+        const l = f?.current;
+        q(l) && l.closest("label") != null ? (i = t ?? null) : (i = a ?? s);
+      } else if (t != null) ((p.current = !0), (i = t));
+      else if (p.current) i = s;
+      else {
+        u();
+        return;
+      }
+      if (i === void 0) {
+        u();
+        return;
+      }
+      ((v.current = !0), o(m.current, i));
+    }, [t, f, a, o, n, s, m, u]),
+    r.useEffect(() => u, [u]),
+    b ?? s
+  );
+}
+function de(e) {
+  const { enabled: t = !0, value: n, id: f, name: b, controlRef: o, commit: s } = e,
+    { formRef: a } = ie(),
+    { invalid: m, markedDirtyRef: v, validityData: p, setValidityData: u } = N(),
+    i = k(e.getValue);
+  (h(() => {
+    if (!t) return;
+    let l = n;
+    (l === void 0 && (l = i()),
+      p.initialValue === null && l !== null && u((x) => ({ ...x, initialValue: l })));
+  }, [t, u, n, p.initialValue, i]),
+    h(() => {
+      !t ||
+        !f ||
+        a.current.fields.set(f, {
+          getValue: i,
+          name: b,
+          controlRef: o,
+          validityData: oe(p, m),
+          validate(l = !0) {
+            let x = n;
+            (x === void 0 && (x = i()), (v.current = !0), l ? J.flushSync(() => s(x)) : s(x));
+          },
+        });
+    }, [s, o, t, a, i, f, m, v, b, p, n]),
+    h(() => {
+      const l = a.current.fields;
+      return () => {
+        f && l.delete(f);
+      };
+    }, [a, f]));
+}
+const fe = r.forwardRef(function (t, n) {
+    const {
+        render: f,
+        className: b,
+        id: o,
+        name: s,
+        value: a,
+        disabled: m = !1,
+        onValueChange: v,
+        defaultValue: p,
+        autoFocus: u = !1,
+        ...i
+      } = t,
+      {
+        state: l,
+        name: x,
+        disabled: j,
+        setTouched: E,
+        setDirty: O,
+        validityData: z,
+        setFocused: R,
+        setFilled: I,
+        validationMode: B,
+        validation: g,
+      } = N(),
+      w = j || m,
+      S = x ?? s,
+      _ = { ...l, disabled: w },
+      { labelId: Y } = U(),
+      T = ue({ id: o });
+    h(() => {
+      const c = a != null;
+      g.inputRef.current?.value || (c && a !== "") ? I(!0) : c && a === "" && I(!1);
+    }, [g.inputRef, I, a]);
+    const y = r.useRef(null);
+    h(() => {
+      u && y.current === ee(H(y.current)) && R(!0);
+    }, [u, R]);
+    const [$] = se({ controlled: a, default: p, name: "FieldControl", state: "value" }),
+      D = a !== void 0,
+      M = D ? $ : void 0;
+    return (
+      de({
+        id: T,
+        name: S,
+        commit: g.commit,
+        value: M,
+        getValue: () => g.inputRef.current?.value,
+        controlRef: g.inputRef,
+      }),
+      G("input", t, {
+        ref: [n, y],
+        state: _,
+        props: [
+          {
+            id: T,
+            disabled: w,
+            name: S,
+            ref: g.inputRef,
+            "aria-labelledby": Y,
+            autoFocus: u,
+            ...(D ? { value: M } : { defaultValue: p }),
+            onChange(c) {
+              const V = c.currentTarget.value;
+              (v?.(V, Q(X, c.nativeEvent)), O(V !== z.initialValue), I(V !== ""));
+            },
+            onFocus() {
+              R(!0);
+            },
+            onBlur(c) {
+              (E(!0), R(!1), B === "onBlur" && g.commit(c.currentTarget.value));
+            },
+            onKeyDown(c) {
+              c.currentTarget.tagName === "INPUT" &&
+                c.key === "Enter" &&
+                (E(!0), g.commit(c.currentTarget.value));
+            },
+          },
+          g.getInputValidationProps(),
+          i,
+        ],
+        stateAttributesMapping: ne,
+      })
+    );
+  }),
+  ce = r.forwardRef(function (t, n) {
+    return C.jsx(fe, { ref: n, ...t });
+  });
+function xe({ className: e, type: t, ...n }) {
+  return C.jsx(ce, {
+    type: t,
+    "data-slot": "input",
+    className: L(
+      "bg-input/30 border-input focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 h-9 rounded-4xl border px-3 py-1 text-base transition-colors file:h-7 file:text-sm file:font-medium focus-visible:ring-[3px] aria-invalid:ring-[3px] md:text-sm file:text-foreground placeholder:text-muted-foreground w-full min-w-0 outline-none file:inline-flex file:border-0 file:bg-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+      e,
+    ),
+    ...n,
+  });
+}
+function he({ className: e, orientation: t = "horizontal", ...n }) {
+  return C.jsx(Z, {
+    "data-slot": "separator",
+    orientation: t,
+    className: L(
+      "bg-border shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch",
+      e,
+    ),
+    ...n,
+  });
+}
+export { xe as I, he as S };

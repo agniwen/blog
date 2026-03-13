@@ -1,8 +1,17 @@
 import type { ComponentProps } from 'react';
+
 import { cn } from '~/lib/utils';
 
-export interface TextareaProps extends ComponentProps<'textarea'> {}
+export type TextareaProps = ComponentProps<'textarea'>;
 export function Textarea(props: TextareaProps) {
   const { className, ...restProps } = props;
-  return <textarea className={cn('bg-gray-50 transition border text-sm py-1.5 px-2.5 rounded-md focus-visible:ring-3  ring-transparent  focus-visible:ring-gray-200 focus-visible:border-gray-400', className)} {...restProps} />;
+  return (
+    <textarea
+      className={cn(
+        'rounded-md border bg-gray-50 px-2.5 py-1.5 text-sm ring-transparent transition focus-visible:border-gray-400 focus-visible:ring-3 focus-visible:ring-gray-200',
+        className,
+      )}
+      {...restProps}
+    />
+  );
 }

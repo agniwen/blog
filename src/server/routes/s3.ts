@@ -2,6 +2,7 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
+
 import { env } from '~/lib/env';
 import { s3 } from '~/lib/s3';
 import { factory } from '~/server/factory';
@@ -11,10 +12,9 @@ const presignedUrlSchema = z.object({
   fileType: z.string().min(1, '文件类型不能为空'),
 });
 
-export const s3Router = factory.createApp().post(
-  '/presigned-url',
-  zValidator('json', presignedUrlSchema),
-  async (c) => {
+export const s3Router = factory
+  .createApp()
+  .post('/presigned-url', zValidator('json', presignedUrlSchema), async (c) => {
     const { fileName, fileType } = c.req.valid('json');
 
     // 生成唯一的文件名，避免冲突
@@ -40,8 +40,7 @@ export const s3Router = factory.createApp().post(
         // 假设你配置了公共访问，这是文件上传后的访问 URL
         fileUrl: `${env.CLOUDFLARE_CDN_URL}/${key}`,
       });
-    }
-    catch (error) {
+    } catch (error) {
       console.error('生成预签名 URL 失败:', error);
       return c.json(
         {
@@ -51,5 +50,4 @@ export const s3Router = factory.createApp().post(
         500,
       );
     }
-  },
-);
+  });

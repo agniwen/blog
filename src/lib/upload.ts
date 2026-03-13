@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import { hono } from '~/lib/hono';
 
 /**
@@ -22,7 +23,8 @@ export async function uploadFileToR2(file: File): Promise<string> {
   const data = await response.json();
 
   if (!data.success) {
-    const errorMsg = 'error' in data && typeof data.error === 'string' ? data.error : '获取上传链接失败';
+    const errorMsg =
+      'error' in data && typeof data.error === 'string' ? data.error : '获取上传链接失败';
     throw new Error(errorMsg);
   }
 
@@ -60,12 +62,10 @@ export function useFileUpload() {
       const fileUrl = await uploadFileToR2(file);
       setProgress(100);
       return fileUrl;
-    }
-    catch (error) {
+    } catch (error) {
       console.error('上传失败:', error);
       throw error;
-    }
-    finally {
+    } finally {
       setUploading(false);
     }
   };

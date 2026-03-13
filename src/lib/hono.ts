@@ -1,5 +1,6 @@
-import type { app } from '~/server';
 import { hc } from 'hono/client';
+
+import type { app } from '~/server';
 
 const _client = hc<typeof app>('/');
 export type Client = typeof _client;

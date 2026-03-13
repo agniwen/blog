@@ -33,7 +33,7 @@
 .tiptap-image-upload {
   margin: 2rem 0;
 
-  input[type="file"] {
+  input[type='file'] {
     display: none;
   }
 
@@ -118,14 +118,12 @@
 
     &.drag-active {
       border-color: var(--tiptap-image-upload-border-active);
-      background-color: rgba(var(--tiptap-image-upload-active-rgb, 0, 123, 255),
-          0.05);
+      background-color: rgba(var(--tiptap-image-upload-active-rgb, 0, 123, 255), 0.05);
     }
 
     &.drag-over {
       border-color: var(--tiptap-image-upload-border-active);
-      background-color: rgba(var(--tiptap-image-upload-active-rgb, 0, 123, 255),
-          0.1);
+      background-color: rgba(var(--tiptap-image-upload-active-rgb, 0, 123, 255), 0.1);
     }
   }
 
@@ -163,7 +161,7 @@
     }
   }
 
- /* === Individual File Preview Styles === */
+  /* === Individual File Preview Styles === */
   .tiptap-image-upload-preview {
     position: relative;
     border-radius: var(--tt-radius-md, 0.5rem);

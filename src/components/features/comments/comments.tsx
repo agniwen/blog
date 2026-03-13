@@ -1,13 +1,14 @@
-import type { CommentWithUser } from './comments-type';
 import { useQuery } from '@tanstack/react-query';
+
 import { getComments } from './actions';
 import { CommentsInput } from './comments-input';
 import { CommentsList } from './comments-list';
 import { CommentsMask } from './comments-mask';
+import type { CommentWithUser } from './comments-type';
 
 interface CommentsProps {
-  id: string
-  initialComments: Array<CommentWithUser>
+  id: string;
+  initialComments: Array<CommentWithUser>;
 }
 
 export function Comments(props: CommentsProps) {

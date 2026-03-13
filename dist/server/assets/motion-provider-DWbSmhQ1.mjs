@@ -3,6 +3,4 @@ import { LazyMotion, domMax } from "motion/react";
 function MotionProvider({ children }) {
   return /* @__PURE__ */ jsx(LazyMotion, { features: domMax, strict: true, children });
 }
-export {
-  MotionProvider as M
-};
+export { MotionProvider as M };

@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
+
 import { AdminContainer } from '~/components/admin/admin-container';
+
 import { UpsertEditor } from './-components/upsert-editor';
 
 export const Route = createFileRoute('/studio/posts/upsert/$id')({

@@ -1,11 +1,13 @@
 import * as React from 'react';
+
 import { uploadFileToR2 } from '~/lib/upload';
+
 import './banner-upload.css';
 
 interface BannerUploadProps {
-  value?: string
-  onChange?: (url: string) => void
-  onError?: (error: Error) => void
+  value?: string;
+  onChange?: (url: string) => void;
+  onError?: (error: Error) => void;
 }
 
 const CloudUploadIcon: React.FC = () => (
@@ -105,13 +107,11 @@ export function BannerUpload({ value, onChange, onError }: BannerUploadProps) {
 
       // Clean up local preview
       URL.revokeObjectURL(localPreview);
-    }
-    catch (err) {
+    } catch (err) {
       const error = err instanceof Error ? err : new Error('Upload failed');
       onError?.(error);
       setPreviewUrl(value);
-    }
-    finally {
+    } finally {
       setUploading(false);
       setProgress(0);
     }
@@ -119,8 +119,7 @@ export function BannerUpload({ value, onChange, onError }: BannerUploadProps) {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file)
-      return;
+    if (!file) return;
     handleFileUpload(file);
   };
 
@@ -163,6 +162,13 @@ export function BannerUpload({ value, onChange, onError }: BannerUploadProps) {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
+
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
     setPreviewUrl(undefined);
@@ -174,76 +180,67 @@ export function BannerUpload({ value, onChange, onError }: BannerUploadProps) {
 
   return (
     <div className='banner-upload'>
-      {!previewUrl
-        ? (
-            <div
-              className={`banner-upload-drag-area ${isDragActive ? 'drag-active' : ''} ${isDragOver ? 'drag-over' : ''}`}
-              onDragEnter={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              onClick={handleClick}
-            >
-              <div className='banner-upload-dropzone'>
-                <FileIcon />
-                <FileCornerIcon />
-                <div className='banner-upload-icon-container'>
-                  <CloudUploadIcon />
-                </div>
-              </div>
+      {!previewUrl ? (
+        /* eslint-disable-next-line jsx-a11y/prefer-tag-over-role */
+        <div
+          className={`banner-upload-drag-area ${isDragActive ? 'drag-active' : ''} ${isDragOver ? 'drag-over' : ''}`}
+          role='button'
+          tabIndex={0}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onClick={handleClick}
+          onKeyDown={handleKeyDown}
+        >
+          <div className='banner-upload-dropzone'>
+            <FileIcon />
+            <FileCornerIcon />
+            <div className='banner-upload-icon-container'>
+              <CloudUploadIcon />
+            </div>
+          </div>
 
-              <div className='banner-upload-content'>
-                <span className='banner-upload-text'>
-                  <em>Click to upload</em>
-                  {' '}
-                  or drag and drop
-                </span>
-                <span className='banner-upload-subtext'>
-                  PNG, JPG, GIF up to 5MB
-                </span>
-              </div>
-            </div>
-          )
-        : (
-            <div className='banner-upload-preview'>
-              {uploading && (
-                <div
-                  className='banner-upload-progress'
-                  style={{ width: `${progress}%` }}
-                />
-              )}
-              <div className='banner-upload-preview-content'>
-                <img
-                  src={previewUrl}
-                  alt='Banner preview'
-                  className='banner-upload-image'
-                />
-                {!uploading && (
-                  <button
-                    type='button'
-                    onClick={handleRemove}
-                    className='banner-upload-remove'
-                    aria-label='Remove banner'
-                  >
-                    <svg
-                      xmlns='http://www.w3.org/2000/svg'
-                      width='16'
-                      height='16'
-                      viewBox='0 0 24 24'
-                      fill='none'
-                      stroke='currentColor'
-                      strokeWidth='2'
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                    >
-                      <path d='M18 6 6 18' />
-                      <path d='m6 6 12 12' />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
+          <div className='banner-upload-content'>
+            <span className='banner-upload-text'>
+              <em>Click to upload</em> or drag and drop
+            </span>
+            <span className='banner-upload-subtext'>PNG, JPG, GIF up to 5MB</span>
+          </div>
+        </div>
+      ) : (
+        <div className='banner-upload-preview'>
+          {uploading && (
+            <div className='banner-upload-progress' style={{ width: `${progress}%` }} />
           )}
+          <div className='banner-upload-preview-content'>
+            <img src={previewUrl} alt='Banner preview' className='banner-upload-image' />
+            {!uploading && (
+              <button
+                type='button'
+                onClick={handleRemove}
+                className='banner-upload-remove'
+                aria-label='Remove banner'
+              >
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='16'
+                  height='16'
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  stroke='currentColor'
+                  strokeWidth='2'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                >
+                  <path d='M18 6 6 18' />
+                  <path d='m6 6 12 12' />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       <input
         ref={inputRef}

@@ -41,23 +41,44 @@ import "@aws-sdk/client-s3";
 import "@hono/zod-validator";
 import "@aws-sdk/s3-request-presigner";
 function PostList({ posts }) {
-  return /* @__PURE__ */ jsx("div", { className: "grid md:grid-cols-2 grid-cols-1 gap-4 px-4", children: posts.map((post) => /* @__PURE__ */ jsx(Link, { to: "/blog/$id", params: { id: post.id }, className: "block cursor-default", children: /* @__PURE__ */ jsx(
-    PostCard,
-    {
-      post,
-      showMeta: false
-    }
-  ) }, post.id)) });
+  return /* @__PURE__ */ jsx("div", {
+    className: "grid md:grid-cols-2 grid-cols-1 gap-4 px-4",
+    children: posts.map((post) =>
+      /* @__PURE__ */ jsx(
+        Link,
+        {
+          to: "/blog/$id",
+          params: { id: post.id },
+          className: "block cursor-default",
+          children: /* @__PURE__ */ jsx(PostCard, {
+            post,
+            showMeta: false,
+          }),
+        },
+        post.id,
+      ),
+    ),
+  });
 }
 function BlogListPage() {
-  const {
-    posts
-  } = Route.useLoaderData();
-  return /* @__PURE__ */ jsxs(PageContainer, { className: "pt-12 pb-8 max-w-2xl mx-auto", children: [
-    /* @__PURE__ */ jsx("div", { className: "px-4 mb-8", children: /* @__PURE__ */ jsx(Link, { to: "/", children: /* @__PURE__ */ jsx(Button, { size: "icon", variant: "secondary", className: "rounded-full text-xl", children: /* @__PURE__ */ jsx(Icon, { icon: "ri:arrow-left-line" }) }) }) }),
-    /* @__PURE__ */ jsx(PostList, { posts })
-  ] });
+  const { posts } = Route.useLoaderData();
+  return /* @__PURE__ */ jsxs(PageContainer, {
+    className: "pt-12 pb-8 max-w-2xl mx-auto",
+    children: [
+      /* @__PURE__ */ jsx("div", {
+        className: "px-4 mb-8",
+        children: /* @__PURE__ */ jsx(Link, {
+          to: "/",
+          children: /* @__PURE__ */ jsx(Button, {
+            size: "icon",
+            variant: "secondary",
+            className: "rounded-full text-xl",
+            children: /* @__PURE__ */ jsx(Icon, { icon: "ri:arrow-left-line" }),
+          }),
+        }),
+      }),
+      /* @__PURE__ */ jsx(PostList, { posts }),
+    ],
+  });
 }
-export {
-  BlogListPage as component
-};
+export { BlogListPage as component };

@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { AnimatePresence, m } from 'motion/react';
+
 import { cn } from '~/lib/utils';
 
 const socials = [
@@ -12,13 +13,11 @@ const socials = [
     name: 'github',
     url: 'https://github.com/agniwen',
     icon: <Icon className='size-5' icon='ri:github-line' />,
-
   },
   {
     name: 'bilibili',
     url: 'https://space.bilibili.com/2940875',
     icon: <Icon className='size-5' icon='ri:bilibili-line' />,
-
   },
   {
     name: 'email',
@@ -43,7 +42,7 @@ export function Social({ className }: { className?: string }) {
                 href={s.url}
                 target='_blank'
                 rel='noreferrer'
-                className='inline-block p-2 cursor-default rounded-full transition-colors text-secondary-foreground hover:bg-secondary  '
+                className='inline-block cursor-default rounded-full p-2 text-secondary-foreground transition-colors hover:bg-secondary'
               >
                 {s.icon}
               </a>

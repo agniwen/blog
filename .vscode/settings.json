@@ -1,6 +1,19 @@
 {
-  "cSpell.words": [
-    "akumanoko",
-    "Umami"
-  ]
+  "cSpell.words": ["akumanoko", "Umami"],
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.oxc": "always",
+  },
+  "[typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.oxc": "explicit",
+    },
+  },
+  "[typescript]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.oxc": "explicit",
+    },
+  },
 }

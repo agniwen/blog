@@ -1,8 +1,10 @@
-import type { PropsWithChildren } from 'react';
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
+import type { PropsWithChildren } from 'react';
 import { Toaster } from 'sonner';
+
 import { QueryClientProvider } from '~/components/provider/query-client-provider';
 import { ThemeProvider } from '~/components/provider/theme-provider';
+
 import appCss from '~/styles/globals.css?url';
 
 export const Route = createRootRoute({
@@ -35,12 +37,7 @@ function RootDocument({ children }: PropsWithChildren) {
 
 function RootOutlet() {
   return (
-    <ThemeProvider
-      attribute='class'
-      defaultTheme='system'
-      enableSystem
-      disableTransitionOnChange
-    >
+    <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
       <QueryClientProvider>
         <Outlet />
       </QueryClientProvider>

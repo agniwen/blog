@@ -5,10 +5,24 @@ import { Trash2Icon } from 'lucide-react';
 import { useId, useState } from 'react';
 import ContentLoader from 'react-content-loader';
 import { toast } from 'sonner';
+
 import { PostCard } from '~/components/features/post-card';
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '~/components/ui/alert-dialog';
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '~/components/ui/alert-dialog';
 import { Button } from '~/components/ui/button';
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '~/components/ui/context-menu';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '~/components/ui/context-menu';
 import { hono } from '~/lib/hono';
 import { cn } from '~/lib/utils';
 
@@ -34,7 +48,7 @@ function PostCardLoader() {
 function PostsLoader() {
   return (
     <div className='posts pb-4'>
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:flex 2xl:flex-wrap gap-4'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:flex 2xl:flex-wrap'>
         <PostCardLoader />
         <PostCardLoader />
         <PostCardLoader />
@@ -52,7 +66,12 @@ export function Posts() {
   const [deletePostId, setDeletePostId] = useState<string | null>(null);
 
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
-  const { data: posts, isLoading, isFetching, refetch } = useQuery({
+  const {
+    data: posts,
+    isLoading,
+    isFetching,
+    refetch,
+  } = useQuery({
     queryFn() {
       return parseResponse(hono.api.posts.$get());
     },
@@ -61,22 +80,22 @@ export function Posts() {
 
   async function handleDelete(postId: string) {
     try {
-      const res = await parseResponse(hono.api.posts[':id'].$delete({
-        param: {
-          id: postId,
-        },
-      }));
+      const res = await parseResponse(
+        hono.api.posts[':id'].$delete({
+          param: {
+            id: postId,
+          },
+        }),
+      );
       if (res.data.id) {
         toast.success('Post deleted');
         setConfirmDialogOpen(false);
         refetch();
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Failed to delete post', error);
       toast.error('Failed to delete post');
-    }
-    finally {
+    } finally {
       setDeletePostId(null);
     }
   }
@@ -93,16 +112,25 @@ export function Posts() {
   return (
     <>
       <div className='posts pb-4'>
-        <div className={cn('grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:flex 2xl:flex-wrap gap-4', isFetching && 'opacity-80')}>
+        <div
+          className={cn(
+            'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:flex 2xl:flex-wrap',
+            isFetching && 'opacity-80',
+          )}
+        >
           {posts?.data.map((post) => {
             return (
               <ContextMenu key={post.id}>
                 <ContextMenuTrigger
-                  render={(
-                    <Link to='/studio/posts/upsert/$id' params={{ id: post.id }} className='block 2xl:w-xs'>
+                  render={
+                    <Link
+                      to='/studio/posts/upsert/$id'
+                      params={{ id: post.id }}
+                      className='block 2xl:w-xs'
+                    >
                       <PostCard className='h-full' post={post} />
                     </Link>
-                  )}
+                  }
                 />
                 <ContextMenuContent>
                   <ContextMenuItem onClick={() => handleSelectDeletePost(post.id)}>
@@ -126,9 +154,7 @@ export function Posts() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <Button onClick={() => deletePostId && handleDelete(deletePostId)}>
-              Delete
-            </Button>
+            <Button onClick={() => deletePostId && handleDelete(deletePostId)}>Delete</Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
