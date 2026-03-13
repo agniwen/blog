@@ -1,9 +1,9 @@
 import { useIsClient } from 'foxact/use-is-client';
 import { useMemo } from 'react';
 
-import { clientEnv } from '~/lib/env';
+import { env } from '~/lib/env';
 
-const umamiShareUrl = clientEnv.NEXT_PUBLIC_UMAMI_SHARE_URL;
+const umamiShareUrl = env.NEXT_PUBLIC_UMAMI_SHARE_URL;
 
 export function UmamiDashboard() {
   const { src } = useMemo(() => {

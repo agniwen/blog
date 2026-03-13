@@ -5,7 +5,7 @@ import { MotionProvider } from '~/components/provider/motion-provider';
 import { Button } from '~/components/ui/button';
 import { PageContainer } from '~/components/ui/page-container';
 import { ScrollArea } from '~/components/ui/scroll-area';
-import { clientEnv } from '~/lib/env';
+import { env } from '~/lib/env';
 
 export const Route = createFileRoute('/')({
   head: () => ({
@@ -26,7 +26,7 @@ function HomePage() {
           <div className='flex min-h-screen w-full flex-col items-center justify-center space-y-8'>
             <div className='size-24 rounded-full bg-zinc-50'>
               <img
-                src={clientEnv.NEXT_PUBLIC_AVATAR_URL}
+                src={env.NEXT_PUBLIC_AVATAR_URL}
                 className='pointer-events-none w-full shrink-0 rounded-full object-contain shadow-xl'
                 alt='avatar'
               />

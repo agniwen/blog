@@ -3,7 +3,7 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
 import { comments } from '~/db/schema';
-import { getAuth } from '~/lib/auth';
+import { auth } from '~/lib/auth';
 import { db } from '~/lib/db';
 
 export const getCommentsServerFn = createServerFn({ method: 'GET' })
@@ -22,7 +22,7 @@ export const getCommentsServerFn = createServerFn({ method: 'GET' })
 export const createCommentServerFn = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ postId: z.string(), content: z.string() }))
   .handler(async ({ data }) => {
-    const session = await getAuth().api.getSession({
+    const session = await auth.api.getSession({
       headers: getRequestHeaders(),
     });
 
