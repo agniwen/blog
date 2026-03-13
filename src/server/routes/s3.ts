@@ -1,10 +1,8 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { env } from '~/lib/env';
-import { s3 } from '~/lib/s3';
+import { getS3Client } from '~/lib/s3';
 import { factory } from '~/server/factory';
 
 const presignedUrlSchema = z.object({
@@ -21,6 +19,12 @@ export const s3Router = factory
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 15);
     const key = `assets/${fileType}/${timestamp}-${randomString}-${fileName}`;
+
+    const [{ PutObjectCommand }, { getSignedUrl }, s3] = await Promise.all([
+      import('@aws-sdk/client-s3'),
+      import('@aws-sdk/s3-request-presigner'),
+      getS3Client(),
+    ]);
 
     // 创建 PutObject 命令
     const command = new PutObjectCommand({

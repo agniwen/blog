@@ -1,10 +1,9 @@
-import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
 import { env } from '~/lib/env';
 import { fail, success } from '~/lib/result';
-import { s3 } from '~/lib/s3';
+import { getS3Client } from '~/lib/s3';
 
 import { factory } from '../factory';
 
@@ -50,6 +49,10 @@ async function downloadAndUploadImage(imageUrl: string): Promise<string | undefi
     const randomString = Math.random().toString(36).substring(2, 15);
     const ext = contentType.split('/')[1] || 'jpg';
     const key = `assets/bookmarks/images/${timestamp}-${randomString}.${ext}`;
+    const [{ PutObjectCommand }, s3] = await Promise.all([
+      import('@aws-sdk/client-s3'),
+      getS3Client(),
+    ]);
 
     // Upload to R2
     const command = new PutObjectCommand({
