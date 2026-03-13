@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StudioRouteRouteImport } from './routes/studio/route'
 import { Route as BlogRouteRouteImport } from './routes/blog/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudioIndexRouteImport } from './routes/studio/index'
@@ -22,6 +23,11 @@ import { Route as StudioPostsIndexRouteImport } from './routes/studio/posts/inde
 import { Route as StudioPostsUpsertIndexRouteImport } from './routes/studio/posts/upsert/index'
 import { Route as StudioPostsUpsertIdRouteImport } from './routes/studio/posts/upsert/$id'
 
+const StudioRouteRoute = StudioRouteRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogRouteRoute = BlogRouteRouteImport.update({
   id: '/blog',
   path: '/blog',
@@ -33,9 +39,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudioIndexRoute = StudioIndexRouteImport.update({
-  id: '/studio/',
-  path: '/studio/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => StudioRouteRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
@@ -43,14 +49,14 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   getParentRoute: () => BlogRouteRoute,
 } as any)
 const StudioProjectsRoute = StudioProjectsRouteImport.update({
-  id: '/studio/projects',
-  path: '/studio/projects',
-  getParentRoute: () => rootRouteImport,
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => StudioRouteRoute,
 } as any)
 const StudioLoginRoute = StudioLoginRouteImport.update({
-  id: '/studio/login',
-  path: '/studio/login',
-  getParentRoute: () => rootRouteImport,
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => StudioRouteRoute,
 } as any)
 const SitemapXmlRoute = SitemapXmlRouteImport.update({
   id: '/sitemap/xml',
@@ -68,24 +74,25 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudioPostsIndexRoute = StudioPostsIndexRouteImport.update({
-  id: '/studio/posts/',
-  path: '/studio/posts/',
-  getParentRoute: () => rootRouteImport,
+  id: '/posts/',
+  path: '/posts/',
+  getParentRoute: () => StudioRouteRoute,
 } as any)
 const StudioPostsUpsertIndexRoute = StudioPostsUpsertIndexRouteImport.update({
-  id: '/studio/posts/upsert/',
-  path: '/studio/posts/upsert/',
-  getParentRoute: () => rootRouteImport,
+  id: '/posts/upsert/',
+  path: '/posts/upsert/',
+  getParentRoute: () => StudioRouteRoute,
 } as any)
 const StudioPostsUpsertIdRoute = StudioPostsUpsertIdRouteImport.update({
-  id: '/studio/posts/upsert/$id',
-  path: '/studio/posts/upsert/$id',
-  getParentRoute: () => rootRouteImport,
+  id: '/posts/upsert/$id',
+  path: '/posts/upsert/$id',
+  getParentRoute: () => StudioRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteRouteWithChildren
+  '/studio': typeof StudioRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/blog/$id': typeof BlogIdRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -114,6 +121,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/blog': typeof BlogRouteRouteWithChildren
+  '/studio': typeof StudioRouteRouteWithChildren
   '/api/$': typeof ApiSplatRoute
   '/blog/$id': typeof BlogIdRoute
   '/sitemap/xml': typeof SitemapXmlRoute
@@ -130,6 +138,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/blog'
+    | '/studio'
     | '/api/$'
     | '/blog/$id'
     | '/sitemap/xml'
@@ -157,6 +166,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/blog'
+    | '/studio'
     | '/api/$'
     | '/blog/$id'
     | '/sitemap/xml'
@@ -172,18 +182,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRouteRoute: typeof BlogRouteRouteWithChildren
+  StudioRouteRoute: typeof StudioRouteRouteWithChildren
   ApiSplatRoute: typeof ApiSplatRoute
   SitemapXmlRoute: typeof SitemapXmlRoute
-  StudioLoginRoute: typeof StudioLoginRoute
-  StudioProjectsRoute: typeof StudioProjectsRoute
-  StudioIndexRoute: typeof StudioIndexRoute
-  StudioPostsIndexRoute: typeof StudioPostsIndexRoute
-  StudioPostsUpsertIdRoute: typeof StudioPostsUpsertIdRoute
-  StudioPostsUpsertIndexRoute: typeof StudioPostsUpsertIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog': {
       id: '/blog'
       path: '/blog'
@@ -200,10 +212,10 @@ declare module '@tanstack/react-router' {
     }
     '/studio/': {
       id: '/studio/'
-      path: '/studio'
+      path: '/'
       fullPath: '/studio/'
       preLoaderRoute: typeof StudioIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudioRouteRoute
     }
     '/blog/': {
       id: '/blog/'
@@ -214,17 +226,17 @@ declare module '@tanstack/react-router' {
     }
     '/studio/projects': {
       id: '/studio/projects'
-      path: '/studio/projects'
+      path: '/projects'
       fullPath: '/studio/projects'
       preLoaderRoute: typeof StudioProjectsRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudioRouteRoute
     }
     '/studio/login': {
       id: '/studio/login'
-      path: '/studio/login'
+      path: '/login'
       fullPath: '/studio/login'
       preLoaderRoute: typeof StudioLoginRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudioRouteRoute
     }
     '/sitemap/xml': {
       id: '/sitemap/xml'
@@ -249,24 +261,24 @@ declare module '@tanstack/react-router' {
     }
     '/studio/posts/': {
       id: '/studio/posts/'
-      path: '/studio/posts'
+      path: '/posts'
       fullPath: '/studio/posts/'
       preLoaderRoute: typeof StudioPostsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudioRouteRoute
     }
     '/studio/posts/upsert/': {
       id: '/studio/posts/upsert/'
-      path: '/studio/posts/upsert'
+      path: '/posts/upsert'
       fullPath: '/studio/posts/upsert/'
       preLoaderRoute: typeof StudioPostsUpsertIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudioRouteRoute
     }
     '/studio/posts/upsert/$id': {
       id: '/studio/posts/upsert/$id'
-      path: '/studio/posts/upsert/$id'
+      path: '/posts/upsert/$id'
       fullPath: '/studio/posts/upsert/$id'
       preLoaderRoute: typeof StudioPostsUpsertIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof StudioRouteRoute
     }
   }
 }
@@ -285,17 +297,34 @@ const BlogRouteRouteWithChildren = BlogRouteRoute._addFileChildren(
   BlogRouteRouteChildren,
 )
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  BlogRouteRoute: BlogRouteRouteWithChildren,
-  ApiSplatRoute: ApiSplatRoute,
-  SitemapXmlRoute: SitemapXmlRoute,
+interface StudioRouteRouteChildren {
+  StudioLoginRoute: typeof StudioLoginRoute
+  StudioProjectsRoute: typeof StudioProjectsRoute
+  StudioIndexRoute: typeof StudioIndexRoute
+  StudioPostsIndexRoute: typeof StudioPostsIndexRoute
+  StudioPostsUpsertIdRoute: typeof StudioPostsUpsertIdRoute
+  StudioPostsUpsertIndexRoute: typeof StudioPostsUpsertIndexRoute
+}
+
+const StudioRouteRouteChildren: StudioRouteRouteChildren = {
   StudioLoginRoute: StudioLoginRoute,
   StudioProjectsRoute: StudioProjectsRoute,
   StudioIndexRoute: StudioIndexRoute,
   StudioPostsIndexRoute: StudioPostsIndexRoute,
   StudioPostsUpsertIdRoute: StudioPostsUpsertIdRoute,
   StudioPostsUpsertIndexRoute: StudioPostsUpsertIndexRoute,
+}
+
+const StudioRouteRouteWithChildren = StudioRouteRoute._addFileChildren(
+  StudioRouteRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  BlogRouteRoute: BlogRouteRouteWithChildren,
+  StudioRouteRoute: StudioRouteRouteWithChildren,
+  ApiSplatRoute: ApiSplatRoute,
+  SitemapXmlRoute: SitemapXmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
