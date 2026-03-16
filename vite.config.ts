@@ -9,37 +9,14 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
-
   plugins: [
     tailwindcss(),
     tanstackStart({
       prerender: {
         enabled: true,
-        crawlLinks: false,
-        autoStaticPathsDiscovery: false,
-        filter: ({ path }) => {
-          if (path.startsWith('/api')) {
-            return false;
-          }
-          if (path.startsWith('/studio')) {
-            return false;
-          }
-          if (/^\/blog\/[^/]+$/.test(path)) {
-            return false;
-          }
-          return true;
-        },
+        crawlLinks: true,
+        autoStaticPathsDiscovery: true,
       },
-      pages: [
-        {
-          path: '/',
-          prerender: { enabled: true },
-        },
-        {
-          path: '/blog',
-          prerender: { enabled: true },
-        },
-      ],
       router: {
         routesDirectory: 'routes',
       },

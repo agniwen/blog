@@ -5,7 +5,6 @@ import { Toaster } from 'sonner';
 import { QueryClientProvider } from '~/components/provider/query-client-provider';
 import { Background } from '~/components/ui/background';
 import { Button } from '~/components/ui/button';
-import { PageContainer } from '~/components/ui/page-container';
 
 import appCss from '~/styles/globals.css?url';
 
