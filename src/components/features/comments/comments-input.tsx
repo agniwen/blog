@@ -59,7 +59,7 @@ export function CommentsInput({ id }: CommentsInputProps) {
     <div className='comment-input rounded-xl'>
       <div className='relative pt-4'>
         <form onSubmit={handleSubmit}>
-          <InputGroup className='pt-2 [--radius:16px]'>
+          <InputGroup>
             <InputGroupTextarea
               name='comment'
               value={comment}
@@ -69,13 +69,7 @@ export function CommentsInput({ id }: CommentsInputProps) {
             />
             <InputGroupAddon align='block-end'>
               <Separator className='flex-1 bg-transparent' orientation='vertical' />
-              <InputGroupButton
-                type='submit'
-                disabled={isPending}
-                variant='default'
-                className='rounded-full'
-                size='icon-sm'
-              >
+              <InputGroupButton type='submit' disabled={isPending} variant='default' size='icon-sm'>
                 <ArrowUpIcon className='size-5' />
               </InputGroupButton>
             </InputGroupAddon>

@@ -23,7 +23,7 @@
 
   .bookmark-card {
     display: flex;
-    border: 1px solid var(--bookmark-border);
+    border: 1px solid var(--border);
     overflow: hidden;
     cursor: pointer;
     transition: all 0.2s ease;

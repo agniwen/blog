@@ -1,27 +1,26 @@
 import { useId } from 'react';
 import ContentLoader, { Code } from 'react-content-loader';
 
-export function PostListLoader() {
-  const id = useId();
+import { Skeleton } from '~/components/ui/skeleton';
 
+export function PostListLoader() {
   return (
-    <div className='mt-4'>
-      <ContentLoader
-        uniqueKey={`${id}-title`}
-        viewBox='0 0 400 20'
-        className='w-full px-4 pb-6'
-        backgroundColor='var(--secondary)'
-        foregroundColor='var(--background)'
-      >
-        <rect x='0' y='0' rx='5' ry='5' width='100' height='20' />
-      </ContentLoader>
-      <div className='flex flex-wrap'>
-        <PostCardLoader />
-        <PostCardLoader />
-        <PostCardLoader />
-        <PostCardLoader />
-        <PostCardLoader />
-      </div>
+    <div className='grid grid-cols-1 divide-y divide-border/60 px-4'>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <div key={index} className='px-1 py-3.5'>
+          <div className='space-y-3'>
+            <Skeleton className='h-5 w-2/5 rounded-md' />
+            <div className='flex items-end justify-between gap-12'>
+              <div className='flex-1 space-y-2'>
+                <Skeleton className='h-3 w-full rounded-md' />
+                <Skeleton className='h-3 w-4/5 rounded-md' />
+                <Skeleton className='h-3 w-3/5 rounded-md' />
+              </div>
+              <Skeleton className='h-3 w-24 shrink-0 rounded-md' />
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

@@ -18,8 +18,8 @@ export function CommentsMask({ children }: PropsWithChildren) {
     return children;
   }
   return (
-    <div className='relative w-full rounded-md border border-gray-50 p-2'>
-      <div className='absolute top-0 left-0 z-10 h-full w-full bg-white/20 backdrop-blur-sm'>
+    <div className='relative w-full rounded-md border'>
+      <div className='absolute top-0 left-0 z-10 h-full w-full bg-white/20 backdrop-blur-xs'>
         <div className='flex h-full w-full items-center justify-center'>
           <div>
             <div className='pb-4 text-center text-sm'>
