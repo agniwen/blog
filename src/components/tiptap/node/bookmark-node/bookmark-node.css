@@ -9,7 +9,7 @@
 }
 
 .dark {
-  --bookmark-border: var(--tt-gray-dark-a-300);
+  --bookmark-border: var(--tt-gray-dark-a-100);
   --bookmark-bg: var(--tt-background-color);
   --bookmark-hover-bg: var(--tt-gray-dark-a-100);
   --bookmark-title-color: var(--tt-gray-dark-a-900);
@@ -24,7 +24,6 @@
   .bookmark-card {
     display: flex;
     border: 1px solid var(--bookmark-border);
-    border-radius: var(--tt-radius-md, 0.5rem);
     overflow: hidden;
     cursor: pointer;
     transition: all 0.2s ease;

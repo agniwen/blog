@@ -30,10 +30,12 @@ export function PostContent({ post }: PostContentProps) {
             className='relative z-2 aspect-16/10 rounded-3xl object-cover'
             src={post.banner}
             alt={post.title ?? ''}
+            style={{ borderRadius: 8 }}
           />
           <img
             className='absolute top-0 left-0 z-1 aspect-16/10 rounded-3xl object-cover opacity-65 blur-xl'
             src={post.banner}
+            style={{ borderRadius: 8 }}
             alt=''
           />
         </div>

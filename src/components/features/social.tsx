@@ -1,6 +1,8 @@
 import { Icon } from '@iconify/react';
+import { Link } from '@tanstack/react-router';
 import { AnimatePresence, m } from 'motion/react';
 
+import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 
 const socials = [
@@ -38,14 +40,11 @@ export function Social({ className }: { className?: string }) {
               animate={{ opacity: 1, x: 0 }}
               key={s.url}
             >
-              <a
-                href={s.url}
-                target='_blank'
-                rel='noreferrer'
-                className='inline-block cursor-default rounded-full p-2 text-secondary-foreground transition-colors hover:bg-secondary'
-              >
-                {s.icon}
-              </a>
+              <Link to={s.url} target='_blank'>
+                <Button size='icon-sm' variant='ghost' rel='noreferrer' className='cursor-default'>
+                  {s.icon}
+                </Button>
+              </Link>
             </m.div>
           );
         })}

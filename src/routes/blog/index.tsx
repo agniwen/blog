@@ -28,7 +28,7 @@ function BlogListPage() {
     <PageContainer className='mx-auto max-w-2xl pt-12 pb-8'>
       <div className='mb-8 px-4'>
         <Link to='/'>
-          <Button size='icon' variant='secondary' className='rounded-full text-xl'>
+          <Button size='icon-sm' variant='secondary' className='text-xl'>
             <Icon icon='ri:arrow-left-line' />
           </Button>
         </Link>
@@ -43,7 +43,7 @@ function BlogListPendingPage() {
     <PageContainer className='mx-auto max-w-2xl pt-12 pb-8'>
       <div className='mb-8 px-4'>
         <Link to='/'>
-          <Button size='icon' variant='secondary' className='rounded-full text-xl'>
+          <Button size='icon-sm' variant='secondary' className='text-xl'>
             <Icon icon='ri:arrow-left-line' />
           </Button>
         </Link>

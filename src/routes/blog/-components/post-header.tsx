@@ -23,7 +23,7 @@ export function PostHeader() {
           className={cn('relative mx-auto flex max-w-2xl items-center justify-between px-4 py-0.5')}
         >
           <Link to='/blog' className='invisible p-1 md:visible'>
-            <Button size='icon' className='rounded-full' variant='ghost'>
+            <Button size='icon-sm' className='' variant='ghost'>
               <Icon className='size-4 text-xl' icon='ri:arrow-left-line' />
             </Button>
           </Link>
@@ -35,7 +35,7 @@ export function PostHeader() {
       </div>
       <div className='mb-12' ref={ref}>
         <Link to='/blog'>
-          <Button size='icon' variant='secondary' className='rounded-full text-xl'>
+          <Button size='icon-sm' variant='secondary' className='text-xl'>
             <Icon icon='ri:arrow-left-line' />
           </Button>
         </Link>

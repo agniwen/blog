@@ -31,7 +31,7 @@ function HomePage() {
                 alt='avatar'
               />
             </div>
-            <div className='flex flex-col items-center justify-center space-y-8'>
+            <div className='flex flex-col items-center justify-center space-y-6'>
               <div className='text-center'>
                 <h1 className='mb-4 text-xl text-gray-800'>Wen&apos;s Blog</h1>
                 <p className='max-w-xs text-base text-balance text-gray-600'>
@@ -41,7 +41,7 @@ function HomePage() {
               </div>
               <Social />
               <Link to='/blog' preload='render'>
-                <Button size='lg' variant='secondary' className='rounded-full px-8'>
+                <Button variant='secondary' className='px-8'>
                   Blog
                 </Button>
               </Link>

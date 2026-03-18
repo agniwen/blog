@@ -25,7 +25,7 @@ export function PostCard(props: PostCardProps) {
           alt=''
         />
       </div>
-      <div className='flex-1 bg-background p-2 select-none'>
+      <div className='flex-1 bg-background/90 p-2 select-none'>
         <h2 className='text-lg font-bold'>{post.title || 'Untitled'}</h2>
         <p className='mb-2 text-xs sm:line-clamp-2 lg:line-clamp-2'>
           {post.description || 'No description available'}
