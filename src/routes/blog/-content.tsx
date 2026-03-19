@@ -25,18 +25,11 @@ export function PostContent({ post }: PostContentProps) {
   return (
     <div className='post-content'>
       {post?.banner ? (
-        <div className='pointer-events-none relative mb-8 aspect-16/10 rounded-3xl *:select-none'>
+        <div className='pointer-events-none relative mb-8 aspect-16/10 rounded-3xl border border-border bg-border p-0.5 *:select-none'>
           <img
             className='relative z-2 aspect-16/10 rounded-3xl object-cover'
             src={post.banner}
             alt={post.title ?? ''}
-            style={{ borderRadius: 8 }}
-          />
-          <img
-            className='absolute top-0 left-0 z-1 aspect-16/10 rounded-3xl object-cover opacity-65 blur-xl'
-            src={post.banner}
-            style={{ borderRadius: 8 }}
-            alt=''
           />
         </div>
       ) : null}

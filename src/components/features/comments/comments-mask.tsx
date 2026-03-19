@@ -3,6 +3,7 @@ import type { PropsWithChildren } from 'react';
 
 import { Button } from '~/components/ui/button';
 import { authClient } from '~/lib/auth-client';
+import { cn } from '~/lib/utils';
 
 export function CommentsMask({ children }: PropsWithChildren) {
   const { data, isPending } = authClient.useSession();
@@ -18,7 +19,11 @@ export function CommentsMask({ children }: PropsWithChildren) {
     return children;
   }
   return (
-    <div className='relative w-full rounded-md border'>
+    <div
+      className={cn('relative w-full rounded-md', {
+        'p-4': !data?.user,
+      })}
+    >
       <div className='absolute top-0 left-0 z-10 h-full w-full bg-white/20 backdrop-blur-xs'>
         <div className='flex h-full w-full items-center justify-center'>
           <div>
