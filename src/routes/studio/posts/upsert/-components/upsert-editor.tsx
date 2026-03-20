@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 
 import { BannerUpload } from '~/components/features/banner-upload';
 import { Editor } from '~/components/features/editor';
+import { Toolbar, ToolbarGroup, ToolbarSeparator } from '~/components/tiptap/ui-primitive/toolbar';
 import { Button } from '~/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '~/components/ui/field';
 import {
@@ -19,6 +20,7 @@ import {
   InputGroupTextarea,
 } from '~/components/ui/input-group';
 import { NativeSelect, NativeSelectOption } from '~/components/ui/native-select';
+import { Skeleton } from '~/components/ui/skeleton';
 import { Spinner } from '~/components/ui/spinner';
 import { useEditor } from '~/hooks/use-editor';
 import { hono } from '~/lib/hono';
@@ -34,6 +36,145 @@ interface PostFormData {
   jsonContent?: any;
 }
 
+function ToolbarSkeletonButton({ className }: { className?: string }) {
+  return <Skeleton className={`h-8 min-w-8 rounded-xl ${className ?? ''}`.trim()} />;
+}
+
+function UpsertEditorSkeleton() {
+  return (
+    <div className='flex h-[calc(100vh-82px)] flex-col overflow-hidden md:flex-row'>
+      <div className='editor-form w-full overflow-y-auto border-b border-(--tt-toolbar-border-color) md:order-2 md:w-xs md:border-b-0 md:border-l'>
+        <div className='bg-[--tt-background-color] p-2 md:sticky md:top-0'>
+          <div className='flex flex-col gap-7'>
+            <div className='flex flex-col gap-3'>
+              <Skeleton className='h-4 w-12 rounded-md' />
+              <div className='relative overflow-hidden rounded-md border border-input/60'>
+                <Skeleton className='h-48 w-full rounded-none' />
+                <Skeleton className='absolute top-2 right-2 size-7 rounded-full' />
+              </div>
+            </div>
+
+            <div className='flex flex-col gap-3'>
+              <Skeleton className='h-4 w-12 rounded-md' />
+              <Skeleton className='h-10 w-full rounded-4xl' />
+            </div>
+
+            <div className='flex flex-col gap-3'>
+              <Skeleton className='h-4 w-12 rounded-md' />
+              <Skeleton className='h-10 w-full rounded-4xl' />
+            </div>
+
+            <div className='flex flex-col gap-3'>
+              <Skeleton className='h-4 w-24 rounded-md' />
+              <Skeleton className='h-24 w-full rounded-3xl' />
+            </div>
+
+            <div className='flex flex-col gap-3'>
+              <Skeleton className='h-4 w-16 rounded-md' />
+              <div className='overflow-hidden rounded-3xl border border-input/60 bg-input/30'>
+                <div className='flex flex-col gap-3 p-3 pb-2'>
+                  <Skeleton className='h-4 w-2/3 rounded-md' />
+                  <Skeleton className='h-4 w-full rounded-md' />
+                  <Skeleton className='h-4 w-5/6 rounded-md' />
+                </div>
+                <div className='flex justify-end px-3 pb-3'>
+                  <Skeleton className='h-8 w-28 rounded-full' />
+                </div>
+              </div>
+            </div>
+
+            <div className='flex flex-col gap-3'>
+              <Skeleton className='h-4 w-20 rounded-md' />
+              <Skeleton className='h-9 w-full rounded-4xl' />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className='relative flex-1 overflow-y-auto md:order-1'>
+        <div className='editor relative'>
+          <Toolbar>
+            <div className='flex-1' />
+
+            <ToolbarGroup>
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+            </ToolbarGroup>
+
+            <ToolbarSeparator />
+
+            <ToolbarGroup>
+              <ToolbarSkeletonButton className='w-24' />
+              <ToolbarSkeletonButton className='w-28' />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+            </ToolbarGroup>
+
+            <ToolbarSeparator />
+
+            <ToolbarGroup>
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+            </ToolbarGroup>
+
+            <ToolbarSeparator />
+
+            <ToolbarGroup>
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+            </ToolbarGroup>
+
+            <ToolbarSeparator />
+
+            <ToolbarGroup>
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+            </ToolbarGroup>
+
+            <ToolbarSeparator />
+
+            <ToolbarGroup>
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton />
+              <ToolbarSkeletonButton className='w-14' />
+            </ToolbarGroup>
+
+            <div className='flex-1' />
+          </Toolbar>
+
+          <div className='mx-auto flex h-full w-full max-w-[648px] flex-col px-6 py-12 pb-[30vh] md:px-12'>
+            <div className='flex flex-1 flex-col gap-4'>
+              <Skeleton className='h-11 w-3/4 rounded-2xl' />
+              <Skeleton className='h-5 w-full rounded-lg' />
+              <Skeleton className='h-5 w-11/12 rounded-lg' />
+              <Skeleton className='h-5 w-10/12 rounded-lg' />
+              <div className='h-3' />
+              <Skeleton className='h-32 w-full rounded-3xl' />
+              <div className='h-2' />
+              <Skeleton className='h-5 w-full rounded-lg' />
+              <Skeleton className='h-5 w-full rounded-lg' />
+              <Skeleton className='h-5 w-9/12 rounded-lg' />
+              <div className='h-3' />
+              <Skeleton className='h-8 w-40 rounded-xl' />
+              <Skeleton className='h-5 w-full rounded-lg' />
+              <Skeleton className='h-5 w-10/12 rounded-lg' />
+              <Skeleton className='h-5 w-full rounded-lg' />
+              <Skeleton className='h-5 w-8/12 rounded-lg' />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function UpsertEditor(props: { id?: string }) {
   const { id } = props;
   const editor = useEditor();
@@ -43,7 +184,7 @@ export function UpsertEditor(props: { id?: string }) {
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialLoadRef = useRef(true);
 
-  const { data: post } = useQuery({
+  const { data: post, isPending } = useQuery({
     enabled: !isNil(id),
     queryKey: ['post-detail', id],
     queryFn() {
@@ -54,6 +195,7 @@ export function UpsertEditor(props: { id?: string }) {
       );
     },
   });
+
   const form = useForm({
     defaultValues: {
       title: post?.data?.title ?? '',
@@ -199,6 +341,10 @@ export function UpsertEditor(props: { id?: string }) {
       isInitialLoadRef.current = false;
     }
   }, [editor, post]);
+
+  if (id && isPending) {
+    return <UpsertEditorSkeleton />;
+  }
 
   return (
     <div className='flex h-[calc(100vh-82px)] flex-col overflow-hidden md:flex-row'>
