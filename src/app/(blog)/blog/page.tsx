@@ -1,5 +1,7 @@
 import { Icon } from '@iconify/react';
+import { cacheLife } from 'next/cache';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 import { HydrationBoundary } from '~/components/features/hydration-boundary';
 import { Button } from '~/components/ui/button';
@@ -8,7 +10,9 @@ import { PageContainer } from '~/components/ui/page-container';
 import { getPosts } from './[id]/actions';
 import { PostList } from './_components/post-list';
 
-export default function Blogs() {
+export default async function Blogs() {
+  'use cache';
+  cacheLife({ revalidate: 300 });
   return (
     <PageContainer className='mx-auto max-w-2xl pt-12 pb-8'>
       <div className='mb-8 px-4'>
@@ -18,18 +22,20 @@ export default function Blogs() {
           </Button>
         </Link>
       </div>
-      <HydrationBoundary
-        prefetch={[
-          {
-            queryKey: ['post-list'],
-            queryFn() {
-              return getPosts();
+      <Suspense>
+        <HydrationBoundary
+          prefetch={[
+            {
+              queryKey: ['post-list'],
+              queryFn() {
+                return getPosts();
+              },
             },
-          },
-        ]}
-      >
-        <PostList />
-      </HydrationBoundary>
+          ]}
+        >
+          <PostList />
+        </HydrationBoundary>
+      </Suspense>
     </PageContainer>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { Toaster } from 'sonner';
 
 import { QueryClientProvider } from '~/components/provider/query-client-provider';
@@ -19,7 +20,9 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning lang='en'>
       <body className='antialiased'>
-        <QueryClientProvider>{children}</QueryClientProvider>
+        <Suspense>
+          <QueryClientProvider>{children}</QueryClientProvider>
+        </Suspense>
         <Background />
         <Toaster position='top-center' />
       </body>

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import { cacheLife } from 'next/cache';
+import { Suspense } from 'react';
 
 import { Comments } from '~/components/features/comments';
 import { HydrationBoundary } from '~/components/features/hydration-boundary';
@@ -20,31 +22,33 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   } as Metadata;
 }
 
-export const revalidate = 300;
-
 export async function generateStaticParams() {
   const posts = await getPosts();
   return posts.map((post) => ({ id: post.id }));
 }
 
 export default async function Blog({ params }: { params: Promise<{ id: string }> }) {
+  'use cache';
+  cacheLife({ revalidate: 300 });
   const { id } = await params;
   return (
     <PageContainer className='mx-auto max-w-2xl px-4 pt-12'>
-      <HydrationBoundary
-        prefetch={[
-          {
-            queryKey: ['post-detail', id],
-            queryFn() {
-              return getPost(id);
+      <Suspense>
+        <HydrationBoundary
+          prefetch={[
+            {
+              queryKey: ['post-detail', id],
+              queryFn() {
+                return getPost(id);
+              },
             },
-          },
-        ]}
-      >
-        <PostHeader />
-        <PostContent id={id} />
-        <Comments id={id} />
-      </HydrationBoundary>
+          ]}
+        >
+          <PostHeader />
+          <PostContent id={id} />
+          <Comments id={id} />
+        </HydrationBoundary>
+      </Suspense>
     </PageContainer>
   );
 }

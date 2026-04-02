@@ -1,3 +1,4 @@
+import { cacheLife } from 'next/cache';
 import Link from 'next/link';
 
 import { Social } from '~/components/features/social';
@@ -5,9 +6,9 @@ import { Button } from '~/components/ui/button';
 import { PageContainer } from '~/components/ui/page-container';
 import { env } from '~/lib/env';
 
-export const dynamic = 'force-static';
-
-export default function Home() {
+export default async function Home() {
+  'use cache';
+  cacheLife('max');
   return (
     <PageContainer className='home container mx-auto overflow-hidden'>
       <div className='flex min-h-screen w-full flex-col items-center justify-center space-y-8'>
