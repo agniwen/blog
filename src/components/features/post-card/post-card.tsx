@@ -13,10 +13,7 @@ export function PostCard(props: PostCardProps) {
   const { post, className, showMeta = true } = props;
   return (
     <div
-      className={cn(
-        'flex flex-col overflow-hidden rounded-xl border shadow-xs hover:opacity-90',
-        className,
-      )}
+      className={cn('flex flex-col overflow-hidden rounded-xl border hover:opacity-90', className)}
     >
       <div className='w-full'>
         <img

@@ -1,3 +1,4 @@
+'use client';
 import type { InferUserFromClient } from 'better-auth';
 
 import { TimeDisplay } from '~/components/ui/time-display';

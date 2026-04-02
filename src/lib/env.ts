@@ -1,4 +1,4 @@
-import { createEnv } from '@t3-oss/env-core';
+import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod/v4-mini';
 
 export const env = createEnv({
@@ -14,15 +14,25 @@ export const env = createEnv({
     R2_BUCKET_NAME: z.string(),
     CLOUDFLARE_CDN_URL: z.string(),
   },
-  clientPrefix: 'NEXT_PUBLIC_',
   client: {
     NEXT_PUBLIC_AVATAR_URL: z.string(),
     NEXT_PUBLIC_BETTER_AUTH_URL: z.string(),
     NEXT_PUBLIC_UMAMI_SHARE_URL: z.string(),
   },
   runtimeEnv: {
-    ...process.env,
-    ...import.meta.env,
+    DATABASE_URL: process.env.DATABASE_URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+    GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+    R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,
+    R2_ENDPOINT: process.env.R2_ENDPOINT,
+    R2_BUCKET_NAME: process.env.R2_BUCKET_NAME,
+    CLOUDFLARE_CDN_URL: process.env.CLOUDFLARE_CDN_URL,
+    NEXT_PUBLIC_AVATAR_URL: process.env.NEXT_PUBLIC_AVATAR_URL,
+    NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+    NEXT_PUBLIC_UMAMI_SHARE_URL: process.env.NEXT_PUBLIC_UMAMI_SHARE_URL,
   },
   emptyStringAsUndefined: true,
 });

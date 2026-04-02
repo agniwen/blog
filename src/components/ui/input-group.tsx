@@ -54,6 +54,7 @@ function InputGroupAddon({
   return (
     <div
       role='group'
+      // oxlint-disable-next-line jsx_a11y/no-noninteractive-tabindex
       tabIndex={0}
       data-slot='input-group-addon'
       data-align={align}
