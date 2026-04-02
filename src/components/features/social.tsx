@@ -41,7 +41,7 @@ export function Social({ className }: { className?: string }) {
               animate={{ opacity: 1, x: 0 }}
               key={s.url}
             >
-              <Link href={s.url} target='_blank'>
+              <Link href={s.url as never} target='_blank'>
                 <Button size='icon-sm' variant='ghost' rel='noreferrer' className='cursor-default'>
                   {s.icon}
                 </Button>

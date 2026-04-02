@@ -50,7 +50,7 @@ export function AppSidebar() {
                         <SidebarMenuButton
                           isActive={pathname === menu.href}
                           render={
-                            <Link href={menu.href}>
+                            <Link href={menu.href as never}>
                               {menu.icon}
                               {menu.label}
                             </Link>
