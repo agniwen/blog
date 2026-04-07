@@ -16,7 +16,7 @@ export function PostHeader() {
     <>
       <div
         className={cn(
-          'invisible fixed top-0 left-0 z-10 w-full bg-neutral-50 backdrop-blur-md transition-all',
+          'invisible fixed top-0 left-0 z-10 w-full bg-background backdrop-blur-md transition-all',
           inView ? 'invisible opacity-0' : 'visible opacity-100',
         )}
       >

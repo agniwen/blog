@@ -55,11 +55,11 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
+  --background: var(--color-neutral-50);
   --foreground: oklch(0.153 0.006 107.1);
-  --card: oklch(1 0 0);
+  --card: var(--color-neutral-50);
   --card-foreground: oklch(0.153 0.006 107.1);
-  --popover: oklch(1 0 0);
+  --popover: var(--color-neutral-50);
   --popover-foreground: oklch(0.153 0.006 107.1);
   --primary: oklch(0.228 0.013 107.4);
   --primary-foreground: oklch(0.988 0.003 106.5);
@@ -137,5 +137,5 @@
 }
 
 * {
-  @apply selection:bg-primary/20!;
+  @apply selection:bg-accent;
 }

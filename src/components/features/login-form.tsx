@@ -16,9 +16,9 @@ const loginFormSchema = z.object({
   password: z.string().min(8),
 });
 export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
-  function githubSignIn() {
+  function googleSignIn() {
     authClient.signIn.social({
-      provider: 'github',
+      provider: 'google',
       callbackURL: location.href,
     });
   }
@@ -111,9 +111,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         </Field>
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>
-          <Button variant='outline' type='button' onClick={githubSignIn}>
-            <Icon className='mr-1 size-4.5' icon='ri:github-fill' />
-            Login with GitHub
+          <Button variant='outline' type='button' onClick={googleSignIn}>
+            <Icon className='mr-1 size-4.5' icon='logos:google-icon' />
+            Login with Google
           </Button>
         </Field>
       </FieldGroup>
