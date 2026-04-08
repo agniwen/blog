@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Toaster } from 'sonner';
+import { Analytics } from '@vercel/analytics/next';
 
 import { QueryClientProvider } from '~/components/provider/query-client-provider';
 import { Background } from '~/components/ui/background';
@@ -25,6 +26,7 @@ export default function RootLayout({
         </Suspense>
         <Background />
         <Toaster position='top-center' />
+        <Analytics />
       </body>
     </html>
   );
