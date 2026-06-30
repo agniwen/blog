@@ -16,9 +16,11 @@ export function PostList() {
   return (
     <div className='grid grid-cols-1 divide-y divide-border/60 px-4'>
       {data?.map((post) => (
+        // oxlint-disable-next-line jsx-a11y/control-has-associated-label
         <Link
           key={post.id}
           href={`/blog/${post.id}`}
+          prefetch='auto'
           className='block cursor-default hover:bg-accent'
         >
           <div className='space-y-1 px-1 py-3.5'>

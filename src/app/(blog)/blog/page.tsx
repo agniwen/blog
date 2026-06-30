@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 import { HydrationBoundary } from '~/components/features/hydration-boundary';
+import { PostListLoader } from '~/components/features/post-loader';
 import { Button } from '~/components/ui/button';
 import { PageContainer } from '~/components/ui/page-container';
 
@@ -22,7 +23,7 @@ export default async function Blogs() {
           </Button>
         </Link>
       </div>
-      <Suspense>
+      <Suspense fallback={<PostListLoader />}>
         <HydrationBoundary
           prefetch={[
             {
