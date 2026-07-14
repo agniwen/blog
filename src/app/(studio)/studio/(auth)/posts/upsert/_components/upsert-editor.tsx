@@ -41,7 +41,7 @@ function ToolbarSkeletonButton({ className }: { className?: string }) {
   return <Skeleton className={`h-8 min-w-8 rounded-xl ${className ?? ''}`.trim()} />;
 }
 
-function UpsertEditorSkeleton() {
+export function UpsertEditorSkeleton() {
   return (
     <div className='flex h-[calc(100vh-82px)] flex-col overflow-hidden md:flex-row'>
       <div className='editor-form w-full overflow-y-auto border-b border-(--tt-toolbar-border-color) md:order-2 md:w-xs md:border-b-0 md:border-l'>
@@ -338,8 +338,14 @@ export function UpsertEditor(props: { id?: string }) {
 
   useEffect(() => {
     if (post?.data && isInitialLoadRef.current && editor) {
-      editor.commands.setContent(post.data.htmlContent as string);
       isInitialLoadRef.current = false;
+      const htmlContent = post.data.htmlContent as string;
+
+      queueMicrotask(() => {
+        if (!editor.isDestroyed) {
+          editor.commands.setContent(htmlContent, { emitUpdate: false });
+        }
+      });
     }
   }, [editor, post]);
 
