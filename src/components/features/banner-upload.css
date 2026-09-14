@@ -93,7 +93,7 @@
 
   .banner-upload-subtext {
     color: var(--banner-upload-subtext-color);
-    font-weight: 600;
+    font-weight: 500;
     line-height: normal;
     font-size: 0.75rem;
   }

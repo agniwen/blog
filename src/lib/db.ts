@@ -1,14 +1,12 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 
 import { relations } from '~/db/relations';
-import * as schema from '~/db/schema';
 
-let drizzleClient: ReturnType<typeof drizzle<typeof schema, typeof relations>> | null = null;
+let drizzleClient: ReturnType<typeof drizzle<typeof relations>> | null = null;
 
 export function db() {
   if (!drizzleClient) {
     drizzleClient = drizzle(process.env.DATABASE_URL!, {
-      schema,
       relations,
     });
   }

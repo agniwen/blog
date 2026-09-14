@@ -1,4 +1,3 @@
-'use client';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -24,7 +23,7 @@ export function CommentsInput({ id }: CommentsInputProps) {
   const [comment, setComment] = useState('');
   const [isPending, setIsPending] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsPending(true);
     const inputComment = comment;
@@ -44,7 +43,7 @@ export function CommentsInput({ id }: CommentsInputProps) {
       content: inputComment,
     };
     try {
-      await createComment(create);
+      await createComment({ data: create });
       toast.success('评论成功');
       setComment('');
       queryClient.invalidateQueries({ queryKey: ['comments', id] });

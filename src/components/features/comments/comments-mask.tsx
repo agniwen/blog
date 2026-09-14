@@ -1,4 +1,3 @@
-'use client';
 import { Icon } from '@iconify/react';
 import type { PropsWithChildren } from 'react';
 
@@ -39,7 +38,7 @@ export function CommentsMask({ children }: PropsWithChildren) {
               </p>
             </div>
             <div className='p flex items-center justify-center gap-4'>
-              <Button onClick={googleSignIn}>
+              <Button variant='secondary' onClick={googleSignIn}>
                 <Icon className='mr-1 size-4.5' fill='#fff' icon='logos:google-icon' />
                 Google
               </Button>

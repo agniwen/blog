@@ -31,7 +31,11 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
  * @returns boolean indicating if the current platform is Mac
  */
 export function isMac(): boolean {
-  return typeof navigator !== 'undefined' && navigator.platform.toLowerCase().includes('mac');
+  if (typeof navigator === 'undefined') return false;
+  const platform = (navigator as Navigator & { userAgentData?: { platform: string } }).userAgentData
+    ?.platform;
+  // Client Hints are unavailable in Safari/Firefox; use UA only for shortcut labels.
+  return platform ? /mac/i.test(platform) : /Macintosh|Mac OS X/i.test(navigator.userAgent);
 }
 
 /**

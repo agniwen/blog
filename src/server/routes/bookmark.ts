@@ -8,7 +8,7 @@ import { getS3Client } from '~/lib/s3';
 import { factory } from '../factory';
 
 const urlSchema = z.object({
-  url: z.string().url('Invalid URL'),
+  url: z.url('Invalid URL'),
 });
 
 interface OGData {

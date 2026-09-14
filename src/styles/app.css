@@ -1,0 +1,166 @@
+@import 'tailwindcss';
+@import './variables.css';
+@import './keyframe-animations.css';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: 'MiSans', 'PingFang SC', sans-serif;
+  --font-mono: 'MiSans', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --font-heading: var(--font-sans);
+}
+
+:root {
+  --background: #fefefb;
+  --foreground: #24231f;
+  --card: #f9f8f5;
+  --card-foreground: #24231f;
+  --popover: #fefefb;
+  --popover-foreground: #24231f;
+  --primary: #c56473;
+  --primary-foreground: #141312;
+  --secondary: #f0efeb;
+  --secondary-foreground: #24231f;
+  --muted: #f9f8f5;
+  --muted-foreground: #5c5a55;
+  --accent: #e3e1db;
+  --accent-foreground: #24231f;
+  --content-accent: #c56473;
+  --content-link: #a6495b;
+  --destructive: #a64953;
+  --border: rgb(24 24 27 / 10%);
+  --input: rgb(24 24 27 / 10%);
+  --ring: #c56473;
+  --chart-1: #c56473;
+  --chart-2: #3d6896;
+  --chart-3: #5e9f7e;
+  --chart-4: #a87a3d;
+  --chart-5: #a64953;
+  --radius: 8px;
+  --sidebar: #f9f8f5;
+  --sidebar-foreground: #24231f;
+  --sidebar-primary: #c56473;
+  --sidebar-primary-foreground: #141312;
+  --sidebar-accent: #f0efeb;
+  --sidebar-accent-foreground: #24231f;
+  --sidebar-border: rgb(24 24 27 / 10%);
+  --sidebar-ring: #c56473;
+}
+
+.dark {
+  --background: #1c1c1e;
+  --foreground: #e5e5e5;
+  --card: #262626;
+  --card-foreground: #e5e5e5;
+  --popover: #262626;
+  --popover-foreground: #e5e5e5;
+  --primary: #f596aa;
+  --primary-foreground: #1c1c1e;
+  --secondary: #262626;
+  --secondary-foreground: #e5e5e5;
+  --muted: #262626;
+  --muted-foreground: #a3a3a3;
+  --accent: #404040;
+  --accent-foreground: #e5e5e5;
+  --content-accent: #f596aa;
+  --content-link: #f596aa;
+  --destructive: #f596aa;
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 10%);
+  --ring: #f596aa;
+  --sidebar: #262626;
+  --sidebar-foreground: #e5e5e5;
+  --sidebar-primary: #f596aa;
+  --sidebar-primary-foreground: #1c1c1e;
+  --sidebar-accent: #404040;
+  --sidebar-accent-foreground: #e5e5e5;
+  --sidebar-border: rgb(255 255 255 / 10%);
+  --sidebar-ring: #f596aa;
+}
+
+@theme {
+  /* MiSans CDN uses its original numeric weights. */
+  --font-weight-normal: 330;
+  --font-weight-medium: 380;
+  --font-weight-semibold: 500;
+  --font-weight-bold: 500;
+  --font-weight-extrabold: 500;
+  --font-weight-black: 500;
+  --shadow-2xs: 0 1px 2px rgb(24 24 27 / 3%);
+  --shadow-xs: 0 1px 3px rgb(24 24 27 / 4%);
+  --shadow-sm: 0 2px 6px rgb(24 24 27 / 5%);
+  --shadow-md: 0 4px 12px rgb(24 24 27 / 6%);
+  --shadow-lg: 0 8px 24px rgb(24 24 27 / 7%);
+  --shadow-xl: 0 12px 32px rgb(24 24 27 / 8%);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background font-normal text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  b,
+  strong {
+    font-weight: 500;
+  }
+}
+
+* {
+  @apply selection:bg-accent;
+}
+
+/* Match the warm studio paper without changing the studio surfaces. */
+.blog-surface {
+  --background: var(--sidebar);
+  background-color: var(--background);
+}
+/* Stored article emphasis keeps its meaning without heavy visual weight. */
+.tiptap.ProseMirror :is(b, strong) {
+  font-weight: 500;
+}

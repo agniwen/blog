@@ -1,4 +1,3 @@
-'use client';
 import { m } from 'motion/react';
 import type { PropsWithChildren } from 'react';
 

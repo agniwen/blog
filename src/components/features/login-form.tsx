@@ -1,7 +1,6 @@
-'use client';
 import { Icon } from '@iconify/react';
 import { useForm } from '@tanstack/react-form';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
@@ -37,7 +36,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         password: value.password,
       });
       if (res.data?.user) {
-        router.push('/studio');
+        await router.invalidate();
+        await router.navigate({ to: '/studio' });
       } else {
         toast('login failed');
       }
@@ -56,7 +56,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
     >
       <FieldGroup>
         <div className='flex flex-col items-center gap-1 text-center'>
-          <h1 className='text-2xl font-bold'>Login to your account</h1>
+          <h1 className='text-2xl font-medium'>Login to your account</h1>
           <p className='text-sm text-balance text-muted-foreground'>
             Enter your email below to login to your account
           </p>
@@ -111,7 +111,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         </Field>
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>
-          <Button variant='outline' type='button' onClick={googleSignIn}>
+          <Button variant='secondary' type='button' onClick={googleSignIn}>
             <Icon className='mr-1 size-4.5' icon='logos:google-icon' />
             Login with Google
           </Button>

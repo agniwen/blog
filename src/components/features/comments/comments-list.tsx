@@ -1,4 +1,3 @@
-'use client';
 import type { InferUserFromClient } from 'better-auth';
 
 import { TimeDisplay } from '~/components/ui/time-display';
@@ -56,19 +55,19 @@ function CommentsListItem({
         })}
       >
         <div className='space-x-2 pb-1 pl-1'>
-          <span className='text-sm font-bold'>{comment.user?.name}</span>
-          <span className='text-[10px] text-gray-500'>
+          <span className='text-sm font-medium'>{comment.user?.name}</span>
+          <span className='text-[10px] text-muted-foreground'>
             #{index + 1}{' '}
             <TimeDisplay value={comment.createdAt} options={{ format: 'YYYY-MM-DD HH:mm:ss' }} />
           </span>
           <TimeDisplay
-            className='text-[10px] text-gray-500'
+            className='text-[10px] text-muted-foreground'
             value={comment.createdAt}
             options={{ relative: true }}
           />
         </div>
         <p
-          className={cn('inline-block bg-gray-100 p-2 text-left text-sm', [
+          className={cn('inline-block bg-secondary p-2 text-left text-sm', [
             isSelfComment ? 'rounded-t-xl rounded-bl-xl' : 'rounded-t-xl rounded-br-xl',
           ])}
         >

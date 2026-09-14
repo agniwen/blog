@@ -1,21 +1,10 @@
 :root {
-  --bookmark-border: var(--tt-gray-light-a-300);
-  --bookmark-bg: var(--tt-background-color);
-  --bookmark-hover-bg: var(--tt-gray-light-a-100);
-  --bookmark-title-color: var(--tt-gray-light-a-900);
-  --bookmark-description-color: var(--tt-gray-light-a-600);
-  --bookmark-url-color: var(--tt-gray-light-a-500);
-  --bookmark-site-color: var(--tt-gray-light-a-600);
-}
-
-.dark {
-  --bookmark-border: var(--tt-gray-dark-a-100);
-  --bookmark-bg: var(--tt-background-color);
-  --bookmark-hover-bg: var(--tt-gray-dark-a-100);
-  --bookmark-title-color: var(--tt-gray-dark-a-900);
-  --bookmark-description-color: var(--tt-gray-dark-a-600);
-  --bookmark-url-color: var(--tt-gray-dark-a-500);
-  --bookmark-site-color: var(--tt-gray-dark-a-600);
+  --bookmark-bg: var(--background);
+  --bookmark-hover-bg: color-mix(in srgb, var(--accent) 30%, var(--background));
+  --bookmark-title-color: var(--foreground);
+  --bookmark-description-color: var(--muted-foreground);
+  --bookmark-url-color: var(--muted-foreground);
+  --bookmark-site-color: var(--muted-foreground);
 }
 
 .bookmark-node {
@@ -25,8 +14,9 @@
     display: flex;
     border: 1px solid var(--border);
     overflow: hidden;
+    border-radius: var(--radius);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease;
     background-color: var(--bookmark-bg);
 
     &:hover {
@@ -69,7 +59,7 @@
 
   .bookmark-title {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--bookmark-title-color);
     overflow: hidden;
     text-overflow: ellipsis;

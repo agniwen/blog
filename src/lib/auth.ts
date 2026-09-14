@@ -1,12 +1,14 @@
+import { drizzleAdapter } from '@better-auth/drizzle-adapter/relations-v2';
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin } from 'better-auth/plugins';
+
+import * as schema from '~/db/schema';
 
 import { db } from './db';
 import { env } from './env';
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db(), { provider: 'pg' }),
+  database: drizzleAdapter(db(), { provider: 'pg', schema }),
   plugins: [admin()],
   emailAndPassword: {
     enabled: true,

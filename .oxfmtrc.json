@@ -8,12 +8,26 @@
   "trailingComma": "all",
   "quoteProps": "as-needed",
   "sortImports": {
-    "internalPattern": ["~/"],
+    "internalPattern": [
+      "~/"
+    ],
     "sortSideEffects": false
   },
   "sortTailwindcss": {
-    "functions": ["cn", "cva", "clsx"],
-    "stylesheet": "./src/app/globals.css"
+    "functions": [
+      "cn",
+      "cva",
+      "clsx"
+    ],
+    "stylesheet": "./src/styles/app.css"
   },
-  "ignorePatterns": ["dist/**", ".output/**", ".next/**", "src/generated/**"]
+  "ignorePatterns": [
+    "dist/**",
+    ".output/**",
+    ".next/**",
+    "src/generated/**",
+    "src/routeTree.gen.ts",
+    ".nitro/**",
+    ".tanstack/**"
+  ]
 }

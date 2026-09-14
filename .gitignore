@@ -42,3 +42,7 @@ next-env.d.ts
 .claude
 .output
 /dist
+
+# TanStack Start / Nitro
+.tanstack/
+.nitro/

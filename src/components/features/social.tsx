@@ -1,7 +1,5 @@
-'use client';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, m } from 'motion/react';
-import Link from 'next/link';
 
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
@@ -41,11 +39,11 @@ export function Social({ className }: { className?: string }) {
               animate={{ opacity: 1, x: 0 }}
               key={s.url}
             >
-              <Link href={s.url as never} target='_blank'>
+              <a href={s.url} target='_blank' rel='noreferrer' aria-label={s.name}>
                 <Button size='icon-sm' variant='ghost' rel='noreferrer' className='cursor-default'>
                   {s.icon}
                 </Button>
-              </Link>
+              </a>
             </m.div>
           );
         })}

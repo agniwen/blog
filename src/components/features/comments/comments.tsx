@@ -1,3 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
+
 import { getComments } from './actions';
 import { CommentsInput } from './comments-input';
 import { CommentsList } from './comments-list';
@@ -7,9 +9,12 @@ interface CommentsProps {
   id: string;
 }
 
-export async function Comments(props: CommentsProps) {
+export function Comments(props: CommentsProps) {
   const { id } = props;
-  const data = await getComments(id);
+  const { data } = useQuery({
+    queryKey: ['comments', id],
+    queryFn: () => getComments({ data: id }),
+  });
 
   return (
     <div className='comment w-full pb-24'>

@@ -173,26 +173,26 @@
   **************************************************/
 
   /* Global colors - Light mode */
-  --tt-bg-color: var(--color-neutral-50);
+  --tt-bg-color: var(--background);
   --tt-border-color: var(--tt-gray-light-a-200);
   --tt-border-color-tint: var(--tt-gray-light-a-100);
   --tt-sidebar-bg-color: var(--tt-gray-light-100);
   --tt-scrollbar-color: var(--tt-gray-light-a-200);
   --tt-cursor-color: var(--primary);
-  --tt-selection-color: rgba(18, 88, 173, 0.2);
+  --tt-selection-color: color-mix(in srgb, var(--content-accent) 20%, transparent);
   --tt-card-bg-color: var(--color-neutral-50);
   --tt-card-border-color: var(--tt-gray-light-a-100);
 }
 
 /* Global colors - Dark mode */
 .dark {
-  --tt-bg-color: var(--black);
+  --tt-bg-color: var(--background);
   --tt-border-color: var(--tt-gray-dark-a-200);
   --tt-border-color-tint: var(--tt-gray-dark-a-100);
   --tt-sidebar-bg-color: var(--tt-gray-dark-100);
   --tt-scrollbar-color: var(--tt-gray-dark-a-200);
   --tt-cursor-color: var(--primary);
-  --tt-selection-color: rgba(18, 88, 173, 0.2);
+  --tt-selection-color: color-mix(in srgb, var(--content-accent) 20%, transparent);
   --tt-card-bg-color: var(--tt-gray-dark-50);
   --tt-card-border-color: var(--tt-gray-dark-a-50);
 

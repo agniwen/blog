@@ -169,7 +169,7 @@ export function Editor({ editor }: EditorProps) {
   }, [isMobile, mobileView]);
 
   return (
-    <div className='editor relative'>
+    <div className='editor relative min-w-0'>
       <EditorContext value={{ editor }}>
         <Toolbar
           ref={toolbarRef}

@@ -20,7 +20,8 @@
 
   /* focus-visible */
   &:focus-visible {
-    outline: none;
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 
   &[data-highlighted='true'],
@@ -236,7 +237,7 @@
     color: var(--tt-button-active-text-color);
 
     .tiptap-button-icon {
-      color: var(--primary);
+      color: var(--tt-button-active-icon-color);
     }
 
     .tiptap-button-icon-sub {
