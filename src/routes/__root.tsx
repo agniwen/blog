@@ -1,10 +1,10 @@
 import type { QueryClient } from '@tanstack/react-query';
 import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
-import { Analytics } from '@vercel/analytics/react';
-import { Toaster } from 'sonner';
 
 import NotFound from '~/components/features/not-found';
 import { Background } from '~/components/ui/background';
+import { Button } from '~/components/ui/button';
+import { ToastProvider } from '~/components/ui/toast';
 
 import '~/styles/app.css';
 
@@ -30,7 +30,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ({ reset }) => (
     <main className='p-8'>
       <h1>页面加载失败</h1>
-      <button onClick={reset}>重试</button>
+      <Button onClick={reset}>重试</Button>
     </main>
   ),
   component: () => <Outlet />,
@@ -39,11 +39,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       <head>
         <HeadContent />
       </head>
-      <body className='antialiased'>
-        {children}
+      <body className='relative antialiased'>
+        <ToastProvider position='top-center'>
+          <div className='relative isolate min-h-svh'>{children}</div>
+        </ToastProvider>
         <Background />
-        <Toaster position='top-center' />
-        <Analytics />
         <Scripts />
       </body>
     </html>

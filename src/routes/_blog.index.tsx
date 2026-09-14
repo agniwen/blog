@@ -26,11 +26,9 @@ function Home() {
             </p>
           </div>
           <Social />
-          <Link to='/blog'>
-            <Button variant='secondary' className='px-8'>
-              Blog
-            </Button>
-          </Link>
+          <Button render={<Link to='/blog' />} variant='secondary' className='px-4'>
+            Blog
+          </Button>
         </div>
       </div>
     </PageContainer>

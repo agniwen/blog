@@ -11,11 +11,9 @@ export default function NotFound() {
         <p className='text-sm text-muted-foreground'>
           The page you requested does not exist or has moved.
         </p>
-        <Link to='/'>
-          <Button variant='secondary' className='rounded-full px-6'>
-            Back home
-          </Button>
-        </Link>
+        <Button render={<Link to='/' />} variant='secondary' className='px-6'>
+          Back home
+        </Button>
       </div>
     </div>
   );

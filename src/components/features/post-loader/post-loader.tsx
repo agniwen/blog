@@ -2,7 +2,7 @@ import { Skeleton } from '~/components/ui/skeleton';
 
 export function PostListLoader() {
   return (
-    <div className='grid grid-cols-1 divide-y divide-border/60 px-4'>
+    <div aria-hidden='true' className='grid grid-cols-1 divide-y divide-border/60 px-4'>
       {Array.from({ length: 5 }).map((_, index) => (
         <div key={index} className='px-1 py-3.5'>
           <div className='space-y-3'>
@@ -39,9 +39,9 @@ export function PostCardLoader() {
 export function PostContentLoader() {
   return (
     <div className='post-content' aria-hidden='true'>
-      <Skeleton className='mb-8 aspect-16/10 w-full rounded-3xl' />
+      <Skeleton className='mb-8 aspect-16/10 w-full rounded-xl' />
       <div className='mt-12 mb-8 space-y-6'>
-        <Skeleton className='h-10 w-4/5 rounded-xl' />
+        <Skeleton className='h-10 w-4/5 rounded-md' />
         <div className='flex items-center gap-8'>
           <Skeleton className='h-4 w-24 rounded-md' />
           <Skeleton className='h-4 w-28 rounded-md' />

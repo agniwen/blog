@@ -7,28 +7,30 @@ import * as schema from '~/db/schema';
 import { db } from './db';
 import { env } from './env';
 
-export const auth = betterAuth({
-  database: drizzleAdapter(db(), { provider: 'pg', schema }),
-  plugins: [admin()],
-  emailAndPassword: {
-    enabled: true,
-  },
-  session: {
-    modelName: 'sessions',
-  },
-  account: {
-    modelName: 'accounts',
-  },
-  verification: {
-    modelName: 'verifications',
-  },
-  user: {
-    modelName: 'users',
-  },
-  socialProviders: {
-    google: {
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
+export function getAuth() {
+  return betterAuth({
+    database: drizzleAdapter(db(), { provider: 'pg', schema }),
+    plugins: [admin()],
+    emailAndPassword: {
+      enabled: true,
     },
-  },
-});
+    session: {
+      modelName: 'sessions',
+    },
+    account: {
+      modelName: 'accounts',
+    },
+    verification: {
+      modelName: 'verifications',
+    },
+    user: {
+      modelName: 'users',
+    },
+    socialProviders: {
+      google: {
+        clientId: env.GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+      },
+    },
+  });
+}

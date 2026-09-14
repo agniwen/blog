@@ -46,3 +46,9 @@ next-env.d.ts
 # TanStack Start / Nitro
 .tanstack/
 .nitro/
+
+# Cloudflare local state and secrets
+.wrangler/
+.dev.vars
+.dev.vars.*
+worker-startup.cpuprofile

@@ -3,7 +3,7 @@ import { getRequestHeaders } from '@tanstack/react-start/server';
 import { z } from 'zod';
 
 import { comments } from '~/db/schema';
-import { auth } from '~/lib/auth';
+import { getAuth } from '~/lib/auth';
 import { db } from '~/lib/db';
 
 export const getComments = createServerFn({ method: 'GET' })
@@ -23,7 +23,7 @@ export const getComments = createServerFn({ method: 'GET' })
 export const createComment = createServerFn({ method: 'POST' })
   .validator(z.object({ postId: z.string().min(1), content: z.string().trim().min(1).max(10000) }))
   .handler(async ({ data }) => {
-    const session = await auth.api.getSession({ headers: getRequestHeaders() });
+    const session = await getAuth().api.getSession({ headers: getRequestHeaders() });
     if (!session) throw new Error('Unauthorized');
     const post = await db().query.posts.findFirst({
       where: { id: data.postId, published: true },

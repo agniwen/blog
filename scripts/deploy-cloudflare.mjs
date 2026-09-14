@@ -1,0 +1,20 @@
+import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+
+import { parse } from 'jsonc-parser';
+
+const errors = [];
+const config = parse(readFileSync('wrangler.jsonc', 'utf8'), errors, { allowTrailingComma: true });
+if (errors.length) throw new Error('Invalid wrangler.jsonc configuration.');
+const binding = config.hyperdrive?.find((item) => item.binding === 'HYPERDRIVE');
+if (!binding?.id || /^0+$/.test(binding.id)) {
+  throw new Error(
+    'Configure the real HYPERDRIVE binding before deployment; see docs/cloudflare.md.',
+  );
+}
+
+for (const args of [['build:cloudflare'], ['exec', 'wrangler', 'deploy']]) {
+  const result = spawnSync('pnpm', args, { stdio: 'inherit' });
+  if (result.error) throw result.error;
+  if (result.status !== 0) process.exit(result.status ?? 1);
+}

@@ -25,7 +25,9 @@
     "src/generated/**",
     "src/routeTree.gen.ts",
     ".nitro/**",
-    ".tanstack/**"
+    ".tanstack/**",
+    "src/worker-env.d.ts",
+    ".wrangler/**"
   ],
   "settings": {
     "react": {

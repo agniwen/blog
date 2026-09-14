@@ -6,22 +6,29 @@ import { isNil } from 'lodash-es';
 import { Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { toast } from 'sonner';
 
 import { BannerUpload } from '~/components/features/banner-upload';
 import { Editor } from '~/components/features/editor';
-import { Toolbar, ToolbarGroup, ToolbarSeparator } from '~/components/tiptap/ui-primitive/toolbar';
+import { EditorSkeleton } from '~/components/features/page-skeletons';
 import { Button } from '~/components/ui/button';
-import { Field, FieldError, FieldGroup, FieldLabel, FieldSet } from '~/components/ui/field';
+import { Field, FieldError, FieldLabel } from '~/components/ui/field';
+import { Fieldset } from '~/components/ui/fieldset';
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
   InputGroupTextarea,
 } from '~/components/ui/input-group';
-import { NativeSelect, NativeSelectOption } from '~/components/ui/native-select';
-import { Skeleton } from '~/components/ui/skeleton';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectPopup,
+  SelectItem,
+} from '~/components/ui/select';
 import { Spinner } from '~/components/ui/spinner';
+import { toastManager } from '~/components/ui/toast';
+import { useDelayedPending } from '~/hooks/use-delayed-pending';
 import { useEditor } from '~/hooks/use-editor';
 import { hono } from '~/lib/hono';
 import { getAdminPost } from '~/server/functions';
@@ -35,145 +42,6 @@ interface PostFormData {
   published?: boolean;
   htmlContent?: string;
   jsonContent?: any;
-}
-
-function ToolbarSkeletonButton({ className }: { className?: string }) {
-  return <Skeleton className={`h-8 min-w-8 rounded-xl ${className ?? ''}`.trim()} />;
-}
-
-export function UpsertEditorSkeleton() {
-  return (
-    <div className='flex h-full min-h-0 min-w-0 flex-col overflow-x-hidden overflow-y-auto overscroll-contain md:flex-row md:overflow-hidden'>
-      <div className='editor-form min-h-0 w-full shrink-0 border-b border-(--tt-toolbar-border-color) md:order-2 md:w-xs md:overflow-y-auto md:overscroll-contain md:border-b-0 md:border-l'>
-        <div className='bg-background p-4 md:sticky md:top-0'>
-          <div className='flex flex-col gap-7'>
-            <div className='flex flex-col gap-3'>
-              <Skeleton className='h-4 w-12 rounded-md' />
-              <div className='relative overflow-hidden rounded-md border border-input/60'>
-                <Skeleton className='h-48 w-full rounded-none' />
-                <Skeleton className='absolute top-2 right-2 size-7 rounded-full' />
-              </div>
-            </div>
-
-            <div className='flex flex-col gap-3'>
-              <Skeleton className='h-4 w-12 rounded-md' />
-              <Skeleton className='h-10 w-full rounded-xl' />
-            </div>
-
-            <div className='flex flex-col gap-3'>
-              <Skeleton className='h-4 w-12 rounded-md' />
-              <Skeleton className='h-10 w-full rounded-xl' />
-            </div>
-
-            <div className='flex flex-col gap-3'>
-              <Skeleton className='h-4 w-24 rounded-md' />
-              <Skeleton className='h-24 w-full rounded-xl' />
-            </div>
-
-            <div className='flex flex-col gap-3'>
-              <Skeleton className='h-4 w-16 rounded-md' />
-              <div className='overflow-hidden rounded-3xl border border-input/60 bg-input/30'>
-                <div className='flex flex-col gap-3 p-3 pb-2'>
-                  <Skeleton className='h-4 w-2/3 rounded-md' />
-                  <Skeleton className='h-4 w-full rounded-md' />
-                  <Skeleton className='h-4 w-5/6 rounded-md' />
-                </div>
-                <div className='flex justify-end px-3 pb-3'>
-                  <Skeleton className='h-8 w-28 rounded-full' />
-                </div>
-              </div>
-            </div>
-
-            <div className='flex flex-col gap-3'>
-              <Skeleton className='h-4 w-20 rounded-md' />
-              <Skeleton className='h-9 w-full rounded-xl' />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className='relative min-h-0 min-w-0 shrink-0 md:order-1 md:flex-1 md:overflow-y-auto md:overscroll-contain'>
-        <div className='editor relative'>
-          <Toolbar>
-            <div className='flex-1' />
-
-            <ToolbarGroup>
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-            </ToolbarGroup>
-
-            <ToolbarSeparator />
-
-            <ToolbarGroup>
-              <ToolbarSkeletonButton className='w-24' />
-              <ToolbarSkeletonButton className='w-28' />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-            </ToolbarGroup>
-
-            <ToolbarSeparator />
-
-            <ToolbarGroup>
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-            </ToolbarGroup>
-
-            <ToolbarSeparator />
-
-            <ToolbarGroup>
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-            </ToolbarGroup>
-
-            <ToolbarSeparator />
-
-            <ToolbarGroup>
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-            </ToolbarGroup>
-
-            <ToolbarSeparator />
-
-            <ToolbarGroup>
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton />
-              <ToolbarSkeletonButton className='w-14' />
-            </ToolbarGroup>
-
-            <div className='flex-1' />
-          </Toolbar>
-
-          <div className='mx-auto flex h-full w-full max-w-[648px] flex-col px-6 py-12 pb-[30vh] md:px-12'>
-            <div className='flex flex-1 flex-col gap-4'>
-              <Skeleton className='h-11 w-3/4 rounded-2xl' />
-              <Skeleton className='h-5 w-full rounded-lg' />
-              <Skeleton className='h-5 w-11/12 rounded-lg' />
-              <Skeleton className='h-5 w-10/12 rounded-lg' />
-              <div className='h-3' />
-              <Skeleton className='h-32 w-full rounded-3xl' />
-              <div className='h-2' />
-              <Skeleton className='h-5 w-full rounded-lg' />
-              <Skeleton className='h-5 w-full rounded-lg' />
-              <Skeleton className='h-5 w-9/12 rounded-lg' />
-              <div className='h-3' />
-              <Skeleton className='h-8 w-40 rounded-xl' />
-              <Skeleton className='h-5 w-full rounded-lg' />
-              <Skeleton className='h-5 w-10/12 rounded-lg' />
-              <Skeleton className='h-5 w-full rounded-lg' />
-              <Skeleton className='h-5 w-8/12 rounded-lg' />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export function UpsertEditor(props: { id?: string }) {
@@ -190,6 +58,8 @@ export function UpsertEditor(props: { id?: string }) {
     queryKey: ['admin-post-detail', id],
     queryFn: () => getAdminPost({ data: id! }),
   });
+
+  const showSkeleton = useDelayedPending(Boolean(id) && isPending);
 
   const form = useForm({
     defaultValues: {
@@ -226,12 +96,12 @@ export function UpsertEditor(props: { id?: string }) {
         }),
       );
       if (resp.data.id) {
-        toast.success('文章创建成功');
+        toastManager.add({ type: 'success', title: '文章创建成功' });
 
         router.navigate({ to: '/studio/posts/upsert/$id', params: { id: resp.data.id } });
       }
     } catch (err) {
-      toast.error('文章创建失败');
+      toastManager.add({ type: 'error', title: '文章创建失败' });
       throw err;
     }
   }
@@ -247,11 +117,11 @@ export function UpsertEditor(props: { id?: string }) {
         }),
       );
       if (resp.data.id) {
-        toast.success('文章更新成功');
+        toastManager.add({ type: 'success', title: '文章更新成功' });
         queryClient.invalidateQueries({ queryKey: ['admin-post-detail', id] });
       }
     } catch (err) {
-      toast.error('文章更新失败');
+      toastManager.add({ type: 'error', title: '文章更新失败' });
       throw err;
     }
   }
@@ -279,7 +149,7 @@ export function UpsertEditor(props: { id?: string }) {
       // 不刷新数据，避免覆盖用户正在编辑的内容
     } catch (err) {
       console.error('自动保存失败:', err);
-      toast.error('自动保存失败');
+      toastManager.add({ type: 'error', title: '自动保存失败' });
     } finally {
       setIsSaving(false);
     }
@@ -343,8 +213,8 @@ export function UpsertEditor(props: { id?: string }) {
     }
   }, [editor, post]);
 
-  if (id && isPending) {
-    return <UpsertEditorSkeleton />;
+  if ((id && isPending) || showSkeleton) {
+    return showSkeleton ? <EditorSkeleton /> : null;
   }
 
   return (
@@ -358,8 +228,8 @@ export function UpsertEditor(props: { id?: string }) {
               void form.handleSubmit();
             }}
           >
-            <FieldSet>
-              <FieldGroup>
+            <Fieldset>
+              <div className='flex flex-col gap-6'>
                 <form.Field name='banner'>
                   {(field) => {
                     return (
@@ -373,7 +243,11 @@ export function UpsertEditor(props: { id?: string }) {
                           }}
                           onError={(error) => console.error('Banner upload error:', error)}
                         />
-                        <FieldError errors={field.state.meta.errors} />
+                        {field.state.meta.errors.length > 0 && (
+                          <FieldError match>
+                            {field.state.meta.errors.filter(Boolean).map(String).join(', ')}
+                          </FieldError>
+                        )}
                       </Field>
                     );
                   }}
@@ -382,7 +256,7 @@ export function UpsertEditor(props: { id?: string }) {
                   {(field) => {
                     const inValid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field data-invalid={inValid}>
+                      <Field invalid={inValid}>
                         <FieldLabel>Title</FieldLabel>
                         <InputGroup>
                           <InputGroupInput
@@ -394,7 +268,11 @@ export function UpsertEditor(props: { id?: string }) {
                             }}
                           />
                         </InputGroup>
-                        <FieldError errors={field.state.meta.errors} />
+                        {field.state.meta.errors.length > 0 && (
+                          <FieldError match>
+                            {field.state.meta.errors.filter(Boolean).map(String).join(', ')}
+                          </FieldError>
+                        )}
                       </Field>
                     );
                   }}
@@ -403,7 +281,7 @@ export function UpsertEditor(props: { id?: string }) {
                   {(field) => {
                     const isValid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field data-invalid={isValid}>
+                      <Field invalid={isValid}>
                         <FieldLabel>Slug</FieldLabel>
                         <InputGroup>
                           <InputGroupInput
@@ -415,7 +293,11 @@ export function UpsertEditor(props: { id?: string }) {
                             }}
                           />
                         </InputGroup>
-                        <FieldError errors={field.state.meta.errors} />
+                        {field.state.meta.errors.length > 0 && (
+                          <FieldError match>
+                            {field.state.meta.errors.filter(Boolean).map(String).join(', ')}
+                          </FieldError>
+                        )}
                       </Field>
                     );
                   }}
@@ -424,7 +306,7 @@ export function UpsertEditor(props: { id?: string }) {
                   {(field) => {
                     const isValid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field data-invalid={isValid}>
+                      <Field invalid={isValid}>
                         <FieldLabel>Description</FieldLabel>
                         <InputGroup>
                           <InputGroupTextarea
@@ -436,7 +318,11 @@ export function UpsertEditor(props: { id?: string }) {
                             }}
                           />
                         </InputGroup>
-                        <FieldError errors={field.state.meta.errors} />
+                        {field.state.meta.errors.length > 0 && (
+                          <FieldError match>
+                            {field.state.meta.errors.filter(Boolean).map(String).join(', ')}
+                          </FieldError>
+                        )}
                       </Field>
                     );
                   }}
@@ -445,7 +331,7 @@ export function UpsertEditor(props: { id?: string }) {
                   {(field) => {
                     const isValid = field.state.meta.isTouched && !field.state.meta.isValid;
                     return (
-                      <Field data-invalid={isValid}>
+                      <Field invalid={isValid}>
                         <FieldLabel>Summary</FieldLabel>
                         <InputGroup>
                           <InputGroupTextarea
@@ -458,13 +344,17 @@ export function UpsertEditor(props: { id?: string }) {
                           />
                           <InputGroupAddon align='block-end'>
                             <div className='flex w-full justify-end'>
-                              <Button variant='ghost' size='sm' className='rounded-full'>
+                              <Button variant='ghost' size='sm' className='rounded-md'>
                                 <Sparkles className='size-4' /> AI Generate
                               </Button>
                             </div>
                           </InputGroupAddon>
                         </InputGroup>
-                        <FieldError errors={field.state.meta.errors} />
+                        {field.state.meta.errors.length > 0 && (
+                          <FieldError match>
+                            {field.state.meta.errors.filter(Boolean).map(String).join(', ')}
+                          </FieldError>
+                        )}
                       </Field>
                     );
                   }}
@@ -474,23 +364,36 @@ export function UpsertEditor(props: { id?: string }) {
                     return (
                       <Field>
                         <FieldLabel>Published</FieldLabel>
-                        <NativeSelect
+                        <Select
+                          items={[
+                            { value: 'false', label: 'Draft' },
+                            { value: 'true', label: 'Published' },
+                          ]}
                           value={field.state.value ? 'true' : 'false'}
-                          onChange={(event) => {
-                            field.handleChange(event.target.value === 'true');
+                          onValueChange={(value) => {
+                            field.handleChange(value === 'true');
                             triggerAutoSave();
                           }}
                         >
-                          <NativeSelectOption value='false'>Draft</NativeSelectOption>
-                          <NativeSelectOption value='true'>Published</NativeSelectOption>
-                        </NativeSelect>
-                        <FieldError errors={field.state.meta.errors} />
+                          <SelectTrigger className='w-full'>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectPopup>
+                            <SelectItem value='false'>Draft</SelectItem>
+                            <SelectItem value='true'>Published</SelectItem>
+                          </SelectPopup>
+                        </Select>
+                        {field.state.meta.errors.length > 0 && (
+                          <FieldError match>
+                            {field.state.meta.errors.filter(Boolean).map(String).join(', ')}
+                          </FieldError>
+                        )}
                       </Field>
                     );
                   }}
                 </form.Field>
-              </FieldGroup>
-            </FieldSet>
+              </div>
+            </Fieldset>
           </form>
         </div>
       </div>

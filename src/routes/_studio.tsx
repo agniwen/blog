@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet, redirect, useLocation } from '@tanstack/react-router';
 import type { PropsWithChildren } from 'react';
 
+import { StudioSkeleton } from '~/components/features/page-skeletons';
 import { AppSidebar } from '~/components/features/studio/app-sidebar';
 import { AppThemeToggle } from '~/components/features/studio/app-theme-toggle';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
@@ -12,6 +13,7 @@ export const Route = createFileRoute('/_studio')({
       throw redirect({ to: '/', headers: { 'Cache-Control': 'private, no-store' } });
   },
   headers: () => ({ 'Cache-Control': 'private, no-store' }),
+  pendingComponent: StudioSkeleton,
   component: Studio,
 });
 function Studio() {

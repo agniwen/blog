@@ -27,7 +27,7 @@ pnpm dev
 | `_blog.blog.$id.tsx`                    | `/blog/:id`                           |
 | `studio.login.tsx`                      | `/studio/login`，独立于后台布局       |
 | `_studio.tsx`                           | 管理员无路径布局与服务端会话检查      |
-| `_studio.studio.index.tsx`              | `/studio` → `/studio/posts`            |
+| `_studio.studio.index.tsx`              | `/studio` → `/studio/posts`           |
 | `_studio.studio.posts.index.tsx`        | `/studio/posts`                       |
 | `_studio.studio.posts.upsert.index.tsx` | 跳转 `/studio/posts`                  |
 | `_studio.studio.posts.upsert.$id.tsx`   | `/studio/posts/upsert/:id`            |
@@ -55,6 +55,8 @@ pnpm test
 还需在预发布环境用实际管理员账户确认：登录/退出、文章创建与编辑、自动保存、评论提交后刷新、R2 上传和 OAuth 回调。未认证的自动检查不能替代这些流程。
 
 ## 部署
+
+- Cloudflare Workers：使用 `pnpm build:cloudflare` / `pnpm deploy`，保留默认 Node 开发方式。首次配置、Hyperdrive、Secrets、域名和验证步骤见 [Cloudflare 部署说明](docs/cloudflare.md)。
 
 - Node：`pnpm build` 后运行 `pnpm start`，支持 `PORT`；生产入口为 `.output/server/index.mjs`，部署整个 `.output`。运行时注入服务端环境变量；公开变量在构建时注入。
 - Vercel：`vercel.json` 使用 `tanstack-start`，Nitro 自动选择 Vercel 产物。发布前验证预览环境，确认原有域名、Cookie 密钥和 OAuth 配置保持一致。
@@ -85,7 +87,7 @@ pnpm test
 
 `@iconify/react` 属于运行时依赖，shadcn CLI 属于开发依赖。Drizzle ORM / Kit 已配对固定到 `1.0.0-rc.4`（当前 `rc` 标签，仍是预发布版本），Better Auth 使用官方 `@better-auth/drizzle-adapter/relations-v2` 适配器并显式传入 schema；连接配置只传 `relations`。此次不修改数据库结构，peer 依赖检查已无问题。Table、Motion、Jotai、Day Picker、Resizable Panels、TypeScript 等跨大版本升级，以及 0.x 包的跨兼容范围升级，本轮未进行。
 
-应用已不使用 Next.js；锁文件仍可能包含 Better Auth / Vercel Analytics 的可选 Next.js peer。用 `pnpm why next` 区分可选依赖与应用入口，不要为消除提示添加 Next.js 配置或隐藏真实 peer 不兼容。
+应用已不使用 Next.js；锁文件仍可能包含 Better Auth 的可选 Next.js peer。用 `pnpm why next` 区分可选依赖与应用入口，不要为消除提示添加 Next.js 配置或隐藏真实 peer 不兼容。
 
 更新后先执行 `pnpm install --frozen-lockfile`、lint、typecheck 和 build，再针对运行中的开发/生产服务执行 HTTP 冒烟测试。涉及编辑器、认证和上传时，另用测试账户验证成功写入流程；构建通过不能替代这些检查。
 

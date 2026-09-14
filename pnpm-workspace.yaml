@@ -2,6 +2,7 @@ allowBuilds:
   '@parcel/watcher': true
   esbuild: true
   sharp: true
+  workerd: true
 minimumReleaseAgeExclude:
   - '@aws-sdk/checksums@3.1000.9'
   - '@aws-sdk/client-s3@3.1076.0 || 3.1106.0'

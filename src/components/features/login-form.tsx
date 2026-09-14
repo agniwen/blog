@@ -1,12 +1,14 @@
 import { Icon } from '@iconify/react';
 import { useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
-import { toast } from 'sonner';
+import { useState } from 'react';
 import { z } from 'zod';
 
 import { Button } from '~/components/ui/button';
-import { Field, FieldGroup, FieldLabel, FieldSeparator } from '~/components/ui/field';
+import { Field, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
+import { Separator } from '~/components/ui/separator';
+import { toastManager } from '~/components/ui/toast';
 import { authClient } from '~/lib/auth-client';
 import { cn } from '~/lib/utils';
 
@@ -15,11 +17,21 @@ const loginFormSchema = z.object({
   password: z.string().min(8),
 });
 export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
-  function googleSignIn() {
-    authClient.signIn.social({
-      provider: 'google',
-      callbackURL: location.href,
-    });
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  async function googleSignIn() {
+    if (isSigningIn) return;
+    setIsSigningIn(true);
+    try {
+      const result = await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: location.href,
+      });
+      if (result.error) throw new Error(result.error.message);
+    } catch {
+      toastManager.add({ type: 'error', title: 'Google 登录失败，请重试' });
+    } finally {
+      setIsSigningIn(false);
+    }
   }
   const router = useRouter();
   const form = useForm({
@@ -39,7 +51,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         await router.invalidate();
         await router.navigate({ to: '/studio' });
       } else {
-        toast('login failed');
+        toastManager.add({ type: 'error', title: 'login failed' });
       }
     },
   });
@@ -54,7 +66,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         form.handleSubmit();
       }}
     >
-      <FieldGroup>
+      <div className='flex flex-col gap-6'>
         <div className='flex flex-col items-center gap-1 text-center'>
           <h1 className='text-2xl font-medium'>Login to your account</h1>
           <p className='text-sm text-balance text-muted-foreground'>
@@ -102,21 +114,31 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
           <form.Subscribe>
             {(state) => {
               return (
-                <Button disabled={state.isSubmitting} type='submit'>
+                <Button className='w-full' loading={state.isSubmitting} type='submit'>
                   {state.isSubmitting ? 'Loading...' : 'Login'}
                 </Button>
               );
             }}
           </form.Subscribe>
         </Field>
-        <FieldSeparator>Or continue with</FieldSeparator>
+        <div className='flex items-center gap-3 text-sm text-muted-foreground'>
+          <Separator className='flex-1' />
+          <span>Or continue with</span>
+          <Separator className='flex-1' />
+        </div>
         <Field>
-          <Button variant='secondary' type='button' onClick={googleSignIn}>
+          <Button
+            className='w-full'
+            variant='secondary'
+            type='button'
+            loading={isSigningIn}
+            onClick={googleSignIn}
+          >
             <Icon className='mr-1 size-4.5' icon='logos:google-icon' />
             Login with Google
           </Button>
         </Field>
-      </FieldGroup>
+      </div>
     </form>
   );
 }

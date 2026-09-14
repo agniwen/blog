@@ -1,9 +1,9 @@
-import { auth } from '~/lib/auth';
+import { getAuth } from '~/lib/auth';
 
 import { factory } from '../factory';
 
 export const betterAuthMiddleware = factory.createMiddleware(async (c, next) => {
-  const session = await auth.api.getSession({
+  const session = await getAuth().api.getSession({
     headers: c.req.raw.headers,
   });
 

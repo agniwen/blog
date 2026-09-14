@@ -22,7 +22,7 @@ For UI changes, verify the relevant flow in a real browser and include screensho
 
 ## Style
 
-TypeScript is strict. Use explicit types at module boundaries, PascalCase component names, `useCamelCase` hooks, camelCase helpers, and the `~/` alias. Route filenames follow TanStack Router conventions; existing component filenames use kebab-case. Follow Oxlint/Oxfmt for two-space indentation, single quotes, import ordering, and Tailwind sorting. Reuse the project's shadcn components and semantic color tokens.
+TypeScript is strict. Use explicit types at module boundaries, PascalCase component names, `useCamelCase` hooks, camelCase helpers, and the `~/` alias. Route filenames follow TanStack Router conventions; existing component filenames use kebab-case. Follow Oxlint/Oxfmt for two-space indentation, single quotes, import ordering, and Tailwind sorting. Use the coss registry components in `src/components/ui` and semantic color tokens. Add available components with `pnpm dlx shadcn@latest add @coss/<name>`; preserve the customized theme instead of installing `@coss/style`. See `docs/design.md` for component mappings and intentional local styling.
 
 Visual conventions are documented in `docs/design.md`. Reference Yohaku for colors, radii, borders and soft shadows through existing semantic tokens in `src/styles/app.css`. Preserve the existing layout, content order, typography sizes and spacing unless explicitly asked to change them. Do not add document-wide font/background resets to editor stylesheets.
 
@@ -32,7 +32,7 @@ Use `.env.example` as the variable inventory. Server variables belong in `src/li
 
 The schema is `src/db/schema.ts`, relations are `src/db/relations.ts`, and migrations are generated under `drizzle/migrations`. Generate artifacts with `pnpm db:generate` when the schema changes. Confirm the target database before `db:migrate`, `db:push`, or any data write, and use a branch-specific development database. Dependency updates alone do not authorize changing shared data. Drizzle ORM and Kit are pinned together at `1.0.0-rc.4`. Keep `defineRelations` / Relations v2 and the official `@better-auth/drizzle-adapter/relations-v2` adapter aligned. Pass the table schema explicitly to Better Auth; pass relations, not the removed schema option, to the Drizzle connection. Validate adapter reads and relational queries when updating either package.
 
-Update compatible dependencies and the lockfile together. Treat major upgrades and prerelease database upgrades as API migrations. Check peer warnings and document any retained versions rather than suppressing incompatibilities. For deployment changes, validate both the default Node build and `NITRO_PRESET=vercel pnpm build`; see README for run instructions and validation limits.
+Update compatible dependencies and the lockfile together. Treat major upgrades and prerelease database upgrades as API migrations. Check peer warnings and document any retained versions rather than suppressing incompatibilities. For deployment changes, validate the default Node build, `NITRO_PRESET=vercel pnpm build`, and the Cloudflare build. Read `docs/cloudflare.md` when changing Worker bindings, database connection lifetime, deployment origins, secrets, or deployment commands. Worker requests must use the request-scoped Drizzle database and `getAuth()`; `scripts/auth.config.ts` is the Node-only schema CLI entry.
 
 ## Commits and PRs
 

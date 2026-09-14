@@ -10,13 +10,13 @@ import { Input } from '~/components/ui/input';
 import { Separator } from '~/components/ui/separator';
 import {
   Sheet,
-  SheetContent,
+  SheetPopup,
   SheetDescription,
   SheetHeader,
   SheetTitle,
 } from '~/components/ui/sheet';
 import { Skeleton } from '~/components/ui/skeleton';
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
+import { Tooltip, TooltipPopup, TooltipTrigger } from '~/components/ui/tooltip';
 import { useIsMobile } from '~/hooks/use-mobile';
 import { cn } from '~/lib/utils';
 
@@ -176,7 +176,7 @@ function Sidebar({
   if (isMobile) {
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
-        <SheetContent
+        <SheetPopup
           data-sidebar='sidebar'
           data-slot='sidebar'
           data-mobile='true'
@@ -193,7 +193,7 @@ function Sidebar({
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
           <div className='flex h-full w-full flex-col'>{children}</div>
-        </SheetContent>
+        </SheetPopup>
       </Sheet>
     );
   }
@@ -489,7 +489,7 @@ function SidebarMenuButton({
 }: useRender.ComponentProps<'button'> &
   React.ComponentProps<'button'> & {
     isActive?: boolean;
-    tooltip?: string | React.ComponentProps<typeof TooltipContent>;
+    tooltip?: string | React.ComponentProps<typeof TooltipPopup>;
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar();
   const comp = useRender({
@@ -522,7 +522,7 @@ function SidebarMenuButton({
   return (
     <Tooltip>
       {comp}
-      <TooltipContent
+      <TooltipPopup
         side='right'
         align='center'
         hidden={state !== 'collapsed' || isMobile}

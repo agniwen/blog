@@ -1,13 +1,17 @@
 import { useRouter } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { toast } from 'sonner';
+import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
+import { toastManager } from '~/components/ui/toast';
 import { hono } from '~/lib/hono';
 
 export function PostsCreateButton() {
   const router = useRouter();
+  const [isCreating, setIsCreating] = useState(false);
   async function handleCreate() {
+    if (isCreating) return;
+    setIsCreating(true);
     try {
       const res = await parseResponse(
         hono.api.posts.$post({
@@ -15,12 +19,18 @@ export function PostsCreateButton() {
         }),
       );
       if (res.data.id) {
-        router.navigate({ to: '/studio/posts/upsert/$id', params: { id: res.data.id } });
+        await router.navigate({ to: '/studio/posts/upsert/$id', params: { id: res.data.id } });
       }
     } catch (err) {
       console.error('Failed to create post', err);
-      toast.error('Failed to create post');
+      toastManager.add({ type: 'error', title: 'Failed to create post' });
+    } finally {
+      setIsCreating(false);
     }
   }
-  return <Button onClick={handleCreate}>New Post</Button>;
+  return (
+    <Button loading={isCreating} onClick={handleCreate}>
+      New Post
+    </Button>
+  );
 }

@@ -1,15 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowUpIcon } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupTextarea,
-} from '~/components/ui/input-group';
+import { Button } from '~/components/ui/button';
+import { InputGroup, InputGroupAddon, InputGroupTextarea } from '~/components/ui/input-group';
 import { Separator } from '~/components/ui/separator';
+import { toastManager } from '~/components/ui/toast';
 import { authClient } from '~/lib/auth-client';
 
 import { createComment } from './actions';
@@ -28,12 +24,12 @@ export function CommentsInput({ id }: CommentsInputProps) {
     setIsPending(true);
     const inputComment = comment;
     if (comment.trim().length === 0) {
-      toast.info('请输入评论');
+      toastManager.add({ type: 'info', title: '请输入评论' });
       setIsPending(false);
       return;
     }
     if (!data?.user) {
-      toast.info('请登陆后评论');
+      toastManager.add({ type: 'info', title: '请登陆后评论' });
       setComment('');
       setIsPending(false);
       return;
@@ -44,12 +40,12 @@ export function CommentsInput({ id }: CommentsInputProps) {
     };
     try {
       await createComment({ data: create });
-      toast.success('评论成功');
+      toastManager.add({ type: 'success', title: '评论成功' });
       setComment('');
       queryClient.invalidateQueries({ queryKey: ['comments', id] });
     } catch (error) {
       console.error(error);
-      toast.error('评论失败');
+      toastManager.add({ type: 'error', title: '评论失败' });
     } finally {
       setIsPending(false);
     }
@@ -69,9 +65,15 @@ export function CommentsInput({ id }: CommentsInputProps) {
             />
             <InputGroupAddon align='block-end'>
               <Separator className='flex-1 bg-transparent' orientation='vertical' />
-              <InputGroupButton type='submit' disabled={isPending} variant='default' size='icon-sm'>
+              <Button
+                type='submit'
+                aria-label='发送评论'
+                loading={isPending}
+                variant='default'
+                size='icon-sm'
+              >
                 <ArrowUpIcon className='size-5' />
-              </InputGroupButton>
+              </Button>
             </InputGroupAddon>
           </InputGroup>
         </form>

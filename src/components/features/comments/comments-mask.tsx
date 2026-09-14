@@ -1,18 +1,30 @@
 import { Icon } from '@iconify/react';
+import { useState } from 'react';
 import type { PropsWithChildren } from 'react';
 
 import { Button } from '~/components/ui/button';
+import { toastManager } from '~/components/ui/toast';
 import { authClient } from '~/lib/auth-client';
 import { cn } from '~/lib/utils';
 
 export function CommentsMask({ children }: PropsWithChildren) {
   const { data, isPending } = authClient.useSession();
 
-  function googleSignIn() {
-    authClient.signIn.social({
-      provider: 'google',
-      callbackURL: location.href,
-    });
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  async function googleSignIn() {
+    if (isSigningIn) return;
+    setIsSigningIn(true);
+    try {
+      const result = await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: location.href,
+      });
+      if (result.error) throw new Error(result.error.message);
+    } catch {
+      toastManager.add({ type: 'error', title: 'Google 登录失败，请重试' });
+    } finally {
+      setIsSigningIn(false);
+    }
   }
 
   if (data?.user || isPending) {
@@ -24,21 +36,21 @@ export function CommentsMask({ children }: PropsWithChildren) {
         'p-4': !data?.user,
       })}
     >
-      <div className='absolute top-0 left-0 z-10 h-full w-full bg-white/20 backdrop-blur-xs'>
+      <div className='absolute top-0 left-0 z-10 h-full w-full bg-background/20 backdrop-blur-xs'>
         <div className='flex h-full w-full items-center justify-center'>
           <div>
             <div className='pb-4 text-center text-sm'>
               <p className='mb-2!'>使用社交账户登录评论</p>
               <p className='text-xs'>
                 如果你没有以下社交帐户，你可以给我
-                <a className='text-black underline' href='mailto:wisakura@outlook.com'>
+                <a className='text-(--content-link) underline' href='mailto:wisakura@outlook.com'>
                   写信
                 </a>
                 交流
               </p>
             </div>
             <div className='p flex items-center justify-center gap-4'>
-              <Button variant='secondary' onClick={googleSignIn}>
+              <Button variant='secondary' loading={isSigningIn} onClick={googleSignIn}>
                 <Icon className='mr-1 size-4.5' fill='#fff' icon='logos:google-icon' />
                 Google
               </Button>

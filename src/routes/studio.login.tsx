@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
 import { LoginForm } from '~/components/features/login-form';
+import { LoginSkeleton } from '~/components/features/page-skeletons';
 import { getSession } from '~/server/functions';
 
 export const Route = createFileRoute('/studio/login')({
@@ -9,6 +10,7 @@ export const Route = createFileRoute('/studio/login')({
       throw redirect({ to: '/studio', headers: { 'Cache-Control': 'private, no-store' } });
   },
   headers: () => ({ 'Cache-Control': 'private, no-store' }),
+  pendingComponent: LoginSkeleton,
   component: LoginPage,
 });
 

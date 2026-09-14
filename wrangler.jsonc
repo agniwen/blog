@@ -1,0 +1,12 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "blog",
+  "account_id": "b8f52910e25273ecc2fc719d582dece7",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-09-14",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "13b2029329504bf1bc4dc948a6aaf1ab" }],
+  "observability": { "enabled": true, "head_sampling_rate": 1 },
+  "vars": { "BETTER_AUTH_URL": "https://blog.wenhouman.workers.dev" },
+}

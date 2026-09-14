@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { AnimatePresence, m } from 'motion/react';
 
+import { buttonVariants } from '~/components/ui/button';
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 
@@ -31,20 +32,16 @@ export function Social({ className }: { className?: string }) {
   return (
     <div className={cn('flex h-8 space-x-5', className)}>
       <AnimatePresence>
-        {socials.map((s, index) => {
+        {socials.map((s) => {
           return (
-            <m.div
-              transition={{ delay: index * 0.05 }}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
+            <Button
+              render={<a href={s.url} target='_blank' />}
               key={s.url}
+              variant='ghost'
+              size={'icon-sm'}
             >
-              <a href={s.url} target='_blank' rel='noreferrer' aria-label={s.name}>
-                <Button size='icon-sm' variant='ghost' rel='noreferrer' className='cursor-default'>
-                  {s.icon}
-                </Button>
-              </a>
-            </m.div>
+              {s.icon}
+            </Button>
           );
         })}
       </AnimatePresence>
