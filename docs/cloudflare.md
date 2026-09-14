@@ -1,6 +1,6 @@
 # Cloudflare Workers 与 D1
 
-当前应用通过官方 Cloudflare Vite 插件运行，开发、构建和生产均使用 Workers。数据库是已有 D1 `blog`，ID `7381a7aa-92cc-411d-aabe-35c74abebea6`，以 `wrangler.jsonc` 的 `DB` 绑定为准。公开地址为 https://blog.wenhouman.workers.dev。
+当前应用通过官方 Cloudflare Vite 插件运行，开发、构建和生产均使用 Workers。数据库是已有 D1 `blog`，ID `7381a7aa-92cc-411d-aabe-35c74abebea6`，以 `wrangler.jsonc` 的 `DB` 绑定为准。主域名为 https://akumanoko.com。
 
 ## 开发与发布
 
@@ -9,7 +9,7 @@
 3. 生产 Secrets 继续使用 `pnpm cf:secrets` 配置八个认证和 R2 变量，不上传整个 `.env`。D1 无需数据库 URL 或密码。
 4. 保持 `.env.cloudflare` 的公开认证地址、Wrangler 的 `BETTER_AUTH_URL`、Google OAuth 回调和 R2 CORS 一致。
 5. 执行 `pnpm cf:typegen`、`pnpm lint`、`pnpm typecheck`、`pnpm build`。`pnpm start` 预览当前构建；`pnpm deploy` 重新使用 cloudflare mode 构建后发布。
-6. 执行 `TEST_BASE_URL=https://blog.wenhouman.workers.dev pnpm test`。未授权请求检查不能替代成功登录、写入或上传验证。
+6. 执行 `TEST_BASE_URL=https://akumanoko.com pnpm test`。未授权请求检查不能替代成功登录、写入或上传验证。
 
 静态文件走 Workers Static Assets；图片继续使用 R2，MiSans 使用 CDN。`pnpm exec wrangler deploy --dry-run` 可检查上传大小。保持 `dist`、`.dev.vars*`、`.env` 在忽略列表内。
 
@@ -53,3 +53,9 @@ node --env-file=.env scripts/migrate-postgres-to-d1.mjs --apply
 发布后线上 20 项 HTTP 检查通过；再次用临时账户确认线上登录、会话读取、草稿创建/修改/删除和编辑页 SSR 正常。退出请求遭遇一次网络中断，随后通过 D1 删除该测试用户并确认测试账户为零，级联清理关联账户和会话。
 
 生产构建统一使用 `cloudflare` mode，包括默认 `pnpm build`，使 Git 自动构建不依赖本机 `.env`。`.env.cloudflare` 记录公开认证地址和头像地址；认证与 R2 密钥仍由 Worker Secrets 提供。若需在 localhost 验证构建后的登录流程，使用 `pnpm exec vite build --mode development` 后再预览。
+
+## 自定义域名
+
+`wrangler.jsonc` 声明 `akumanoko.com` 和 `www.akumanoko.com` 两个 Custom Domains，均绑定 `blog`。生产认证地址与 `.env.cloudflare` 的公开地址统一为 `https://akumanoko.com`，sitemap 同步使用该域名。`www` 和 `blog.wenhouman.workers.dev` 在 Worker 入口返回 308 并保留路径、查询参数，统一到主域名；localhost 与预览域名不跳转。域名跳转测试：`node --experimental-strip-types --test scripts/canonical-redirect.test.mjs`。
+
+Google OAuth 客户端需允许回调 `https://akumanoko.com/api/auth/callback/google`，如配置 JavaScript 来源则加入 `https://akumanoko.com`；Google 控制台设置不在仓库内，不能仅凭构建成功确认。R2 `blog` 的 CORS 已加入该来源，并保留 localhost 与原 workers.dev 来源。旧域名 Cookie 不共享，切换后需要在主域名重新登录。

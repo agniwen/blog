@@ -6,6 +6,10 @@
   "compatibility_date": "2026-09-14",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
+  "routes": [
+    { "pattern": "akumanoko.com", "custom_domain": true },
+    { "pattern": "www.akumanoko.com", "custom_domain": true },
+  ],
   "d1_databases": [
     {
       "binding": "DB",
@@ -17,5 +21,5 @@
     },
   ],
   "observability": { "enabled": true, "head_sampling_rate": 1 },
-  "vars": { "BETTER_AUTH_URL": "https://blog.wenhouman.workers.dev" },
+  "vars": { "BETTER_AUTH_URL": "https://akumanoko.com" },
 }
