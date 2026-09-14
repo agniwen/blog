@@ -51,3 +51,5 @@ node --env-file=.env scripts/migrate-postgres-to-d1.mjs --apply
 线上 D1 版本为 `30ccc8da-236d-4843-8909-941636f45e05`，绑定 `DB (blog)`。上传约 6506 KiB（gzip 1446 KiB），Cloudflare 启动耗时 25 ms。Google OAuth 与 R2 上传流程保持原实现，本次未重测。
 
 发布后线上 20 项 HTTP 检查通过；再次用临时账户确认线上登录、会话读取、草稿创建/修改/删除和编辑页 SSR 正常。退出请求遭遇一次网络中断，随后通过 D1 删除该测试用户并确认测试账户为零，级联清理关联账户和会话。
+
+生产构建统一使用 `cloudflare` mode，包括默认 `pnpm build`，使 Git 自动构建不依赖本机 `.env`。`.env.cloudflare` 记录公开认证地址和头像地址；认证与 R2 密钥仍由 Worker Secrets 提供。若需在 localhost 验证构建后的登录流程，使用 `pnpm exec vite build --mode development` 后再预览。
