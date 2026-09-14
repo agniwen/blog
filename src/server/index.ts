@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import { cors } from 'hono/cors';
 
 import { getAuth } from '~/lib/auth';
 
@@ -11,17 +10,6 @@ import { postsRouter } from './routes/posts/route';
 import { s3Router } from './routes/s3';
 
 export const app = new Hono<Env>()
-  .use(
-    '/api/auth/*',
-    cors({
-      origin: '*',
-      allowHeaders: ['Content-Type', 'Authorization'],
-      allowMethods: ['POST', 'GET', 'OPTIONS'],
-      exposeHeaders: ['Content-Length'],
-      maxAge: 600,
-      credentials: true,
-    }),
-  )
   .on(['POST', 'GET'], '/api/auth/*', (c) => {
     return getAuth().handler(c.req.raw);
   })

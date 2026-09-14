@@ -4,15 +4,15 @@ React 19 + TanStack Start + TanStack Router，使用 Vite 构建并部署到 Clo
 
 ## 本地开发
 
-使用 Node.js 22.12+（验证环境为 Node.js 24.11）和 pnpm 11.5.2，具体要求见 `package.json` 的 `engines` / `packageManager`：
+使用 Node.js 22.12+（验证环境为 Node.js 24.11）和 Bun 1.4.2，具体要求见 `package.json` 的 `engines` / `packageManager`：
 
 ```sh
-pnpm install --frozen-lockfile
+bun install --frozen-lockfile
 cp .env.example .env # 已有 .env 时跳过
-pnpm dev
+bun run dev
 ```
 
-在 `.env` 配置 Better Auth、Google OAuth 和 R2；先运行 `pnpm exec wrangler login`。数据库使用 `wrangler.jsonc` 的远程 D1 `DB` 绑定，本地开发写入也会修改该库，访问 http://localhost:3000。现有 `NEXT_PUBLIC_AVATAR_URL`、`NEXT_PUBLIC_BETTER_AUTH_URL` 继续有效，仅公开变量会进入浏览器。开发或预览更换端口时，将公开认证 URL 指向对应服务，OAuth 回调地址也需要匹配。
+在 `.env` 配置 Better Auth、Google OAuth 和 R2；先运行 `bunx wrangler login`。数据库使用 `wrangler.jsonc` 的远程 D1 `DB` 绑定，本地开发写入也会修改该库，访问 http://localhost:3000。现有 `NEXT_PUBLIC_AVATAR_URL`、`NEXT_PUBLIC_BETTER_AUTH_URL` 继续有效，仅公开变量会进入浏览器。开发或预览更换端口时，将公开认证 URL 指向对应服务，OAuth 回调地址也需要匹配。
 
 ## 扁平文件路由
 
@@ -41,30 +41,31 @@ Next.js 的缓存组件和静态参数生成已替换为请求时 SSR。Query �
 ## 验证
 
 ```sh
-pnpm lint
-pnpm typecheck
-pnpm build
-pnpm start
+bun run lint
+bun run typecheck
+bun test
+bun run build
+bun run start
 # 在另一个终端执行：
-pnpm test
-# 测试其他端口：TEST_BASE_URL=http://localhost:3102 pnpm test
+TEST_BASE_URL=http://localhost:3000 bun run test:http
+# 测试其他端口：TEST_BASE_URL=http://localhost:3102 bun run test:http
 ```
 
-`pnpm test` 对运行中的服务执行 HTTP 冒烟检查：公开页面 SSR、所有已发布文章、元数据、sitemap、404、后台未登录跳转、认证会话、未授权 API 写请求。不会登录或修改数据库。开发环境同样可运行这组检查。
+`bun test` 使用 Bun 原生测试运行器，默认执行离线回归测试；未设置 `TEST_BASE_URL` 时跳过 HTTP 检查。`TEST_BASE_URL=http://localhost:3000 bun run test:http` 对运行中的服务执行 HTTP 冒烟检查：公开页面 SSR、所有已发布文章、元数据、sitemap、404、后台未登录跳转、认证会话、未授权 API 写请求。不会登录或修改数据库。开发环境同样可运行这组检查。
 
 还需在预发布环境用实际管理员账户确认：登录/退出、文章创建与编辑、自动保存、评论提交后刷新、R2 上传和 OAuth 回调。未认证的自动检查不能替代这些流程。
 
 ## 部署
 
-Cloudflare Workers 是当前运行环境，开发和构建均使用官方 Cloudflare Vite 插件。执行 `pnpm deploy` 发布；`pnpm build` 后用 `pnpm start` 本地预览。D1、Secrets、迁移和域名设置见 [Cloudflare 部署说明](docs/cloudflare.md)。
+Cloudflare Workers 是当前运行环境，开发和构建均使用官方 Cloudflare Vite 插件。执行 `bun run deploy` 发布；`bun run build` 后用 `bun run start` 本地预览。D1、Secrets、迁移和域名设置见 [Cloudflare 部署说明](docs/cloudflare.md)。
 
-数据库变更用 `pnpm db:generate` 生成 `drizzle/d1` 下的 SQLite 迁移，`pnpm db:migrate` 应用到远程 D1，`pnpm db:migrate:local` 只初始化本地 SQLite。原 PostgreSQL 数据库保留，应用不再读取它；`pg` 仅是一次性导入工具的开发依赖。
+数据库变更用 `bun run db:generate` 生成 `drizzle/d1` 下的 SQLite 迁移，`bun run db:migrate` 应用到远程 D1，`bun run db:migrate:local` 只初始化本地 SQLite。原 PostgreSQL 数据库保留，应用不再读取它，已完成的一次性导入脚本及其 `pg` 依赖已移除。
 
 参考：[官方 Next.js 迁移指南](https://tanstack.com/start/latest/docs/framework/react/migrate-from-next-js)、[部署指南](https://tanstack.com/start/latest/docs/framework/react/guide/hosting)。
 
 ## 依赖维护
 
-本轮采用当前兼容版本范围内的更新，并同步 React、React DOM 和对应类型包。pnpm 的版本选择还会遵循本机/工作区的发布时间限制，因此“兼容更新”不等于升级所有 npm 最新标签。
+本轮采用当前兼容版本范围内的更新，并同步 React、React DOM 和对应类型包。本次从原锁文件迁移到 bun.lock，不更新业务依赖版本。
 
 | 依赖                           | 当前版本范围 |
 | ------------------------------ | ------------ |
@@ -77,7 +78,6 @@ Cloudflare Workers 是当前运行环境，开发和构建均使用官方 Cloudf
 | `@aws-sdk/client-s3`           | `^3.1131.0`  |
 | `@base-ui/react`               | `^1.8.0`     |
 | `hono`                         | `^4.13.7`    |
-| `pg`                           | `^8.23.0`    |
 | `shadcn`                       | `^4.21.0`    |
 | `oxlint`                       | `^1.82.0`    |
 | `drizzle-orm` / `drizzle-kit`  | `1.0.0-rc.4` |
@@ -85,9 +85,9 @@ Cloudflare Workers 是当前运行环境，开发和构建均使用官方 Cloudf
 
 `@iconify/react` 属于运行时依赖，shadcn CLI 属于开发依赖。Drizzle ORM / Kit 已配对固定到 `1.0.0-rc.4`（当前 `rc` 标签，仍是预发布版本），Better Auth 使用官方 `@better-auth/drizzle-adapter/relations-v2` 适配器并显式传入 schema；连接配置只传 `relations`。D1 使用 SQLite schema，历史 PostgreSQL 迁移保留在原目录。Table、Motion、Jotai、Day Picker、Resizable Panels、TypeScript 等跨大版本升级，以及 0.x 包的跨兼容范围升级，本轮未进行。
 
-应用已不使用 Next.js；锁文件仍可能包含 Better Auth 的可选 Next.js peer。用 `pnpm why next` 区分可选依赖与应用入口，不要为消除提示添加 Next.js 配置或隐藏真实 peer 不兼容。
+应用已不使用 Next.js；锁文件仍可能包含 Better Auth 的可选 Next.js peer。用 `bun why next` 区分可选依赖与应用入口，不要为消除提示添加 Next.js 配置或隐藏真实 peer 不兼容。
 
-更新后先执行 `pnpm install --frozen-lockfile`、lint、typecheck 和 build，再针对运行中的开发/生产服务执行 HTTP 冒烟测试。涉及编辑器、认证和上传时，另用测试账户验证成功写入流程；构建通过不能替代这些检查。
+更新后先执行 `bun install --frozen-lockfile`、lint、typecheck 和 build，再针对运行中的开发/生产服务执行 HTTP 冒烟测试。涉及编辑器、认证和上传时，另用测试账户验证成功写入流程；构建通过不能替代这些检查。
 
 迁移过程与验证范围见 [迁移记录](docs/tanstack-start-migration.md)。
 
@@ -100,3 +100,5 @@ Drizzle Relations v2 适配依据：[Better Auth 官方文档](https://better-au
 保留现有页面布局，仅参考 Yohaku 调整色号、圆角、边框与轻阴影。设计约定见 [docs/design.md](docs/design.md)。
 
 后台目前仅保留文章管理；`/studio` 跳转到 `/studio/posts`，Projects 页面已移除。列表使用统一内容间距和自适应卡片网格，编辑页沿用同一外框并在正文／属性面板内部滚动。
+
+包管理器统一为 Bun 1.4.2，提交 `bun.lock`，安装使用 `bun install --frozen-lockfile`。构建使用 `bun run build`，测试直接使用 `bun test`。Vite/Wrangler 仍保留 Node 22.12+ 运行环境。`bunfig.toml` 关闭自动加载 `.env`，由 Vite 按 mode 读取，避免把 localhost 打包进生产。

@@ -22,11 +22,11 @@ Typography uses MiSans from jsDelivr (`misans@4.1.0`, Chinese subsets, Regular/M
 
 ## Loading states
 
-Use the shared Skeleton primitive and neutral accent fill, with reduced-motion support. Route pending components mirror the actual blog list, article, login form, and editor containers. Static home content does not need a skeleton. TanStack Router waits 300 ms before showing route skeletons and keeps an activated skeleton visible for at least 300 ms; client query placeholders use the same constants via `useDelayedPending`. Keep cached content visible during background refetches. Timing regression checks run with `pnpm test:loading`.
+Use the shared Skeleton primitive and neutral accent fill, with reduced-motion support. Route pending components mirror the actual blog list, article, login form, and editor containers. Static home content does not need a skeleton. TanStack Router waits 300 ms before showing route skeletons and keeps an activated skeleton visible for at least 300 ms; client query placeholders use the same constants via `useDelayedPending`. Keep cached content visible during background refetches. Timing regression checks run with `bun run test:loading`.
 
 ## coss UI components
 
-Shared UI uses the official coss registry (`https://coss.com/ui/r/{name}.json`), configured as `@coss` in `components.json`. Add individual components with `pnpm dlx shadcn@latest add @coss/<name>`. Do not install the coss style/font preset: MiSans CDN, paper texture, light/dark palettes, selection color and existing layout remain project-owned.
+Shared UI uses the official coss registry (`https://coss.com/ui/r/{name}.json`), configured as `@coss` in `components.json`. Add individual components with `bunx shadcn@latest add @coss/<name>`. Do not install the coss style/font preset: MiSans CDN, paper texture, light/dark palettes, selection color and existing layout remain project-owned.
 
 All previously present coss equivalents have been replaced, including Accordion, Alert, AlertDialog, Avatar, Badge, Breadcrumb, Button, Calendar, Card, Checkbox, Collapsible, Combobox, Command, ContextMenu, Dialog, Drawer, Empty, Field, Input, InputGroup, Kbd, Label, Pagination, Popover, Progress, RadioGroup, ScrollArea, Select, Separator, Sheet, Skeleton, Slider, Spinner, Switch, Table, Tabs, Textarea, Toast, Toggle, ToggleGroup and Tooltip. Autocomplete and Fieldset support their composition.
 

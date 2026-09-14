@@ -5,7 +5,7 @@
       "name": "TanStack Start: debug server-side",
       "type": "node-terminal",
       "request": "launch",
-      "command": "pnpm dev"
+      "command": "bun run dev"
     },
     {
       "name": "TanStack Start: debug client-side",

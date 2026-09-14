@@ -1,0 +1,6 @@
+# Vite selects .env files by mode; preloading .env here would override production URLs.
+env = false
+
+[run]
+# Honor Node shebangs for Vite/Wrangler.
+bun = false

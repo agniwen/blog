@@ -1,18 +1,24 @@
+import { afterEach, jest, test } from 'bun:test';
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
 
 import { createPendingIndicator } from '../src/lib/pending-indicator.ts';
 
-function setup(t) {
-  t.mock.timers.enable({ apis: ['setTimeout', 'Date'], now: 0 });
+let activeIndicator;
+afterEach(() => {
+  activeIndicator?.dispose();
+  jest.useRealTimers();
+});
+
+function setup() {
+  jest.useFakeTimers({ now: 0 });
   const changes = [];
   const indicator = createPendingIndicator((visible) => changes.push({ visible, at: Date.now() }));
-  t.after(() => indicator.dispose());
-  return { changes, indicator, tick: (ms) => t.mock.timers.tick(ms) };
+  activeIndicator = indicator;
+  return { changes, indicator, tick: (ms) => jest.advanceTimersByTime(ms) };
 }
 
-test('fast requests never show a skeleton', (t) => {
-  const { changes, indicator, tick } = setup(t);
+test('fast requests never show a skeleton', () => {
+  const { changes, indicator, tick } = setup();
   indicator.setPending(true);
   tick(100);
   indicator.setPending(false);
@@ -20,8 +26,8 @@ test('fast requests never show a skeleton', (t) => {
   assert.deepEqual(changes, []);
 });
 
-test('slow requests wait 300ms and keep the skeleton visible for 300ms', (t) => {
-  const { changes, indicator, tick } = setup(t);
+test('slow requests wait 300ms and keep the skeleton visible for 300ms', () => {
+  const { changes, indicator, tick } = setup();
   indicator.setPending(true);
   tick(299);
   assert.deepEqual(changes, []);
@@ -36,8 +42,8 @@ test('slow requests wait 300ms and keep the skeleton visible for 300ms', (t) => 
   ]);
 });
 
-test('a restarted request cancels the pending hide without flashing', (t) => {
-  const { changes, indicator, tick } = setup(t);
+test('a restarted request cancels the pending hide without flashing', () => {
+  const { changes, indicator, tick } = setup();
   indicator.setPending(true);
   tick(300);
   indicator.setPending(false);
@@ -46,15 +52,16 @@ test('a restarted request cancels the pending hide without flashing', (t) => {
   tick(500);
   assert.deepEqual(changes, [{ visible: true, at: 300 }]);
   indicator.setPending(false);
-  tick(0);
+  // Bun models the minimum 1ms timeout delay.
+  tick(1);
   assert.deepEqual(changes, [
     { visible: true, at: 300 },
-    { visible: false, at: 900 },
+    { visible: false, at: 901 },
   ]);
 });
 
-test('unmount cancels scheduled visibility changes', (t) => {
-  const { changes, indicator, tick } = setup(t);
+test('unmount cancels scheduled visibility changes', () => {
+  const { changes, indicator, tick } = setup();
   indicator.setPending(true);
   indicator.dispose();
   tick(1000);
