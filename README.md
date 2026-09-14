@@ -91,7 +91,7 @@ Cloudflare Workers 是当前运行环境，开发和构建均使用官方 Cloudf
 
 迁移过程与验证范围见 [迁移记录](docs/tanstack-start-migration.md)。
 
-2026-09-14 依赖更新验证：兼容依赖升级及 Drizzle RC 适配后，lint、类型检查、Node/Vercel 构建、开发/生产各 20 项 HTTP 检查通过；peer 检查无问题。额外在 PostgreSQL 强制只读模式下验证 Better Auth 的四类模型读取，以及文章标签、评论用户关联读取。未执行 `db:push` / `db:migrate`，schema、relations 和已有 migration 文件保持不变。实际登录、成功写入和上传仍需测试账户验证。
+2026-09-14 依赖更新验证：兼容依赖升级及 Drizzle RC 适配后，lint、类型检查、构建、开发/生产各 20 项 HTTP 检查通过；peer 检查无问题。额外在 PostgreSQL 强制只读模式下验证 Better Auth 的四类模型读取，以及文章标签、评论用户关联读取。未执行 `db:push` / `db:migrate`，schema、relations 和已有 migration 文件保持不变。实际登录、成功写入和上传仍需测试账户验证。
 
 Drizzle Relations v2 适配依据：[Better Auth 官方文档](https://better-auth.com/docs/adapters/drizzle#drizzle-relations-v2)、[Drizzle 升级说明](https://orm.drizzle.team/docs/relations-v1-v2)。
 

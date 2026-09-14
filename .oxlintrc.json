@@ -20,11 +20,9 @@
   },
   "ignorePatterns": [
     "dist/**",
-    ".output/**",
     ".next/**",
     "src/generated/**",
     "src/routeTree.gen.ts",
-    ".nitro/**",
     ".tanstack/**",
     "src/worker-env.d.ts",
     ".wrangler/**"
