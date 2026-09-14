@@ -6,7 +6,16 @@
   "compatibility_date": "2026-09-14",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
-  "hyperdrive": [{ "binding": "HYPERDRIVE", "id": "13b2029329504bf1bc4dc948a6aaf1ab" }],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "blog",
+      "database_id": "7381a7aa-92cc-411d-aabe-35c74abebea6",
+      "remote": true,
+      "migrations_dir": "drizzle/d1",
+      "migrations_pattern": "drizzle/d1/*/migration.sql",
+    },
+  ],
   "observability": { "enabled": true, "head_sampling_rate": 1 },
   "vars": { "BETTER_AUTH_URL": "https://blog.wenhouman.workers.dev" },
 }

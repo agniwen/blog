@@ -1,4 +1,8 @@
-// The schema CLI runs in Node, outside the Worker request context.
-import { getAuth } from '../src/lib/auth';
+// Schema generation uses an isolated local D1 binding, never production data.
+import { getPlatformProxy } from 'wrangler';
 
-export const auth = getAuth();
+import { getAuth } from '../src/lib/auth';
+import { createDatabase } from '../src/lib/db';
+const platform = await getPlatformProxy<Cloudflare.Env>({ remoteBindings: false });
+export const auth = getAuth(createDatabase(platform.env.DB));
+await platform.dispose();

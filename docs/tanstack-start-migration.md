@@ -11,3 +11,7 @@
 ## 2026-09-14 后续依赖更新
 
 前一节是升级前的历史快照。随后完成兼容依赖更新，并将 Drizzle ORM / Kit 升至 `1.0.0-rc.4`，使用 Better Auth 1.7.4 的 Relations v2 官方适配器，消除了原有 Drizzle peer 警告。具体当前版本与验证范围见 README。数据库结构与迁移文件未改动。
+
+## 2026-09-14 D1 切换
+
+运行环境统一为 Cloudflare Workers，数据库改为 Drizzle D1 / SQLite。PostgreSQL 历史迁移保留，现行迁移在 `drizzle/d1`。当前架构、数据导入与验证记录见 [Cloudflare 部署说明](cloudflare.md)；上述 Node/Vercel 验证仅代表切换前的历史版本。

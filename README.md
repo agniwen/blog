@@ -1,6 +1,6 @@
 # Wen's Blog
 
-React 19 + TanStack Start + TanStack Router，使用 Vite 构建、Nitro 部署，保留 Hono API、Better Auth 和 Drizzle/PostgreSQL。
+React 19 + TanStack Start + TanStack Router，使用 Vite 构建并部署到 Cloudflare Workers，使用 Hono API、Better Auth 和 Drizzle/D1。
 
 ## 本地开发
 
@@ -12,7 +12,7 @@ cp .env.example .env # 已有 .env 时跳过
 pnpm dev
 ```
 
-在 `.env` 配置数据库、Better Auth、Google OAuth 和 R2，访问 http://localhost:3000。现有 `NEXT_PUBLIC_AVATAR_URL`、`NEXT_PUBLIC_BETTER_AUTH_URL` 继续有效，仅公开变量会进入浏览器。开发或预览更换端口时，将公开认证 URL 指向对应服务，OAuth 回调地址也需要匹配。
+在 `.env` 配置 Better Auth、Google OAuth 和 R2；先运行 `pnpm exec wrangler login`。数据库使用 `wrangler.jsonc` 的远程 D1 `DB` 绑定，本地开发写入也会修改该库，访问 http://localhost:3000。现有 `NEXT_PUBLIC_AVATAR_URL`、`NEXT_PUBLIC_BETTER_AUTH_URL` 继续有效，仅公开变量会进入浏览器。开发或预览更换端口时，将公开认证 URL 指向对应服务，OAuth 回调地址也需要匹配。
 
 ## 扁平文件路由
 
@@ -56,11 +56,9 @@ pnpm test
 
 ## 部署
 
-- Cloudflare Workers：使用 `pnpm build:cloudflare` / `pnpm deploy`，保留默认 Node 开发方式。首次配置、Hyperdrive、Secrets、域名和验证步骤见 [Cloudflare 部署说明](docs/cloudflare.md)。
+Cloudflare Workers 是当前运行环境，开发和构建均使用官方 Cloudflare Vite 插件。执行 `pnpm deploy` 发布；`pnpm build` 后用 `pnpm start` 本地预览。D1、Secrets、迁移和域名设置见 [Cloudflare 部署说明](docs/cloudflare.md)。
 
-- Node：`pnpm build` 后运行 `pnpm start`，支持 `PORT`；生产入口为 `.output/server/index.mjs`，部署整个 `.output`。运行时注入服务端环境变量；公开变量在构建时注入。
-- Vercel：`vercel.json` 使用 `tanstack-start`，Nitro 自动选择 Vercel 产物。发布前验证预览环境，确认原有域名、Cookie 密钥和 OAuth 配置保持一致。
-- 此次框架与兼容依赖更新未修改数据库 schema，无需执行迁移。回滚时重新部署变更前的 Git 版本及其锁文件，保留现有数据库和认证密钥。
+数据库变更用 `pnpm db:generate` 生成 `drizzle/d1` 下的 SQLite 迁移，`pnpm db:migrate` 应用到远程 D1，`pnpm db:migrate:local` 只初始化本地 SQLite。原 PostgreSQL 数据库保留，应用不再读取它；`pg` 仅是一次性导入工具的开发依赖。
 
 参考：[官方 Next.js 迁移指南](https://tanstack.com/start/latest/docs/framework/react/migrate-from-next-js)、[部署指南](https://tanstack.com/start/latest/docs/framework/react/guide/hosting)。
 
@@ -85,7 +83,7 @@ pnpm test
 | `drizzle-orm` / `drizzle-kit`  | `1.0.0-rc.4` |
 | `@better-auth/drizzle-adapter` | `1.7.4`      |
 
-`@iconify/react` 属于运行时依赖，shadcn CLI 属于开发依赖。Drizzle ORM / Kit 已配对固定到 `1.0.0-rc.4`（当前 `rc` 标签，仍是预发布版本），Better Auth 使用官方 `@better-auth/drizzle-adapter/relations-v2` 适配器并显式传入 schema；连接配置只传 `relations`。此次不修改数据库结构，peer 依赖检查已无问题。Table、Motion、Jotai、Day Picker、Resizable Panels、TypeScript 等跨大版本升级，以及 0.x 包的跨兼容范围升级，本轮未进行。
+`@iconify/react` 属于运行时依赖，shadcn CLI 属于开发依赖。Drizzle ORM / Kit 已配对固定到 `1.0.0-rc.4`（当前 `rc` 标签，仍是预发布版本），Better Auth 使用官方 `@better-auth/drizzle-adapter/relations-v2` 适配器并显式传入 schema；连接配置只传 `relations`。D1 使用 SQLite schema，历史 PostgreSQL 迁移保留在原目录。Table、Motion、Jotai、Day Picker、Resizable Panels、TypeScript 等跨大版本升级，以及 0.x 包的跨兼容范围升级，本轮未进行。
 
 应用已不使用 Next.js；锁文件仍可能包含 Better Auth 的可选 Next.js peer。用 `pnpm why next` 区分可选依赖与应用入口，不要为消除提示添加 Next.js 配置或隐藏真实 peer 不兼容。
 

@@ -4,12 +4,12 @@ import { admin } from 'better-auth/plugins';
 
 import * as schema from '~/db/schema';
 
-import { db } from './db';
+import { db, type Database } from './db';
 import { env } from './env';
 
-export function getAuth() {
+export function getAuth(database: Database = db()) {
   return betterAuth({
-    database: drizzleAdapter(db(), { provider: 'pg', schema }),
+    database: drizzleAdapter(database, { provider: 'sqlite', schema }),
     plugins: [admin()],
     emailAndPassword: {
       enabled: true,

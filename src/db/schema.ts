@@ -1,27 +1,8 @@
 import { createId } from '@paralleldrive/cuid2';
 import { sql } from 'drizzle-orm';
-import {
-  bigint,
-  boolean,
-  json,
-  pgSchema,
-  pgTable,
-  primaryKey,
-  serial,
-  text,
-  timestamp,
-  uniqueIndex,
-} from 'drizzle-orm/pg-core';
+import { integer, sqliteTable, primaryKey, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
-export const drizzle = pgSchema('drizzle');
-
-export const drizzleMigrationsInDrizzle = drizzle.table('__drizzle_migrations', {
-  id: serial().primaryKey(),
-  hash: text().notNull(),
-  createdAt: bigint('created_at', { mode: 'number' }),
-});
-
-export const accounts = pgTable('accounts', {
+export const accounts = sqliteTable('accounts', {
   id: text().primaryKey().$defaultFn(createId),
   accountId: text('account_id').notNull(),
   providerId: text('provider_id').notNull(),
@@ -31,26 +12,26 @@ export const accounts = pgTable('accounts', {
   accessToken: text('access_token'),
   refreshToken: text('refresh_token'),
   idToken: text('id_token'),
-  accessTokenExpiresAt: timestamp('access_token_expires_at'),
-  refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+  accessTokenExpiresAt: integer('access_token_expires_at', { mode: 'timestamp_ms' }),
+  refreshTokenExpiresAt: integer('refresh_token_expires_at', { mode: 'timestamp_ms' }),
   scope: text(),
   password: text(),
-  createdAt: timestamp('created_at').notNull(),
-  updatedAt: timestamp('updated_at').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
 });
 
-export const comments = pgTable('comments', {
+export const comments = sqliteTable('comments', {
   id: text().primaryKey().$defaultFn(createId),
   postId: text('post_id').notNull(),
   userId: text('user_id')
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   parentId: text('parent_id'),
-  createdAt: timestamp('created_at').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
   content: text().notNull(),
 });
 
-export const postTags = pgTable(
+export const postTags = sqliteTable(
   'post_tags',
   {
     postId: text('post_id')
@@ -63,7 +44,7 @@ export const postTags = pgTable(
   (table) => [primaryKey({ columns: [table.postId, table.tagId], name: 'post_tags_pkey' })],
 );
 
-export const posts = pgTable(
+export const posts = sqliteTable(
   'posts',
   {
     id: text().primaryKey().$defaultFn(createId),
@@ -71,29 +52,29 @@ export const posts = pgTable(
     description: text(),
     summary: text(),
     banner: text(),
-    published: boolean().default(false),
+    published: integer({ mode: 'boolean' }).default(false),
     htmlContent: text('html_content'),
     textContent: text('text_content'),
-    jsonContent: json('json_content'),
+    jsonContent: text('json_content', { mode: 'json' }),
     slug: text(),
-    createdAt: timestamp('created_at')
-      .default(sql`now()`)
+    createdAt: integer('created_at', { mode: 'timestamp_ms' })
+      .default(sql`(unixepoch() * 1000)`)
       .notNull(),
-    updatedAt: timestamp('updated_at')
-      .default(sql`now()`)
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' })
+      .default(sql`(unixepoch() * 1000)`)
       .notNull(),
   },
-  (table) => [uniqueIndex('posts_slug_unique').using('btree', table.slug.asc().nullsLast())],
+  (table) => [uniqueIndex('posts_slug_unique').on(table.slug)],
 );
 
-export const sessions = pgTable(
+export const sessions = sqliteTable(
   'sessions',
   {
     id: text().primaryKey(),
-    expiresAt: timestamp('expires_at').notNull(),
+    expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
     token: text().notNull(),
-    createdAt: timestamp('created_at').notNull(),
-    updatedAt: timestamp('updated_at').notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
     ipAddress: text('ip_address'),
     userAgent: text('user_agent'),
     userId: text('user_id')
@@ -101,45 +82,45 @@ export const sessions = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     impersonatedBy: text('impersonated_by'),
   },
-  (table) => [uniqueIndex('sessions_token_unique').using('btree', table.token.asc().nullsLast())],
+  (table) => [uniqueIndex('sessions_token_unique').on(table.token)],
 );
 
-export const tags = pgTable(
+export const tags = sqliteTable(
   'tags',
   {
     id: text().primaryKey(),
     name: text().notNull(),
-    createdAt: timestamp('created_at')
-      .default(sql`now()`)
+    createdAt: integer('created_at', { mode: 'timestamp_ms' })
+      .default(sql`(unixepoch() * 1000)`)
       .notNull(),
-    updatedAt: timestamp('updated_at').notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
   },
-  (table) => [uniqueIndex('tags_name_unique').using('btree', table.name.asc().nullsLast())],
+  (table) => [uniqueIndex('tags_name_unique').on(table.name)],
 );
 
-export const users = pgTable(
+export const users = sqliteTable(
   'users',
   {
     id: text().primaryKey(),
     name: text().notNull(),
     email: text().notNull(),
-    emailVerified: boolean('email_verified').notNull(),
+    emailVerified: integer('email_verified', { mode: 'boolean' }).notNull(),
     image: text(),
-    createdAt: timestamp('created_at').notNull(),
-    updatedAt: timestamp('updated_at').notNull(),
-    banExpires: timestamp('ban_expires'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+    banExpires: integer('ban_expires', { mode: 'timestamp_ms' }),
     banReason: text('ban_reason'),
-    banned: boolean().default(false),
+    banned: integer({ mode: 'boolean' }).default(false),
     role: text(),
   },
-  (table) => [uniqueIndex('users_email_unique').using('btree', table.email.asc().nullsLast())],
+  (table) => [uniqueIndex('users_email_unique').on(table.email)],
 );
 
-export const verifications = pgTable('verifications', {
+export const verifications = sqliteTable('verifications', {
   id: text().primaryKey(),
   identifier: text().notNull(),
   value: text().notNull(),
-  expiresAt: timestamp('expires_at').notNull(),
-  createdAt: timestamp('created_at'),
-  updatedAt: timestamp('updated_at'),
+  expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }),
+  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }),
 });

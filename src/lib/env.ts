@@ -3,7 +3,6 @@ import { z } from 'zod/v4-mini';
 
 export const env = createEnv({
   server: {
-    DATABASE_URL: z.optional(z.string()),
     BETTER_AUTH_SECRET: z.string(),
     BETTER_AUTH_URL: z.optional(z.string()),
     GOOGLE_CLIENT_ID: z.string(),
