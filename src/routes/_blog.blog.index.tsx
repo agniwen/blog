@@ -14,8 +14,8 @@ export const Route = createFileRoute('/_blog/blog/')({
 });
 function Blogs() {
   return (
-    <PageContainer className='mx-auto max-w-2xl pt-12 pb-8'>
-      <div className='mb-8 px-4'>
+    <PageContainer className='article-container pt-12 pb-8'>
+      <div className='mb-8'>
         <Link to='/' aria-label='返回首页'>
           <Button size='icon-sm' variant='ghost' className='text-xl'>
             <Icon icon='ri:arrow-left-line' />

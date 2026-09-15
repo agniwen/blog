@@ -2,9 +2,9 @@ import { Skeleton } from '~/components/ui/skeleton';
 
 export function PostListLoader() {
   return (
-    <div aria-hidden='true' className='grid grid-cols-1 divide-y divide-border/60 px-4'>
+    <div aria-hidden='true' className='grid grid-cols-1 divide-y divide-border/60'>
       {Array.from({ length: 5 }).map((_, index) => (
-        <div key={index} className='px-1 py-3.5'>
+        <div key={index} className='py-3.5'>
           <div className='space-y-3'>
             <Skeleton className='h-5 w-2/5 rounded-md' />
             <div className='flex items-end justify-between gap-12'>

@@ -23,8 +23,8 @@
   /* Common list styles */
   ol,
   ul {
-    margin-top: 1.5em;
-    margin-bottom: 1.5em;
+    margin-top: var(--article-flow);
+    margin-bottom: 0;
     padding-left: 1.5em;
 
     &:first-child {
@@ -45,7 +45,7 @@
   li {
     p {
       margin-top: 0;
-      line-height: 1.6;
+      line-height: inherit;
     }
   }
 
@@ -118,7 +118,7 @@
           border: 1px solid var(--tt-checklist-border-color);
           border-radius: var(--tt-radius-xs, 0.25rem);
           position: relative;
-          cursor: pointer;
+          cursor: default;
           background-color: var(--tt-checklist-bg-color);
           transition:
             background-color 80ms ease-out,

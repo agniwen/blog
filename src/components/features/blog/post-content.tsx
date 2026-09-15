@@ -34,7 +34,7 @@ export function PostContent({ id }: { id: string }) {
         </div>
       ) : null}
       <div className='mt-12 mb-8'>
-        <h1 className='mb-6 text-4xl font-medium'>{data?.title}</h1>
+        <h1 className='article-title mb-6'>{data?.title}</h1>
         <p className='flex items-center gap-8 text-sm opacity-80'>
           <span className='flex items-center gap-1'>
             <Calendar className='size-4' />

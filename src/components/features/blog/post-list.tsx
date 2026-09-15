@@ -12,7 +12,7 @@ export function PostList() {
     },
   });
   return (
-    <div className='grid grid-cols-1 divide-y divide-border/60 px-4'>
+    <div className='grid grid-cols-1 divide-y divide-border/60'>
       {data?.map((post) => (
         // oxlint-disable-next-line jsx-a11y/control-has-associated-label
         <Link
@@ -20,9 +20,9 @@ export function PostList() {
           to='/blog/$id'
           params={{ id: post.id }}
           preload='intent'
-          className='block cursor-default transition-colors duration-150 hover:bg-accent/30 motion-reduce:transition-none'
+          className='block transition-colors duration-150 hover:bg-accent/30 motion-reduce:transition-none'
         >
-          <div className='space-y-1 px-1 py-3.5'>
+          <div className='space-y-1 py-3.5'>
             <h2>{post.title}</h2>
             <div className='flex items-end justify-between gap-12'>
               <div className='flex-1'>

@@ -16,7 +16,7 @@ export const segmentedControlItemLayoutClassName =
 
 export const segmentedControlItemVariants = cva(
   [
-    'relative inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md border border-transparent text-base font-medium whitespace-nowrap text-muted-foreground/72 outline-2 outline-transparent transition-[outline-color] select-none hover:bg-transparent hover:text-muted-foreground focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-64 sm:text-sm data-disabled:pointer-events-none data-disabled:opacity-64',
+    'relative inline-flex shrink-0 cursor-default items-center justify-center rounded-md border border-transparent text-base font-medium whitespace-nowrap text-muted-foreground/72 outline-2 outline-transparent transition-[outline-color] select-none hover:bg-transparent hover:text-muted-foreground focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-64 sm:text-sm data-disabled:pointer-events-none data-disabled:opacity-64',
     segmentedControlItemLayoutClassName,
   ],
   {

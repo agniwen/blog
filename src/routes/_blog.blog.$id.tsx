@@ -33,7 +33,7 @@ export const Route = createFileRoute('/_blog/blog/$id')({
 
 function Blog({ id }: { id: string }) {
   return (
-    <PageContainer className='mx-auto max-w-2xl px-4 pt-12'>
+    <PageContainer className='article-container pt-12'>
       <PostHeader />
       <PostContent id={id} />
       <Comments id={id} />

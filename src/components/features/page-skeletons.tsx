@@ -9,8 +9,8 @@ function BackSkeleton() {
 
 export function BlogListSkeleton() {
   return (
-    <div className='mx-auto max-w-2xl pt-12 pb-8' role='status' aria-label='正在加载文章列表'>
-      <div className='mb-8 px-4'>
+    <div className='article-container pt-12 pb-8' role='status' aria-label='正在加载文章列表'>
+      <div className='mb-8'>
         <BackSkeleton />
       </div>
       <PostListLoader />
@@ -20,7 +20,7 @@ export function BlogListSkeleton() {
 
 export function BlogPostSkeleton() {
   return (
-    <div className='mx-auto max-w-2xl px-4 pt-12' role='status' aria-label='正在加载文章'>
+    <div className='article-container pt-12' role='status' aria-label='正在加载文章'>
       <div className='mb-12'>
         <BackSkeleton />
       </div>
@@ -90,7 +90,7 @@ export function EditorSkeleton() {
             <Skeleton key={i} className='size-8 shrink-0 rounded-md' />
           ))}
         </div>
-        <div className='mx-auto flex max-w-[648px] flex-col gap-4 px-6 py-12 md:px-12'>
+        <div className='article-container flex flex-col gap-4 py-12'>
           {Array.from({ length: 8 }, (_, i) => (
             <Skeleton
               key={i}

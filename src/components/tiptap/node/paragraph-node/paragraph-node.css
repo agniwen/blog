@@ -34,14 +34,24 @@
   caret-color: var(--tt-cursor-color);
 
   p:not(:first-child) {
-    margin-top: 20px;
+    margin-top: var(--article-flow);
   }
 
   /* Paragraph spacing */
   p {
-    font-size: 1rem;
-    line-height: 2;
+    font-size: inherit;
+    line-height: inherit;
     font-weight: normal;
+  }
+
+  > :first-child,
+  blockquote > p:first-child,
+  li > p:first-child {
+    margin-top: 0;
+  }
+
+  :is(h1, h2, h3, h4, h5, h6) + p {
+    margin-top: 1em;
   }
 
   /* Selection styles */

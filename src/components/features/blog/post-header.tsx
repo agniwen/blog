@@ -19,7 +19,7 @@ export function PostHeader() {
           inView ? 'invisible opacity-0' : 'visible opacity-100',
         )}
       >
-        <div className='relative mx-auto grid h-11 max-w-2xl grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-3 px-4'>
+        <div className='article-container relative grid h-11 grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-3'>
           <Link
             to='/blog'
             aria-label='返回文章列表'
