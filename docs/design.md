@@ -1,20 +1,20 @@
 # Visual tokens
 
-Reference: [Yohaku's open design system](https://github.com/Innei/Yohaku/tree/main/design-system), especially `src/tokens.css` and `CHEATSHEET.md`.
+Color reference: [Amp's signed-in application](https://ampcode.com/), inspected in Chrome and matched to its app CSS on 2026-09-15. Do not use the marketing homepage's blue/orange primary colors. Existing geometry and paper surfaces remain local.
 
 Scope: adapt colors, corner radii, borders and restrained shadows. Preserve the blog's existing layout, content order, copy, typography sizes and spacing. Do not add navigation, archive grouping, homepage feeds, or move the article cover/header without an explicit request.
 
-The existing shadcn semantic tokens in `src/styles/app.css` map to Yohaku's palette: studio content `#fefefb`, public paper `#f9f8f5`, surfaces `#f9f8f5` / `#f0efeb`, text `#24231f` / `#5c5a55`, and the static contract's ume accent `#c56473` for focus. The accent remains separate from neutral hover fills. Dark surfaces use warm night `#1c1c1e` and neutral gray, with pink focus `#f596aa`.
+Keep the original paper surfaces: light background/popover `#fefefb`, public paper/sidebar/cards `#f9f8f5`; dark background `#1c1c1e` and surfaces `#262626`. Borders retain their original 10% neutral ink/white alpha. Amp's app supplies ink `#0b0d0b` / light text `#f6fff5`, inverse primary buttons (95% foreground mixed with background), secondary gray-green `#d6dcd6` / `#2f372f`, muted text `#595959` / `#9ca49c`, and subtle neutral hover fills. Links use blue `#286bbd` / `#6ca0e0`; focus rings use foreground. Preserve the noise texture and layout.
 
 Use 6px corners for buttons, 8px for cards, 12px for dialogs and a 16px cap for large media. Keep circular avatars. Borders use a 10% neutral ink alpha; shadows are low-opacity and soft. No heavy avatar drop shadow.
 
 Do not introduce document-wide font/background resets from editor stylesheets. All routes and layouts continue to use TanStack Router's flat file conventions.
 
-Keep the original frosted/noise background, including its 5% light-mode opacity and 2% dark-mode opacity. Content links use a darker ume `#a6495b` in light mode for readability; comment surfaces and selection colors follow the semantic theme.
+Keep the original frosted/noise background, including its 5% light-mode opacity and 2% dark-mode opacity. Content links use the theme-specific blue tokens; comment surfaces and selection colors follow the semantic theme.
 
-Primary buttons and sidebar primary controls use ume `#c56473` in light mode and pink `#f596aa` in dark mode, paired with dark ink labels. Hover uses 90% opacity; link buttons use the accessible content-link shade.
+Primary buttons and sidebar primary controls use the same inverse neutral fill and background-colored labels. Links use the separate readable blue token.
 
-Form controls (Input, Textarea, Select, NativeSelect, Combobox, InputGroup and OTP groups) use the same `rounded-xl` corner token (12px). Avoid pill-shaped `rounded-full` / `rounded-4xl` for form fields; matching field skeletons use the same radius.
+Form controls (Input, Textarea, Select, NativeSelect, Combobox, InputGroup and OTP groups) use the same `rounded-lg` corner token (8px). Avoid pill-shaped `rounded-full` / `rounded-4xl` for form fields; matching field skeletons use the same radius.
 
 Studio contains Posts only; `/studio` redirects to the article list and `/studio/projects` is removed. The shared shell owns the fixed sidebar/header and scrollable content boundary. `AdminContainer` provides 16px / 24px responsive padding for list pages, while `flush` allows the full-height editor to align with the same shell. Article cards use an auto-fill grid based on content width instead of switching to fixed-width flex items on wide screens.
 
@@ -44,10 +44,12 @@ AspectRatio, Carousel, Item, Menubar, NavigationMenu, Resizable and Sidebar have
 
 Use `render={<Link ... />}` for link buttons, without nested interactive elements. Async actions pass explicit `loading` to Button; the shared button no longer detects promises or manages mutations. Use coss `Popup` / `Panel` names in application code, Base UI `render` composition, and `onValueChange` for Select. Keep loading indicators at the existing 300ms delay / 300ms minimum.
 
-Local adaptations: button radius 6px and original control heights, input/textarea/select radius 12px, text weight no heavier than 500, subtle ghost hover using `accent/50`, and reduced-motion skeletons. Additional coss info/success/warning tokens use muted blue/green/ochre matching the existing chart palette; destructive text uses the existing destructive token.
+Local adaptations: button radius 6px and original control heights, input/textarea/select radius 8px, text weight no heavier than 500, subtle ghost hover using `accent/50`, and reduced-motion skeletons. Additional coss info/success/warning tokens use muted blue/green/ochre matching the existing chart palette; destructive text uses the existing destructive token.
 
 Article and editor typography share the Typeset rhythm (https://ui.shadcn.com/typeset): 90ch preset (42em at a 15px base, or 630px) content measure, 15px desktop body, 16.875px below 768px, 1.75 line height, and 1.25em paragraph flow. Shared tokens and `.article-container` live in `src/styles/app.css`; both surfaces use the same Tiptap node styles. Keep MiSans and cap heading/emphasis weight at 500. The article list, reader, sticky article header, and their skeletons use `.article-container` for the same maximum width and gutters; avoid adding a second horizontal padding inside the list.
 
 Use `cursor-default` for clickable controls and upload targets; `<a href>` links, including linked cards and buttons rendered as links, keep `cursor-pointer`. Keep text-editing, dragging, and resize cursors where they communicate the actual operation. Non-link interactive elements receive the default arrow through the global base layer.
 
 Spotify embeds use the actual `@spell/spotify-card` registry source in `src/components/spotify-card.tsx` (https://spell.sh/docs/spotify-card), shared by the reader and Tiptap node. Preserve its cover slide, spinning record SVG and blurred artwork; local changes integrate query/snapshot loading, semantic theme colors, max-500 text weight, default button cursors, delayed skeletons, accessible playback errors and per-instance SVG IDs. Legacy Spotify iframe nodes also render through this component. The editor Spotify tool accepts track links, URIs and embed code, with preview, insertion, replacement and deletion.
+
+Input, Textarea, Select, InputGroup and Combobox focus rings use a thin 1px ring with the existing translucent ring color and a 40%-opacity focus border; avoid restoring the coss default 3px halo.
