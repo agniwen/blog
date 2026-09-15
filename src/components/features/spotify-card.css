@@ -1,0 +1,17 @@
+/* Keep article/editor image defaults from stretching Spell's cover and backdrop. */
+.tiptap.ProseMirror .spell-spotify-card img {
+  height: 100%;
+  margin: 0;
+}
+.spell-spotify-card button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spell-spotify-card .animate-spin {
+    animation: none;
+  }
+  .spell-spotify-card button * {
+    transition: none;
+  }
+}

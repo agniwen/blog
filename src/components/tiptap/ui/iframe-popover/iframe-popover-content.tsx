@@ -1,3 +1,4 @@
+import { parseSpotifyTrack } from '~/lib/spotify';
 import type { Editor } from '@tiptap/react';
 import { CornerDownLeftIcon } from 'lucide-react';
 import * as React from 'react';
@@ -24,7 +25,9 @@ export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentPr
 
     setError('');
 
-    editor.chain().focus().setIFrame({ code: code.trim() }).run();
+    const spotify = parseSpotifyTrack(code);
+    if (spotify) editor.chain().focus().setSpotify({ url: spotify }).run();
+    else editor.chain().focus().setIFrame({ code: code.trim() }).run();
 
     setCode('');
     onClose?.();

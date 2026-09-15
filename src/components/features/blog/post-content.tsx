@@ -1,3 +1,4 @@
+import { ArticleBody } from './article-body';
 import { useQuery } from '@tanstack/react-query';
 import { Calendar } from 'lucide-react';
 
@@ -51,12 +52,9 @@ export function PostContent({ id }: { id: string }) {
         </p>
       </div>
       <div>
-        <div
-          className='tiptap ProseMirror'
-          dangerouslySetInnerHTML={{
-            __html: data?.htmlContent || '',
-          }}
-        />
+        <div className='tiptap ProseMirror'>
+          <ArticleBody html={data?.htmlContent || ''} />
+        </div>
       </div>
     </div>
   );

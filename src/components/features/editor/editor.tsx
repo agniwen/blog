@@ -23,6 +23,7 @@ import {
   ColorHighlightPopoverContent,
 } from '~/components/tiptap/ui/color-highlight-popover';
 import { HeadingDropdownMenu } from '~/components/tiptap/ui/heading-dropdown-menu';
+import { SpotifyButton } from '~/components/tiptap/ui/spotify-popover/spotify-button';
 import { IFrameButton } from '~/components/tiptap/ui/iframe-popover';
 import { ImageUploadButton } from '~/components/tiptap/ui/image-upload-button';
 import { LinkButton, LinkContent, LinkPopover } from '~/components/tiptap/ui/link-popover';
@@ -111,6 +112,7 @@ function MainToolbarContent({
       <ToolbarGroup>
         <BookmarkButton />
         <IFrameButton />
+        <SpotifyButton />
         <ImageUploadButton text='Add' />
       </ToolbarGroup>
 

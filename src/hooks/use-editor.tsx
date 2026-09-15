@@ -10,6 +10,8 @@ import type { UseEditorOptions } from '@tiptap/react';
 import { useEditor as useTipTapEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 
+import { SpotifyNode } from '~/components/tiptap/node/spotify-node/spotify-node-extension';
+
 import { BookmarkNode } from '~/components/tiptap/node/bookmark-node/bookmark-node-extension';
 import { HorizontalRule } from '~/components/tiptap/node/horizontal-rule-node/horizontal-rule-node-extension';
 import { IFrameNode } from '~/components/tiptap/node/iframe-node/iframe-node-extension';
@@ -54,6 +56,7 @@ export const defaultEditorOptions = {
       onError: (error) => console.error('Upload failed:', error),
     }),
     BookmarkNode,
+    SpotifyNode,
     IFrameNode,
   ],
 };

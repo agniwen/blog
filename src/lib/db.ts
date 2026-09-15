@@ -8,7 +8,13 @@ export function createDatabase(binding: D1Database) {
   return drizzle(binding, { relations });
 }
 export type Database = ReturnType<typeof createDatabase>;
-export const requestDatabase = new AsyncLocalStorage<Database>();
+// Worker entry and server-function modules can reload independently under Vite HMR.
+// Share the storage identity, never a database instance, across those module copies.
+const contextKey = Symbol.for('blog.requestDatabase');
+const runtime = globalThis as typeof globalThis & {
+  [contextKey]?: AsyncLocalStorage<Database>;
+};
+export const requestDatabase = (runtime[contextKey] ??= new AsyncLocalStorage<Database>());
 export function db(): Database {
   const database = requestDatabase.getStore();
   if (!database)

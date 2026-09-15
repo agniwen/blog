@@ -1,3 +1,5 @@
+import { spotifyRouter } from './routes/spotify';
+
 import { Hono } from 'hono';
 
 import { getAuth } from '~/lib/auth';
@@ -13,6 +15,7 @@ export const app = new Hono<Env>()
   .on(['POST', 'GET'], '/api/auth/*', (c) => {
     return getAuth().handler(c.req.raw);
   })
+  .route('/api/spotify', spotifyRouter)
   .use(drizzleMiddleware, betterAuthMiddleware)
   .basePath('/api')
   .route('/s3', s3Router)
