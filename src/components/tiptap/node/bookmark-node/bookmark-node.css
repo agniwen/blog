@@ -12,6 +12,9 @@
 
   .bookmark-card {
     display: flex;
+    /* Override the h-30 class in previously stored article HTML too. */
+    height: auto;
+    min-height: 7.5rem;
     border: 1px solid var(--border);
     overflow: hidden;
     border-radius: var(--radius);
@@ -37,6 +40,10 @@
     flex-direction: column;
     gap: 0.5rem;
     min-width: 0;
+
+    > * {
+      flex-shrink: 0;
+    }
   }
 
   .bookmark-site {
@@ -71,6 +78,7 @@
   }
 
   .bookmark-description {
+    white-space: normal;
     font-size: 0.875rem;
     color: var(--bookmark-description-color);
     overflow: hidden;
@@ -91,6 +99,7 @@
   }
 
   .bookmark-image-container {
+    position: relative;
     width: 14rem;
     height: auto;
     flex-shrink: 0;
@@ -101,6 +110,8 @@
   }
 
   .bookmark-image {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;

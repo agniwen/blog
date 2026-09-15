@@ -71,7 +71,7 @@ export const BookmarkNode = Node.create({
     const children = [
       'a',
       {
-        class: 'bookmark-card h-30 block ',
+        class: 'bookmark-card',
         style: 'text-decoration:none',
         href: url,
         target: '_blank',

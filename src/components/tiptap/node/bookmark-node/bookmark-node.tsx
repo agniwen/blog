@@ -17,7 +17,7 @@ export const BookmarkNodeView: React.FC<NodeViewProps> = React.memo(
     return (
       <NodeViewWrapper className='bookmark-node'>
         <div
-          className='bookmark-card h-30'
+          className='bookmark-card'
           onClick={handleClick}
           role='button'
           tabIndex={0}
