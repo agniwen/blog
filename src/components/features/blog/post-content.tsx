@@ -25,9 +25,14 @@ export function PostContent({ id }: { id: string }) {
   return (
     <div className='post-content'>
       {data?.banner ? (
-        <div className='pointer-events-none relative mb-8 aspect-16/10 rounded-xl border border-border bg-border *:select-none'>
+        <div className='pointer-events-none relative mb-8 aspect-16/10 rounded-xs bg-border *:select-none'>
           <img
-            className='relative z-2 aspect-16/10 rounded-xl object-cover'
+            className='relative z-2 aspect-16/10 rounded-xs object-cover'
+            src={data.banner}
+            alt={data.title ?? ''}
+          />
+          <img
+            className='pointer-events-none absolute top-10 left-0 z-1 aspect-16/10 rounded-xs object-cover opacity-30 blur-3xl'
             src={data.banner}
             alt={data.title ?? ''}
           />
