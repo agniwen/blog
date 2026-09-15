@@ -53,11 +53,13 @@ export function CommentsInput({ id }: CommentsInputProps) {
 
   return (
     <div className='comment-input rounded-xl'>
-      <div className='relative pt-4'>
+      <div className='relative'>
+        <h2 className='py-4 text-sm font-semibold opacity-60 select-none'>评论</h2>
         <form onSubmit={handleSubmit}>
-          <InputGroup>
+          <InputGroup className='rounded-lg'>
             <InputGroupTextarea
               name='comment'
+              size={'sm'}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               disabled={isPending}
@@ -66,13 +68,13 @@ export function CommentsInput({ id }: CommentsInputProps) {
             <InputGroupAddon align='block-end'>
               <Separator className='flex-1 bg-transparent' orientation='vertical' />
               <Button
+                size={'xs'}
                 type='submit'
                 aria-label='发送评论'
                 loading={isPending}
                 variant='default'
-                size='icon-sm'
               >
-                <ArrowUpIcon className='size-5' />
+                <ArrowUpIcon className='size-4' />发 表
               </Button>
             </InputGroupAddon>
           </InputGroup>
