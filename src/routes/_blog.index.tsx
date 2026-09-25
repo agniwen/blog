@@ -1,3 +1,4 @@
+import { IconBook2 } from '@tabler/icons-react';
 import { createFileRoute, Link } from '@tanstack/react-router';
 
 import { Social } from '~/components/features/social';
@@ -26,7 +27,13 @@ function Home() {
             </p>
           </div>
           <Social />
-          <Button render={<Link to='/blog' />} variant='secondary' className='px-4'>
+          <Button render={<Link to='/blog' />} variant='secondary' className='group px-4'>
+            <span
+              aria-hidden='true'
+              className='inline-flex motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:-rotate-12 motion-safe:group-focus-visible:-rotate-12'
+            >
+              <IconBook2 data-icon='inline-start' />
+            </span>
             Blog
           </Button>
         </div>
