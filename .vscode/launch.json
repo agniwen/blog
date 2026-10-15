@@ -2,32 +2,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "TanStack Start: debug server-side",
+      "name": "Void: start development server",
       "type": "node-terminal",
       "request": "launch",
       "command": "bun run dev"
     },
     {
-      "name": "TanStack Start: debug client-side",
+      "name": "Void: debug client",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:3000"
-    },
-    {
-      "name": "TanStack Start: debug full stack",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/node_modules/vite/bin/vite.js",
-      "runtimeArgs": ["--inspect"],
-      "args": ["--port", "3000"],
-      "skipFiles": ["<node_internals>/**"],
-      "serverReadyAction": {
-        "action": "debugWithEdge",
-        "killOnServerStop": true,
-        "pattern": "Local:.+(https?://.+)",
-        "uriFormat": "%s",
-        "webRoot": "${workspaceFolder}"
-      }
     }
   ]
 }

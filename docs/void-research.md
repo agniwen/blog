@@ -1,58 +1,17 @@
-# Void 集成调研
+# Void 迁移记录
 
-核查日期：2026-10-15。本文区分官方指南与当前项目的兼容性判断，不包含远程部署或数据迁移的执行结果。
+核查日期：2026-10-16。当前实现使用 Void / @void/react 1.1.11，保留 Better Auth 与现有 D1 数据模型。
 
-## 已选择的原生 Pages 重构
+## 官方约定与本项目实现
 
-用户已选择完整迁入原生 Void Pages、loaders 和 actions。官方 React 配置为 `plugins: [voidPlugin(), voidReact()]`，后者来自 `@void/react/plugin`，已包含 React Vite 插件；不再注册 TanStack Start、独立 React 或 Cloudflare 插件。页面位于 `pages/`，动态段用 `[id]`，路径组用 `(blog)`，layout 接收 `children`。[Pages 概览](https://void.cloud/guide/pages-routing/overview)
-
-迁移保留现有 URL、API 契约、UI 组件、排版与交互；TanStack 路由与 server functions 迁入 Pages，旧文件不应和 Void 的 `routes/` 扫描目录重叠。共享布局使用 `pages/layout.tsx` 或组内 `layout.tsx`；登录页应放在受保护组外，仍返回 `/studio/login`。菜单导航使用 `@void/react` 的 `Link href`，编程导航为 `useRouter().visit()`，重新获取当前页为 `refresh()`。[Pages 概览](https://void.cloud/guide/pages-routing/overview)
-
-`page.server.ts` 导出 `loader = defineHandler(async c => ({ ... }))` 与 `type Props = InferProps<typeof loader>`，React 页面仅通过 type import 引用 Props，接收 loader 返回对象。服务端查询不得放进页面组件。页面 metadata 使用 `head = defineHead<Props>((c, props) => ({title, meta}))`；缺失文章抛出 Hono `HTTPException(404)`。[Loaders](https://void.cloud/guide/pages-routing/loaders)、[Handler API](https://void.cloud/reference/api/handlers)
-
-action 导出为 `defineHandler.withValidator({body: schema})(async (c, {body}) => { ... })`，支持 Standard Schema，包括现有 Zod；每次私有 action 内独立授权。返回 void 会重新执行 loader，返回 `c.redirect()` 导航。客户端 `Form/useForm('/route', initialValues)` 管理校验、提交错误与 pending。复杂编辑器可保留现有表单逻辑，用 awaitable `action('/studio/:id?update', {params: {id}, data, method: 'POST'})`；结果为 `{ok:true,pageData}` 或 `{ok:false,error}`，认证/服务器错误会抛出。多操作页面导出 `actions: {update, delete}`，不能同时导出单数 action。每个 action 各自授权。[Actions 与 Forms](https://void.cloud/guide/pages-routing/actions-and-forms)
-
-全局中间件 `middleware/01.context.ts` 导出 `defineMiddleware(async(c,next)=>{ ...; await next(); })`。共享用户数据可 `c.set('shared', {...})`，通过 `CloudContextVariables.shared` 扩展类型后由 `useShared()` 读取。root 中间件可在 `requestDatabase.run(createDatabase(c.env.DB), next)` 中保留项目 rc.4 请求上下文，并在同一链处理 canonical redirect 和私有 `Cache-Control`。这是对已存在 ALS 生命周期的迁移设计，需实际 dev/build 验证。[Layouts 与共享数据](https://void.cloud/guide/pages-routing/layouts)
-
-Void handler 基于 Hono，可直接使用 Hono middleware/Response helpers。API catch-all handler 可委托给现有 Hono app 的 `fetch`，保留 `/api/auth/*`、R2 与业务 API；需通过真实 HTTP 验证路径、method、request/env/context 透传。[Hono 集成](https://void.cloud/integrations/hono)
-
-原生 Void auth 默认会自行管理连接与认证表。官方支持 root `auth.ts` 的 `defineAuth(({defaults})=>({...defaults, ...custom}))`，但不是深合并；导入 `void/auth`、`void/client` 的 auth、config.auth 或 root auth.ts 都会启用它。本项目已有 rc.4 Relations v2 schema/adapter，因此原生页面迁移保留自管 Better Auth，并通过 Void API route 调用它的 handler，避免无意启用另一套 ORM/auth table 管理。若以后迁入 managed auth，应单独证明自定义 database adapter、schema、Google 配置及会话兼容，不可使用自动生成表替换现有表。[认证指南](https://void.cloud/guide/auth)
-
-## 已发布版本与数据库兼容性
-
-`bun info void --json` 在核查时返回 `void@1.1.11`：Node 要求为 `>=24.21.0`，Vite peer 为 `^8.0.0`；其内部依赖为 `drizzle-orm ^0.45.4`、`drizzle-kit ^0.31.11`、`better-auth ^1.7.7`。元数据包含指南所使用的 `void`、`void/config`、`void/env`、`void/db` 和 `void/schema-d1` 导出。这说明 npm 包与当前指南属于同一产品，但不能假定其内置 Drizzle 版本等同于项目版本。[npm 发布包元数据](https://registry.npmjs.org/void/1.1.11)
-
-本项目将 ORM 和 Kit 固定为 `1.0.0-rc.4`，`src/db/relations.ts` 使用 Relations v2；`src/lib/db.ts` 以 `drizzle(binding, { relations })` 建立连接。直接切换到 Void 内置 ORM 会跨越关系 API 与迁移快照格式边界。应保留项目自己的 rc.4 ORM、Kit 和 Better Auth Relations v2 adapter，先验证构建插件是否能独立使用；不能通过包版本覆盖将 Void 强行运行在未经支持的 rc.4 上。
-
-官方数据库指南默认读取 `db/schema.ts` 和 `db/migrations`，并使用 Drizzle 快照检查 schema 漂移；缺少匹配 metadata 会导致重复生成建表迁移。现有项目则使用 `src/db/schema.ts`、`drizzle/d1/<timestamp>/migration.sql` 和 rc.4 快照，因此不能复制 Void 的生成命令来替换既有迁移历史。[数据库指南](https://void.cloud/guide/database)
-
-## 配置与已有资源
-
-官方推荐把 Worker 配置写入 `void.config.ts`：兼容日期和 flags 可置于 `worker`，bindings、资源 ID、域名路由、assets 和其它 Cloudflare 字段置于 `cloudflare`。`void.lock.json` 记录资源与迁移历史，应提交；生成的 `.void-wrangler.jsonc` 不应提交。`sourceDir: 'src'` 会一起改变 schema、migrations、env 等约定路径，不只是修改资源扫描目录，不能为匹配现有 schema 路径而盲目启用。[配置参考](https://void.cloud/reference/config)
-
-现有 `wrangler.jsonc` 的 `DB` 指向已有 D1，且配置远程开发。应完整保留其资源 ID、自定义 migration directory/pattern、assets 策略、compatibility、域名和公开 vars；不得让推断自动创建一个新的生产 DB 取代它。官方直接 Cloudflare 集成明确支持已有 Worker 以及自定义 D1 migration 目录、表和 pattern，但首次 linking/deploy 会迁移配置并可能预建资源，失败构建也可能遗留新资源。[Cloudflare 集成](https://void.cloud/integrations/cloudflare)
-
-`src/worker.ts` 还承担 canonical redirect、请求级 Drizzle AsyncLocalStorage、开发桥接。插件替换必须证明自定义入口仍被采用，否则 `db()` 会在请求中找不到 context。框架直接部署的 redirects/headers 应继续由框架或 Worker 执行，不能仅把这些规则转写到 Void 原生路由配置。[Cloudflare 集成](https://void.cloud/integrations/cloudflare)
-
-## 环境变量
-
-Void 以 `env.ts` 声明变量，使用根 `.env` 提供本地值；生产 server 值通过 secrets 管理。其 public 语义固定为 `VITE_*`，即使 Vite 自定义 `envPrefix` 也不会改变这点；生产 build 不读取 `.env` 中的 public 值，应通过 build shell 或非敏感 schema default 提供。其它 dotenv 文件（包括 `.env.example` 与 `.env.production`）不是 Void 的值来源。[环境变量指南](https://void.cloud/guide/env-vars)
-
-项目现有 `NEXT_PUBLIC_AVATAR_URL` / `NEXT_PUBLIC_BETTER_AUTH_URL` 与 `.env.cloudflare` 属于已支持的兼容契约。不可直接把这些名称放进 Void env schema，否则会按 server 变量处理。应保留 `src/lib/client-env.ts` 与明确的 Vite public prefix/build mode，或通过显式映射增量支持 `VITE_*`，同时保留旧名称。实际运行确认 Void 插件拒绝根 `.env.example` 和 `.env.cloudflare`，因此模板已移到 `docs/env.example`，公开生产默认值在 Vite 配置中显式映射，现有 `.env` 保留。
-
-## 部署与验收边界
-
-`void deploy` 会构建、provision 资源、应用 migrations、上传 Worker 并检查 readiness；它并非单纯替代 `vite build`。官方建议 CLI 与 adapter 版本一致，提交 config/lock；CI 在 typecheck 之前可运行 `void prepare` 生成类型。回滚代码不会回滚数据库 migrations。[部署指南](https://void.cloud/guide/deployment)
-
-第一阶段应只在本地证明：自定义入口、rc.4 relations、Better Auth 私有边界、已有 migration 配置、public env 兼容与 canonical redirect 都保持有效。对 dev 和生产 preview 分别执行 HTTP smoke；成功登录、写入、OAuth、R2 上传必须另行验证。当前远程 D1 与共享数据不能作为自动迁移、seed 或写入测试目标。若 Void 的 prepare/build 强制要求使用其 0.45 ORM 快照，则这是现有版本的实际集成 blocker，应报告具体错误，而非更改 schema 或数据库来绕过。
-
-## 本次落地结构
-
-使用 `sourceDir: 'src'` 集中原生源码约定。`src/pages` 的同名 `.server.ts` 是官方 loader/action 约定，不是旧框架残留。`src/routes/api/posts/index.ts` / `[id].ts` 导出 HTTP method handlers，`_schema.ts` / `_data.ts` 以及书签 `_metadata.ts`、上传 `_presign.ts` 就近复用；下划线文件不生成端点。旧 `src/server`、Hono app/factory/zValidator/RPC client 已移除。Void 本身基于 Hono，`hono/http-exception` 仅用于标准 HTTP 错误，不再创建应用路由链。[官方项目结构](https://void.cloud/reference/structure)、[服务端路由约定](https://void.cloud/guide/server-routing)。
-
-共享 UI、features、hooks、lib 按应用职责组织；官方说明共享代码目录不具有特殊扫描约定。孤立组件和依赖经静态导入图核对后删除，页面数据由 loader 直接传递，不再重复使用客户端 Query 读取文章。[共享代码说明](https://void.cloud/reference/structure#src)。
-
-Void 1.1.11 的 Pages validation 在非 island 页面返回带 `errors` 的新页面 payload（HTTP 200），与直接 API validator 的 HTTP 400 区别明确。保存与评论客户端检查 `pageData.errors` 后才显示成功。通过本地集成测试确认无效输入没有改写数据库。
+- `voidPlugin()` 和 `voidReact()` 注册到 Vite；后者包含 React 插件。`sourceDir: 'src'` 集中源码约定，页面位于 `src/pages`，`[id]` 表示动态段，`(blog)` / `(studio)` 是不影响 URL 的路由组。[Pages 概览](https://void.cloud/guide/pages-routing/overview)
+- 同名 `.server.ts` 提供 loader、action 与页面类型；组件接收 loader props，数据库查询只在服务端执行。私有 loader/action 各自校验身份，登录页位于受保护组外。[Loaders](https://void.cloud/guide/pages-routing/loaders)、[Actions](https://void.cloud/guide/pages-routing/actions-and-forms)
+- `src/routes` 导出原生 HTTP method handlers，`_data.ts`、`_schema.ts`、`_metadata.ts`、`_presign.ts` 就近复用且不生成端点。旧 `src/server`、Hono app/factory/zValidator/RPC client 已删除；仅保留 Void 使用的标准 `hono/http-exception` 错误类型。[项目结构](https://void.cloud/reference/structure)、[服务端路由](https://void.cloud/guide/server-routing)
+- 数字前缀中间件依次处理请求级 Drizzle 上下文、后台与 API 认证。私有响应在 `await next()` 后设置 `private, no-store`，覆盖框架错误响应；不能只依赖布局鉴权。[Middleware](https://void.cloud/guide/server-routing)
+- Better Auth 继续使用项目自己的 `@better-auth/drizzle-adapter/relations-v2` 和显式 schema，Drizzle ORM / Kit 固定 `1.0.0-rc.4`。Void 内置 ORM 为 0.45，数据库推断已关闭；不导入 `void/db`、`void/auth`，不生成另一套认证表或迁移。现有 `drizzle/d1` 与历史 PostgreSQL 迁移保持不变。[认证](https://void.cloud/guide/auth)、[数据库](https://void.cloud/guide/database)
+- Void 只接受根 `.env`，变量模板移至 `docs/env.example`。八项 server secrets 在 `src/env.ts` 声明；`NEXT_PUBLIC_*` 经 Vite 显式兼容映射，生产默认值不会读取本地 localhost 配置。[环境变量](https://void.cloud/guide/env-vars)
+- `void.config.ts` 显式维护已有 Worker、D1 和自定义域名。生产发布由 Wrangler 上传 Void 生成的 `dist/ssr/wrangler.json`，复用现有 OAuth 会话，不自动 provision 或应用迁移；该流程不生成 `void.lock.json`。[Cloudflare](https://void.cloud/integrations/cloudflare)、[部署说明](cloudflare.md)
+- 共享 UI、features、hooks、lib 按职责组织。静态导入图检查后删除孤立组件；文章数据直接使用 loader props。原生 Pages validation 返回 HTTP 200 与 `pageData.errors`，客户端检查校验结果后才提示成功，API validator 则返回 HTTP 400。[项目结构](https://void.cloud/reference/structure)、[Actions](https://void.cloud/guide/pages-routing/actions-and-forms)
 
 ## 验证记录（2026-10-16）
 
