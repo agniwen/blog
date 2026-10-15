@@ -1,9 +1,9 @@
-import { ArticleBody } from './article-body';
-import { useQuery } from '@tanstack/react-query';
 import { Calendar } from 'lucide-react';
 
 import { TimeDisplay } from '~/components/ui/time-display';
-import { getPost } from '~/server/functions';
+import type { Props } from '~/pages/(blog)/blog/[id].server';
+
+import { ArticleBody } from './article-body';
 
 import '~/components/tiptap/node/blockquote-node/blockquote-node.css';
 import '~/components/tiptap/node/code-block-node/code-block-node.css';
@@ -16,13 +16,7 @@ import '~/components/tiptap/node/paragraph-node/paragraph-node.css';
 import '~/components/tiptap/node/bookmark-node/bookmark-node.css';
 import '~/components/features/editor/simple-editor.css';
 
-export function PostContent({ id }: { id: string }) {
-  const { data } = useQuery({
-    queryKey: ['post-detail', id],
-    queryFn() {
-      return getPost({ data: id });
-    },
-  });
+export function PostContent({ post: data }: Pick<Props, 'post'>) {
   return (
     <div className='post-content'>
       {data?.banner ? (

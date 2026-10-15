@@ -8,7 +8,7 @@ export function createDatabase(binding: D1Database) {
   return drizzle(binding, { relations });
 }
 export type Database = ReturnType<typeof createDatabase>;
-// Worker entry and server-function modules can reload independently under Vite HMR.
+// Middleware and page/route modules can reload independently under Vite HMR.
 // Share the storage identity, never a database instance, across those module copies.
 const contextKey = Symbol.for('blog.requestDatabase');
 const runtime = globalThis as typeof globalThis & {

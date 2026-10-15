@@ -1,15 +1,11 @@
 import { useForm } from '@tanstack/react-form';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
-import { parseResponse } from 'hono/client';
-import { isNil } from 'lodash-es';
+import { action } from '@void/react';
 import { Sparkles } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 import { BannerUpload } from '~/components/features/banner-upload';
 import { Editor } from '~/components/features/editor';
-import { EditorSkeleton } from '~/components/features/page-skeletons';
 import { Button } from '~/components/ui/button';
 import { Field, FieldError, FieldLabel } from '~/components/ui/field';
 import { Fieldset } from '~/components/ui/fieldset';
@@ -28,10 +24,8 @@ import {
 } from '~/components/ui/select';
 import { Spinner } from '~/components/ui/spinner';
 import { toastManager } from '~/components/ui/toast';
-import { useDelayedPending } from '~/hooks/use-delayed-pending';
 import { useEditor } from '~/hooks/use-editor';
-import { hono } from '~/lib/hono';
-import { getAdminPost } from '~/server/functions';
+import type { Props } from '~/pages/(studio)/studio/posts/upsert/[id].server';
 
 interface PostFormData {
   title?: string;
@@ -44,33 +38,23 @@ interface PostFormData {
   jsonContent?: any;
 }
 
-export function UpsertEditor(props: { id?: string }) {
-  const { id } = props;
+export function UpsertEditor({ post }: Props) {
+  const id = post.id;
   const editor = useEditor();
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialLoadRef = useRef(true);
 
-  const { data: post, isPending } = useQuery({
-    enabled: !isNil(id),
-    queryKey: ['admin-post-detail', id],
-    queryFn: () => getAdminPost({ data: id! }),
-  });
-
-  const showSkeleton = useDelayedPending(Boolean(id) && isPending);
-
   const form = useForm({
     defaultValues: {
-      title: post?.data?.title ?? '',
-      description: post?.data?.description ?? '',
-      slug: post?.data?.slug ?? '',
+      title: post?.title ?? '',
+      description: post?.description ?? '',
+      slug: post?.slug ?? '',
       banner:
-        post?.data?.banner ??
+        post?.banner ??
         'https://images.unsplash.com/photo-1604076850742-4c7221f3101b?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      summary: post?.data?.summary ?? '',
-      published: post?.data?.published ?? false,
+      summary: post?.summary ?? '',
+      published: post?.published ?? false,
     },
     async onSubmit({ value }) {
       const htmlContent = editor.getHTML();
@@ -80,46 +64,28 @@ export function UpsertEditor(props: { id?: string }) {
         htmlContent,
         jsonContent,
       };
-      if (id) {
-        return handleUpdate(submitData);
-      } else {
-        return handleCreate(submitData);
-      }
+      return handleUpdate(submitData);
     },
   });
 
-  async function handleCreate(submitData: PostFormData) {
-    try {
-      const resp = await parseResponse(
-        hono.api.posts.$post({
-          json: submitData,
-        }),
-      );
-      if (resp.data.id) {
-        toastManager.add({ type: 'success', title: '文章创建成功' });
-
-        router.navigate({ to: '/studio/posts/upsert/$id', params: { id: resp.data.id } });
+  const save = useCallback(
+    async (submitData: PostFormData) => {
+      const result = await action('/studio/posts/upsert/:id', {
+        params: { id },
+        data: submitData,
+        method: 'PUT',
+      });
+      if (!result.ok) throw new Error(result.error.message);
+      if (result.pageData?.errors && Object.keys(result.pageData.errors).length) {
+        throw new Error(Object.values(result.pageData.errors).join('; '));
       }
-    } catch (err) {
-      toastManager.add({ type: 'error', title: '文章创建失败' });
-      throw err;
-    }
-  }
-
+    },
+    [id],
+  );
   async function handleUpdate(submitData: PostFormData) {
     try {
-      const resp = await parseResponse(
-        hono.api.posts.$put({
-          json: {
-            ...submitData,
-            id: id as string,
-          },
-        }),
-      );
-      if (resp.data.id) {
-        toastManager.add({ type: 'success', title: '文章更新成功' });
-        queryClient.invalidateQueries({ queryKey: ['admin-post-detail', id] });
-      }
+      await save(submitData);
+      toastManager.add({ type: 'success', title: '文章更新成功' });
     } catch (err) {
       toastManager.add({ type: 'error', title: '文章更新失败' });
       throw err;
@@ -136,16 +102,7 @@ export function UpsertEditor(props: { id?: string }) {
 
     try {
       setIsSaving(true);
-      await parseResponse(
-        hono.api.posts.$put({
-          json: {
-            ...formValues,
-            htmlContent,
-            jsonContent,
-            id,
-          },
-        }),
-      );
+      await save({ ...formValues, htmlContent, jsonContent });
       // 不刷新数据，避免覆盖用户正在编辑的内容
     } catch (err) {
       console.error('自动保存失败:', err);
@@ -153,7 +110,7 @@ export function UpsertEditor(props: { id?: string }) {
     } finally {
       setIsSaving(false);
     }
-  }, [id, editor, form.state.values]);
+  }, [id, editor, form, save]);
 
   // 防抖的自动保存触发
   const triggerAutoSave = useCallback(() => {
@@ -201,9 +158,9 @@ export function UpsertEditor(props: { id?: string }) {
   }, [editor, id, triggerAutoSave]);
 
   useEffect(() => {
-    if (post?.data && isInitialLoadRef.current && editor) {
+    if (post && isInitialLoadRef.current && editor) {
       isInitialLoadRef.current = false;
-      const htmlContent = post.data.htmlContent as string;
+      const htmlContent = post.htmlContent as string;
 
       queueMicrotask(() => {
         if (!editor.isDestroyed) {
@@ -212,10 +169,6 @@ export function UpsertEditor(props: { id?: string }) {
       });
     }
   }, [editor, post]);
-
-  if ((id && isPending) || showSkeleton) {
-    return showSkeleton ? <EditorSkeleton /> : null;
-  }
 
   return (
     <div className='flex h-full min-h-0 min-w-0 flex-col overflow-x-hidden overflow-y-auto overscroll-contain md:flex-row md:overflow-hidden'>

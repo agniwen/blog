@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useForm } from '@tanstack/react-form';
-import { useRouter } from '@tanstack/react-router';
+import { useRouter } from '@void/react';
 import { useState } from 'react';
 import { z } from 'zod';
 
@@ -48,8 +48,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         password: value.password,
       });
       if (res.data?.user) {
-        await router.invalidate();
-        await router.navigate({ to: '/studio' });
+        await router.visit('/studio');
       } else {
         toastManager.add({ type: 'error', title: 'login failed' });
       }

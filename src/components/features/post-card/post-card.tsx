@@ -4,7 +4,7 @@ import type { posts } from '~/db/schema';
 import { cn } from '~/lib/utils';
 
 interface PostCardProps {
-  post: RPCResponse<typeof posts.$inferSelect> | typeof posts.$inferSelect;
+  post: typeof posts.$inferSelect;
   className?: string;
   showMeta?: boolean;
 }

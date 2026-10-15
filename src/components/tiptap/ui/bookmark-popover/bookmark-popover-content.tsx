@@ -1,11 +1,11 @@
 import type { Editor } from '@tiptap/react';
 import { CornerDownLeftIcon } from 'lucide-react';
 import * as React from 'react';
+import { fetch as apiFetch } from 'void/client';
 
 import { Button, ButtonGroup } from '~/components/tiptap/ui-primitive/button';
 import { Card, CardBody, CardItemGroup } from '~/components/tiptap/ui-primitive/card';
 import { Input, InputGroup } from '~/components/tiptap/ui-primitive/input';
-import { hono } from '~/lib/hono';
 
 interface BookmarkPopoverContentProps {
   editor: Editor;
@@ -35,15 +35,11 @@ export function BookmarkPopoverContent({ editor, onClose }: BookmarkPopoverConte
     setError('');
 
     try {
-      const response = await hono.api.bookmark['fetch-og-data'].$post({
-        json: { url },
+      const result = await apiFetch('/api/bookmark/fetch-og-data', {
+        method: 'POST',
+        body: { url },
+        retry: 0,
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch bookmark data');
-      }
-
-      const result = await response.json();
 
       if (result.code !== 200 || !result.data) {
         throw new Error(result.message || 'Failed to fetch bookmark data');

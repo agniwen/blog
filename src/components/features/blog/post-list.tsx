@@ -1,25 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { Link } from '@void/react';
 
 import { TimeDisplay } from '~/components/ui/time-display';
-import { getPosts } from '~/server/functions';
+import type { Props } from '~/pages/(blog)/blog/index.server';
 
-export function PostList() {
-  const { data } = useQuery({
-    queryKey: ['post-list'],
-    async queryFn() {
-      return getPosts();
-    },
-  });
+export function PostList({ posts: data }: Props) {
   return (
     <div className='grid grid-cols-1 divide-y divide-border/60'>
       {data?.map((post) => (
         // oxlint-disable-next-line jsx-a11y/control-has-associated-label
         <Link
           key={post.id}
-          to='/blog/$id'
-          params={{ id: post.id }}
-          preload='intent'
+          href={`/blog/${encodeURIComponent(post.id)}`}
+          prefetch='hover'
           className='block transition-colors duration-150 hover:bg-accent/30 motion-reduce:transition-none'
         >
           <div className='space-y-1 py-3.5'>

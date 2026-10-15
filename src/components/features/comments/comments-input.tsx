@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { action } from '@void/react';
 import { ArrowUpIcon } from 'lucide-react';
 import { useState } from 'react';
 
@@ -8,14 +8,11 @@ import { Separator } from '~/components/ui/separator';
 import { toastManager } from '~/components/ui/toast';
 import { authClient } from '~/lib/auth-client';
 
-import { createComment } from './actions';
-
 interface CommentsInputProps {
   id: string;
 }
 export function CommentsInput({ id }: CommentsInputProps) {
   const { data } = authClient.useSession();
-  const queryClient = useQueryClient();
   const [comment, setComment] = useState('');
   const [isPending, setIsPending] = useState(false);
 
@@ -34,15 +31,14 @@ export function CommentsInput({ id }: CommentsInputProps) {
       setIsPending(false);
       return;
     }
-    const create = {
-      postId: id,
-      content: inputComment,
-    };
     try {
-      await createComment({ data: create });
+      const result = await action('/blog/:id', { params: { id }, data: { content: inputComment } });
+      if (!result.ok) throw new Error(result.error.message);
+      if (result.pageData?.errors && Object.keys(result.pageData.errors).length) {
+        throw new Error(Object.values(result.pageData.errors).join('; '));
+      }
       toastManager.add({ type: 'success', title: '评论成功' });
       setComment('');
-      queryClient.invalidateQueries({ queryKey: ['comments', id] });
     } catch (error) {
       console.error(error);
       toastManager.add({ type: 'error', title: '评论失败' });

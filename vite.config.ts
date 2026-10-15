@@ -1,43 +1,41 @@
-import { readFileSync } from 'node:fs';
-import { parse } from 'jsonc-parser';
-import { startRemoteBridge } from './scripts/dev/remote-bridge';
 import { fileURLToPath } from 'node:url';
 
-import { cloudflare } from '@cloudflare/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
-import { tanstackStart } from '@tanstack/react-start/plugin/vite';
-import react from '@vitejs/plugin-react';
+import { voidReact } from '@void/react/plugin';
 import { defineConfig, loadEnv } from 'vite';
+import { voidPlugin } from 'void';
 
-export default defineConfig(async ({ mode, command, isPreview }) => {
-  const config = parse(readFileSync('wrangler.jsonc', 'utf8'));
-  const bridge = command === 'serve' && !isPreview && mode !== 'cloudflare'
-    ? await startRemoteBridge(config.account_id, config.d1_databases.find((binding: { binding: string }) => binding.binding === 'DB').database_id)
-    : undefined;
-  return ({
-  envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
-  resolve: { alias: { '~': fileURLToPath(new URL('./src', import.meta.url)) } },
-  plugins: [
-    ...(bridge ? [{ name: 'local-remote-connection', configureServer(server: import('vite').ViteDevServer) { server.httpServer?.once('close', () => void bridge.close()); } }] : []),
-    cloudflare({
-      viteEnvironment: { name: 'ssr' },
-      remoteBindings: !bridge,
-      config:
-        mode === 'cloudflare'
-          ? undefined
-          : (config) => ({
-              vars: {
-                ...config.vars,
-                ...(bridge ? { DEV_REMOTE_URL: bridge.url } : {}),
-                BETTER_AUTH_URL:
-                  loadEnv(mode, process.cwd(), 'BETTER_AUTH_URL').BETTER_AUTH_URL ||
-                  'http://localhost:3000',
-              },
-            }),
-    }),
-    tanstackStart(),
-    tailwindcss(),
-    react(),
-  ],
-});
+export default defineConfig(({ mode, command }) => {
+  // Void only auto-loads .env. Retain the existing public build variables.
+  const publicEnv = command === 'serve' ? loadEnv(mode, process.cwd(), 'NEXT_PUBLIC_') : {};
+  const publicValues = {
+    NEXT_PUBLIC_BETTER_AUTH_URL:
+      process.env.NEXT_PUBLIC_BETTER_AUTH_URL ??
+      publicEnv.NEXT_PUBLIC_BETTER_AUTH_URL ??
+      'https://akumanoko.com',
+    NEXT_PUBLIC_AVATAR_URL:
+      process.env.NEXT_PUBLIC_AVATAR_URL ??
+      publicEnv.NEXT_PUBLIC_AVATAR_URL ??
+      'https://avatars.githubusercontent.com/u/35162226?v=4',
+  };
+  return {
+    envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
+    define: Object.fromEntries(
+      Object.entries(publicValues).map(([key, value]) => [
+        `import.meta.env.${key}`,
+        JSON.stringify(value),
+      ]),
+    ),
+    resolve: { alias: { '~': fileURLToPath(new URL('./src', import.meta.url)) } },
+    // Generated server-route imports are invisible to Vite's page-only dependency crawl.
+    // Scan them at startup so later route visits do not switch React module instances.
+    environments: {
+      void_worker: {
+        optimizeDeps: {
+          entries: ['src/pages/**/*.{ts,tsx}', 'src/routes/**/*.ts', 'src/middleware/**/*.ts'],
+        },
+      },
+    },
+    plugins: [voidPlugin(), voidReact(), tailwindcss()],
+  };
 });

@@ -8,6 +8,9 @@ export const clientEnv = createEnv({
     NEXT_PUBLIC_AVATAR_URL: z.string(),
     NEXT_PUBLIC_BETTER_AUTH_URL: z.string(),
   },
-  runtimeEnv: import.meta.env,
+  runtimeEnv: {
+    NEXT_PUBLIC_AVATAR_URL: import.meta.env.NEXT_PUBLIC_AVATAR_URL,
+    NEXT_PUBLIC_BETTER_AUTH_URL: import.meta.env.NEXT_PUBLIC_BETTER_AUTH_URL,
+  },
   emptyStringAsUndefined: true,
 });

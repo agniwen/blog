@@ -1,31 +1,66 @@
-# Cloudflare Workers 与 D1
+# Void / Cloudflare Workers 与 D1
 
-当前应用通过官方 Cloudflare Vite 插件运行，开发、构建和生产均使用 Workers。数据库是已有 D1 `blog`，ID `7381a7aa-92cc-411d-aabe-35c74abebea6`，以 `wrangler.jsonc` 的 `DB` 绑定为准。主域名为 https://akumanoko.com。
+当前应用使用 Void 1.1.11 原生 Pages 和 React adapter。`void.config.ts` 是 Worker、D1、域名配置的唯一入口；`.void-wrangler.jsonc` 由工具生成。工具版本由 mise 管理：Node 24.21.0、Bun 1.4.2。
 
-## 开发与发布
-
-1. `bun x wrangler login`，用 `bun x wrangler whoami` 确认目标账号。
-2. 在 `.env` 设置 Better Auth、Google OAuth、R2 变量，运行 `bun run dev`。当前 `remote: true` 表示本地开发和预览直接读写远程 D1。需要隔离测试时改用单独的数据库绑定，或设置 `remote: false` 并执行 `bun run db:migrate:local`。
-3. 生产 Secrets 继续使用 `bun run cf:secrets` 配置八个认证和 R2 变量，不上传整个 `.env`。D1 无需数据库 URL 或密码。
-4. 保持 `.env.cloudflare` 的公开认证地址、Wrangler 的 `BETTER_AUTH_URL`、Google OAuth 回调和 R2 CORS 一致。
-5. 执行 `bun run cf:typegen`、`bun run lint`、`bun run typecheck`、`bun run build`。`bun run start` 预览当前构建；`bun run deploy` 重新使用 cloudflare mode 构建后发布。
-6. 执行 `TEST_BASE_URL=https://akumanoko.com bun run test:http`。未授权请求检查不能替代成功登录、写入或上传验证。
-
-静态文件走 Workers Static Assets；图片继续使用 R2，MiSans 使用 CDN。`bun x wrangler deploy --dry-run` 可检查上传大小。保持 `dist`、`.dev.vars*`、`.env` 在忽略列表内。
-
-## 数据访问与迁移
-
-`src/worker.ts` 每次请求通过 `env.DB` 创建 Drizzle D1 实例，由 AsyncLocalStorage 传递给 server functions 和 Hono。`getAuth()` 使用相同实例与 SQLite adapter。无 PostgreSQL 回退路径或连接池。认证 schema CLI 的 `scripts/auth.config.ts` 使用本地模拟绑定，仅用于模型生成。
-
-日期存储为 UTC Unix 毫秒，Drizzle 映射为 Date；布尔值使用 integer，编辑器 JSON 使用 JSON text。Relations v2 与 Better Auth 官方适配器保持不变。
+## 开发与验证
 
 ```sh
-bun run db:generate
-bun run db:migrate:local # 仅本地
-bun run db:migrate       # 远程 blog D1
+mise install
+mise exec -- bun install --frozen-lockfile
+cp docs/env.example .env # 已有文件时跳过
+bun run dev
+# 首次启动生成配置后，在另一终端初始化本地库：
+bun run db:migrate:local
 ```
 
-生成文件在 `drizzle/d1/<timestamp_name>/migration.sql`；Wrangler 通过 `migrations_pattern` 识别嵌套布局。不要手工修改生成的 migration/snapshot。`drizzle/migrations` 中的 PostgreSQL 历史不再应用到 D1。
+本地 D1 保存在 `.void`，`remote: false`。开发服务、Wrangler 本地迁移和生产预览均使用这个隔离目录。现有生产 D1 为 `blog`，ID `7381a7aa-92cc-411d-aabe-35c74abebea6`，生产资源标识保持显式配置。没有远程 REST 桥接；Worker 通过原生 DB binding 创建 request-scoped Drizzle。
+
+`src/middleware/01.database.ts` 负责 canonical redirect 和每次请求的数据库上下文；后台与 API 中间件保护私有读取/写入，并设置 `private, no-store`。`getAuth()` 保留 Better Auth 官方 Relations v2 adapter。`scripts/auth.config.ts` 是独立 Node CLI schema 入口，通过本地模拟绑定生成模型。
+
+```sh
+bun run lint
+bun run typecheck
+bun test
+bun run build
+bun run start
+TEST_BASE_URL=http://localhost:3000 bun run test:http
+```
+
+生产预览同样只连接本地库。`bun run start --port 3102 --strictPort` 可单独验证构建产物。生产构建仍使用 `https://akumanoko.com` 的认证配置和 Secure Cookie 前缀，不能把本地 HTTP 预览当作 OAuth 成功验证；本地浏览器登录使用 origin 匹配的开发服务。生产预览的授权请求测试使用同一临时会话的生产 Cookie 名称，未修改生产认证配置。Google OAuth 回调和 R2 CORS 需单独核对。
+
+在同一 checkout 内按顺序运行 dev、build、preview；Void 会更新 `.void` 中的生成入口，验证时避免多个模式同时改写它。
+
+## 变量与 Secrets
+
+Void 只接受根 `.env`；变量清单移至 `docs/env.example`，服务端 schema 为 `src/env.ts`。生产值用 `void secret put NAME --platform cloudflare` 或项目 `bun run cf:secrets` 的八项 allowlist 上传；该操作会更改线上 Secrets，应明确获准后执行。`BETTER_AUTH_URL` 是公开 Worker variable；其余八项 server 值为 Secrets。
+
+既有 `NEXT_PUBLIC_*` 公开值继续支持，由 `src/lib/client-env.ts` 和 Vite 的显式映射处理。生产构建使用仓库中的公开默认 origin/avatar 或 build shell 覆盖，防止 `.env` 的 localhost 进入生产。浏览器认证始终使用当前页面 origin。
+
+## 迁移兼容性
+
+Drizzle ORM / Kit 配对固定 `1.0.0-rc.4`；Better Auth 的 `@better-auth/drizzle-adapter/relations-v2` 显式传 schema，Drizzle 连接传 relations。Void 自带的是 ORM 0.45 / Kit 0.31，**不接管本项目 schema 和迁移生成**：不导入 `void/db`、`void/auth`，不调用 `void db push` / `void db generate`。
+
+既有 SQLite 文件继续保存在 `drizzle/d1/<timestamp>/migration.sql`，快照和 SQL 内容未重写。`cloudflare.d1_databases` 显式配置此 migrations_dir/pattern，保留 Wrangler 的 `d1_migrations` 历史；本地命令加 `--persist-to .void`，与 dev/preview 一致。Void dev 关于 `src/db/migrations` 的提示不代表应重新生成基线。历史 PostgreSQL 文件仍在 `drizzle/migrations`，不应用到 D1。
+
+```sh
+bun run db:generate      # 使用项目锁定的 Kit
+bun run db:migrate:local # 仅 .void 本地库
+bun run db:migrate       # 远程已有 blog：先确认目标和待应用列表
+```
+
+## 发布
+
+```sh
+bun run deploy # void deploy --platform cloudflare
+```
+
+该命令会构建、解析/创建资源并可能应用迁移。发布前确认账户、现有 D1 migrations 记录和 schema 一致；当前 ORM 与迁移由项目管理，Void 的数据库推断已关闭。保留现有 DB 绑定和迁移配置，不运行自动 schema 生成。首次正式发布后将生成的 `void.lock.json` 提交。
+
+不要把 `.void/`、`dist/`、`.env`、生成配置或 `.dev.vars*` 提交。直接部署继续绑定 `akumanoko.com` 和 `www.akumanoko.com`；aliases 通过中间件 308 到主域名并保留路径/查询，localhost 和预览域名不跳转。
+
+## 历史记录（Void 迁移之前）
+
+以下是已有 D1 数据迁入与线上验证记录，不能当作本次 Void 重构的上线证明。
 
 ## PostgreSQL 迁入记录
 
@@ -54,11 +89,3 @@ bun run db:migrate       # 远程 blog D1
 Google OAuth 客户端需允许回调 `https://akumanoko.com/api/auth/callback/google`，如配置 JavaScript 来源则加入 `https://akumanoko.com`；Google 控制台设置不在仓库内，不能仅凭构建成功确认。R2 `blog` 的 CORS 已加入该来源，并保留 localhost 与原 workers.dev 来源。旧域名 Cookie 不共享，切换后需要在主域名重新登录。
 
 认证客户端在浏览器中使用当前页面 origin，避免构建环境遗留的 `workers.dev` 地址把登录请求发往另一个域名。认证 API 与页面同源，不配置通配符 CORS；Better Auth 继续执行来源与 CSRF 校验。可运行 `bun run test:auth` 验证旧构建地址不会影响实际请求。
-
-## Bun 构建
-
-全项目使用 Bun 1.4.2 与 `bun.lock`。Cloudflare 生产和预览构建均设置 `BUN_VERSION=1.4.2`，构建命令为 `bun install --frozen-lockfile && bun run build`；main 部署命令为 `bun x wrangler deploy`，其他分支使用 `bun x wrangler versions upload`。分支规则保持不变。包管理器切换与登录修复需一起提交后推送，下一次构建才能使用新的锁文件。
-
-`bunfig.toml` 禁止 Bun 预加载 `.env`，避免覆盖 Vite 选定的生产环境。测试使用 `bun:test` 和 Bun 原生假时钟；Node 继续用于 Wrangler/Vite 的 shebang，线上仍运行在 workerd。
-
-Bun 切换验证：冻结安装、lint（既有 warnings）、类型检查、7 项回归测试、Workers 构建和部署 dry-run 通过。Bun 启动开发服务和首页正常；远程 D1 读取出现与切换前一致的连接等待，因此未将完整开发 HTTP 冒烟记为通过。

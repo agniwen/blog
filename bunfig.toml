@@ -1,4 +1,4 @@
-# Vite selects .env files by mode; preloading .env here would override production URLs.
+# Void loads the single local .env; avoid preloading development values into builds.
 env = false
 
 [run]

@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Link } from '@tanstack/react-router';
+import { Link } from '@void/react';
 import { useIsClient } from 'foxact/use-is-client';
 import { useInView } from 'motion/react';
 import { useRef } from 'react';
@@ -21,7 +21,7 @@ export function PostHeader() {
       >
         <div className='article-container relative grid h-11 grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-3'>
           <Link
-            to='/blog'
+            href='/blog'
             aria-label='返回文章列表'
             className={cn(
               buttonVariants({ size: 'icon-sm', variant: 'ghost' }),
@@ -38,7 +38,7 @@ export function PostHeader() {
       </div>
       <div className='mb-12' ref={ref}>
         <Button
-          render={<Link to='/blog' />}
+          render={<Link href='/blog' />}
           aria-label='返回文章列表'
           size='icon-sm'
           variant='ghost'

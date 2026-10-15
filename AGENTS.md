@@ -1,46 +1,50 @@
 # Repository Guidelines
 
-## Framework and routes
+## Framework and directories
 
-This project uses React, TanStack Start, TanStack Router, Vite, and Cloudflare Workers. Keep routes and layouts flat in `src/routes`: dots express nesting, `$id` is a dynamic parameter, and `_blog` / `_studio` are pathless layouts. `/studio/login` stays outside the authenticated layout. The Vite plugin generates `src/routeTree.gen.ts`; run development or build to regenerate it and keep the generated file out of formatting/linting.
+Use Void native React Pages on Cloudflare Workers. `void.config.ts` sets `sourceDir: 'src'`. Pages live in `src/pages`; `[id]` is dynamic and `(blog)` / `(studio)` are pathless groups. The matching `.server.ts` exports loaders/actions and may type-export `Props` with `InferProps`. `/studio/login` stays outside the authenticated group. Preserve public URLs.
 
-Shared UI belongs in `src/components/ui`; blog and studio components belong in `src/components/features/blog` and `studio`. Global CSS lives in `src/styles/app.css`, static files in `public`, and Hono API handlers in `src/server/routes`, exposed by `src/routes/api.$.ts`.
+HTTP endpoints live in `src/routes`, exporting named HTTP methods with `defineHandler`. Use `withValidator` for untrusted body/query/params. Co-locate endpoint-specific schemas and helpers in underscore-prefixed files; Void ignores these during route scanning. `src/routes/api/posts/_data.ts` is shared by Pages and API. Global middleware in `src/middleware` runs in numeric order. Use the native typed fetch from `void/client` for API consumers; mutations set `retry: 0`.
 
-## Server and data boundaries
+Shared UI belongs in `src/components/ui`; feature components belong in `src/components/features`. Editor primitives stay in `src/components/tiptap`, hooks in `src/hooks`, shared utilities in `src/lib`, styles in `src/styles`, and static files in `public`. Verify references before removing components or dependencies.
 
-Route loaders also execute in the browser. Put database access, credentials, and privileged SDK calls behind `createServerFn` or server route handlers. Validate untrusted server-function inputs with `.validator(...)` and enforce authorization inside each private read or mutation; a layout guard alone does not protect an endpoint.
+## Server, auth and data
 
-Create a separate QueryClient for each router/request in `src/router.tsx` and use the SSR Query integration. Keep public and admin query keys separate. After mutations, invalidate the queries that own the data. Await sign-out before navigation and clear private client caches. Private HTML and redirects must return `Cache-Control: private, no-store`.
+Loaders/actions and route handlers run on the server. Keep database access and secrets there; components may import their types with `import type`. Public loaders expose only published posts. Missing posts return actual 404s; sitemap excludes drafts.
 
-Use route `head` for metadata and return actual 404s for missing posts. Keep sitemap entries limited to published posts. Preserve existing public URLs during refactors.
+Keep Better Auth with the existing schema, admin plugin, Google provider, and Relations v2 adapter. `src/lib/auth-options.ts` is the runtime-independent configuration factory; `getAuth()` creates an instance with the request's database. Each private loader/action checks authorization; API middleware rejects unauthorized requests before validation. Private HTML, page data and redirects use `Cache-Control: private, no-store`. Await sign-out, clear private Query caches, then navigate. Void managed auth is intentionally disabled: avoid importing `void/auth`, using its client auth, or adding `src/auth.ts` / config.auth.
 
-## Commands and validation
+The first middleware creates a Drizzle database for the request and propagates it through AsyncLocalStorage. Never share a database instance between requests. Root layout creates a fresh QueryClient per SSR render; page data comes from Void props, while isolated client widgets may use Query. Successful actions refresh page props. Preserve editor state during autosave.
 
-Use Bun 1.4.2 and commit bun.lock. Install with `bun install --frozen-lockfile`. Keep Node for Vite/Wrangler shebangs. Run native Bun tests with `bun test`; tests live in `tests/` and use `bun:test`. HTTP checks are opt-in: `TEST_BASE_URL=http://localhost:3000 bun run test:http` targets an already running service. For routing, SSR, auth-boundary, or dependency changes, run HTTP checks against development and production services. Run `bun run lint`, `bun run typecheck`, and `bun run build` for application changes. Lint applies safe fixes, so inspect its diff.
+## Commands and checks
 
-For UI changes, verify the relevant flow in a real browser and include screenshots or clips when opening a PR. Report authenticated flows separately: the HTTP smoke suite does not log in or exercise successful writes, OAuth, or R2 uploads. Add focused feature tests when appropriate and record environment limitations accurately.
+Use `mise.toml`: Node 24.21.0 and Bun 1.4.2. Install with `mise install` and `mise exec -- bun install --frozen-lockfile`; commit bun.lock. Run `bun run lint`, `bun run typecheck`, `bun test`, and `bun run build` for application changes. Lint applies fixes: inspect the diff. Typecheck runs `void prepare` first. Keep `.void/**`, `.void-wrangler.jsonc` and generated Worker types out of lint/formatting.
 
-## Style
+For routing, SSR, auth-boundary or dependencies, run `TEST_BASE_URL=http://localhost:3000 bun run test:http` against already-running development and production preview services. UI changes require real-browser checks and screenshots when opening a PR. Record authenticated success flows, OAuth and uploads separately from unauthenticated HTTP smoke.
 
-TypeScript is strict. Use explicit types at module boundaries, PascalCase component names, `useCamelCase` hooks, camelCase helpers, and the `~/` alias. Route filenames follow TanStack Router conventions; existing component filenames use kebab-case. Follow Oxlint/Oxfmt for two-space indentation, single quotes, import ordering, and Tailwind sorting. Use the coss registry components in `src/components/ui` and semantic color tokens. Add available components with `bunx shadcn@latest add @coss/<name>`; preserve the customized theme instead of installing `@coss/style`. See `docs/design.md` for component mappings and intentional local styling.
+## Style and UI
 
-Visual conventions are documented in `docs/design.md`. Reference Yohaku for colors, radii, borders and soft shadows through existing semantic tokens in `src/styles/app.css`. Preserve the existing layout, content order, typography sizes and spacing unless explicitly asked to change them. Do not add document-wide font/background resets to editor stylesheets.
+TypeScript is strict. Use PascalCase components, useCamelCase hooks, camelCase helpers and `~/` imports. Follow Oxlint/Oxfmt for single quotes, two-space indentation, import ordering and Tailwind sorting. Keep existing component filenames in kebab-case.
 
-## Environment, migrations, and dependencies
+Use existing coss components and semantic color tokens. Add available components with `bunx shadcn@latest add @coss/<name>`; preserve the customized theme instead of installing `@coss/style`. Read `docs/design.md` for component mappings and intentional styling. Preserve the layout, content order, typography sizes and spacing unless asked to change them. Editor stylesheets must not add document-wide resets.
 
-Use `.env.example` as the variable inventory. Server variables belong in `src/lib/env.ts`; public variables belong in `src/lib/client-env.ts`. The existing `NEXT_PUBLIC_*` names remain supported by Vite for compatibility. Keep authentication URLs, local ports, and OAuth callback origins consistent. Preserve `.env` and never include secrets in commits or logs.
+## Environment and deployment
 
-The schema is `src/db/schema.ts`, relations are `src/db/relations.ts`, and migrations are generated under `drizzle/d1` (the PostgreSQL files in `drizzle/migrations` are historical). Generate artifacts with `bun run db:generate` when the schema changes. Confirm the target database before `db:migrate` or any data write. The current `DB` binding uses remote D1 even during development; use a separate binding or `remote: false` for isolated work. Dependency updates alone do not authorize changing shared data. Drizzle ORM and Kit are pinned together at `1.0.0-rc.4`. Keep `defineRelations` / Relations v2 and the official `@better-auth/drizzle-adapter/relations-v2` adapter aligned. Pass the table schema explicitly to Better Auth; pass relations, not the removed schema option, to the Drizzle connection. Validate adapter reads and relational queries when updating either package.
+The inventory is `docs/env.example`; the typed server schema is `src/env.ts` with `void/env`. Void rejects root dotenv files other than `.env`, so keep the template under docs. Preserve `.env` and keep secrets out of logs/commits. Public `NEXT_PUBLIC_*` compatibility stays in `src/lib/client-env.ts` and the explicit Vite build mapping; these names must not enter the server secret schema. Keep local ports, Better Auth URLs and OAuth origins consistent.
 
-Update compatible dependencies and the lockfile together. Treat major upgrades and prerelease database upgrades as API migrations. Check peer warnings and document any retained versions rather than suppressing incompatibilities. For deployment changes, validate the Workers build and local preview. Read `docs/cloudflare.md` when changing Worker bindings, D1 bindings and migrations, deployment origins, secrets, or deployment commands. Worker requests must use the request-scoped Drizzle database and `getAuth()`; `scripts/auth.config.ts` is the Node-only schema CLI entry.
+Read `docs/cloudflare.md` before changing bindings, deployment origins, secrets, migration paths or deployment commands. Configuration is `void.config.ts`; `.void-wrangler.jsonc` is generated. Dev uses local D1 in `.void`; existing production resource IDs remain explicit. Confirm target before any migration/data write. Resource or dependency changes do not authorize production writes.
+
+Schema is `src/db/schema.ts`, relations are `src/db/relations.ts`, migrations are `drizzle/d1`. Preserve names/content and use project `db:generate` / `db:migrate*` scripts; PostgreSQL files in `drizzle/migrations` are historical. Keep ORM and Kit pinned together at `1.0.0-rc.4`. Void's bundled ORM/Kit use an incompatible migration format; avoid `void/db`, `void db push`, `void db generate` and automatic schema adoption. Keep defineRelations / Relations v2 and the official `@better-auth/drizzle-adapter/relations-v2` adapter aligned. Pass schema explicitly to Better Auth; pass relations to Drizzle. Validate adapter reads and relational queries for package changes.
+
+`void deploy --platform cloudflare` can provision resources/apply migrations. Validate the Workers build and local preview before deployment; commit void.lock.json when generated. The Node-only schema CLI entry is `scripts/auth.config.ts`.
 
 ## Commits and PRs
 
-Use focused conventional commits such as `feat(router): ...` or `chore(deps): ...`, with subjects under roughly 70 characters. Preserve unrelated work. PR descriptions should explain the resulting behavior, relevant issue references, validation, and any schema or environment changes.
+Use focused conventional commits with subjects under roughly 70 characters. Preserve unrelated changes. PRs explain resulting behavior, validation, issue references and any environment/schema changes.
 
 ## Historical Next.js setup
 
-The block below is retained because the repository's original instructions require it. It applies to historical Next.js work; active application changes use the TanStack Start conventions above.
+The block below is retained because the repository's original instructions require it. It applies to historical Next.js work; active application changes use the Void native conventions above.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

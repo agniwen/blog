@@ -18,9 +18,13 @@ if (missing.length) throw new Error(`Missing deployment variables: ${missing.joi
 
 // Only the runtime allowlist goes to Cloudflare. Never send the entire .env file.
 const secrets = Object.fromEntries(names.map((name) => [name, process.env[name]]));
-const result = spawnSync('bun', ['x', 'wrangler', 'secret', 'bulk'], {
-  input: JSON.stringify(secrets),
-  stdio: ['pipe', 'inherit', 'inherit'],
-});
+const result = spawnSync(
+  'bun',
+  ['x', 'wrangler', 'secret', 'bulk', '--config', '.void-wrangler.jsonc'],
+  {
+    input: JSON.stringify(secrets),
+    stdio: ['pipe', 'inherit', 'inherit'],
+  },
+);
 if (result.error) throw result.error;
 process.exitCode = result.status ?? 1;

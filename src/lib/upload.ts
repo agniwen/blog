@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-import { hono } from '~/lib/hono';
+import { fetch as apiFetch } from 'void/client';
 
 /**
  * 使用预签名 URL 上传文件到 R2
@@ -9,18 +8,11 @@ import { hono } from '~/lib/hono';
  */
 export async function uploadFileToR2(file: File): Promise<string> {
   // 1. 获取预签名 URL
-  const response = await hono.api.s3['presigned-url'].$post({
-    json: {
-      fileName: file.name,
-      fileType: file.type,
-    },
+  const data = await apiFetch('/api/s3/presigned-url', {
+    method: 'POST',
+    body: { fileName: file.name, fileType: file.type },
+    retry: 0,
   });
-
-  if (!response.ok) {
-    throw new Error('获取上传链接失败');
-  }
-
-  const data = await response.json();
 
   if (!data.success) {
     const errorMsg =

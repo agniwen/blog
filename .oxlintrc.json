@@ -1,15 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicolo-ribaudo/oxlint-config/refs/heads/oxlint-v1/v1.schema.json",
-  "plugins": [
-    "typescript",
-    "react",
-    "import",
-    "jsx-a11y",
-    "unicorn",
-    "promise",
-    "node",
-    "oxc"
-  ],
+  "plugins": ["typescript", "react", "import", "jsx-a11y", "unicorn", "promise", "node", "oxc"],
   "categories": {
     "correctness": "warn",
     "suspicious": "warn"
@@ -20,19 +11,18 @@
   },
   "ignorePatterns": [
     "dist/**",
-    ".next/**",
     "src/generated/**",
-    "src/routeTree.gen.ts",
-    ".tanstack/**",
     "src/worker-env.d.ts",
-    ".wrangler/**"
+    ".wrangler/**",
+    ".void/**",
+    ".void-wrangler.jsonc"
   ],
   "settings": {
     "react": {
       "version": "19.3.0",
       "linkComponents": [
         {
-          "attribute": "to",
+          "attribute": "href",
           "name": "Link"
         }
       ]
@@ -61,9 +51,7 @@
   },
   "overrides": [
     {
-      "files": [
-        "src/components/tiptap/**/*.tsx"
-      ],
+      "files": ["src/components/tiptap/**/*.tsx"],
       "rules": {
         "jsx-a11y/click-events-have-key-events": "off",
         "jsx-a11y/no-autofocus": "off",
@@ -72,9 +60,7 @@
       }
     },
     {
-      "files": [
-        "src/components/features/banner-upload.tsx"
-      ],
+      "files": ["src/components/features/banner-upload.tsx"],
       "rules": {
         "jsx-a11y/prefer-tag-over-role": "off"
       }

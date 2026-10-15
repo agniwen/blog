@@ -1,104 +1,77 @@
 # Wen's Blog
 
-React 19 + TanStack Start + TanStack Router，使用 Vite 构建并部署到 Cloudflare Workers，使用 Hono API、Better Auth 和 Drizzle/D1。
+React 19 + Void 原生 Pages，部署到 Cloudflare Workers。页面读取和写入使用同目录的 loaders/actions，HTTP API 使用 Void 文件路由；认证保留 Better Auth，数据库保留 Drizzle Relations v2 与现有 D1。
 
-## 本地开发
-
-使用 Node.js 22.12+（验证环境为 Node.js 24.11）和 Bun 1.4.2，具体要求见 `package.json` 的 `engines` / `packageManager`：
+## 开发
 
 ```sh
-bun install --frozen-lockfile
-cp .env.example .env # 已有 .env 时跳过
-bun run dev
+mise install
+mise exec -- bun install --frozen-lockfile
+cp docs/env.example .env # 已有 .env 时跳过
+mise exec -- bun run dev
 ```
 
-在 `.env` 配置 Better Auth、Google OAuth 和 R2；先运行 `bunx wrangler login`。数据库使用 `wrangler.jsonc` 的远程 D1 `DB` 绑定，本地开发写入也会修改该库，访问 http://localhost:3000。现有 `NEXT_PUBLIC_AVATAR_URL`、`NEXT_PUBLIC_BETTER_AUTH_URL` 继续有效，仅公开变量会进入浏览器。开发或预览更换端口时，将公开认证 URL 指向对应服务，OAuth 回调地址也需要匹配。
+工具版本在 `mise.toml`：Node 24.21.0、Bun 1.4.2。默认访问 http://localhost:3000。Void 只允许根目录 `.env`，变量清单在 `docs/env.example`，类型与校验在 `src/env.ts`。既有 `NEXT_PUBLIC_*` 名称通过显式公开值映射继续支持；生产构建使用公开默认值或构建 shell 的覆盖值，不读取开发 `.env` 中的公开地址。
 
-## 扁平文件路由
+开发默认使用 `.void` 下的**本地 D1**；首次运行 `bun run dev` 生成配置后，在另一个终端执行 `bun run db:migrate:local`。已有生产 D1 的 ID 和域名保存在 `void.config.ts`，测试不会写入生产数据库。更换开发端口时同步设置 `BETTER_AUTH_URL`：
 
-所有路由与布局直接定义在 `src/routes`，由 TanStack Router 自动生成 `src/routeTree.gen.ts`，不要手工编辑生成文件。
+```sh
+BETTER_AUTH_URL=http://localhost:3001 bun run dev --port 3001 --strictPort
+```
 
-| 文件                                    | URL / 职责                            |
-| --------------------------------------- | ------------------------------------- |
-| `__root.tsx`                            | HTML 文档、head、全局 UI、错误/404    |
-| `_blog.tsx`                             | 博客无路径布局                        |
-| `_blog.index.tsx`                       | `/`                                   |
-| `_blog.blog.index.tsx`                  | `/blog`                               |
-| `_blog.blog.$id.tsx`                    | `/blog/:id`                           |
-| `studio.login.tsx`                      | `/studio/login`，独立于后台布局       |
-| `_studio.tsx`                           | 管理员无路径布局与服务端会话检查      |
-| `_studio.studio.index.tsx`              | `/studio` → `/studio/posts`           |
-| `_studio.studio.posts.index.tsx`        | `/studio/posts`                       |
-| `_studio.studio.posts.upsert.index.tsx` | 跳转 `/studio/posts`                  |
-| `_studio.studio.posts.upsert.$id.tsx`   | `/studio/posts/upsert/:id`            |
-| `api.$.ts`                              | Hono `/api/*`，含认证、上传和文章 API |
-| `sitemap[.]xml.ts`                      | `/sitemap.xml`，只列已发布文章        |
+## 目录
 
-页面部件放在 `src/components/features/blog`、`studio`；全局样式在 `src/styles/app.css`。`src/router.tsx` 为每个请求创建 QueryClient，并使用官方 SSR Query 集成。数据库读取和评论提交由 server function 执行，后台文章数据在函数内再次验证管理员权限。
+`void.config.ts` 配置 `sourceDir: 'src'`，所有 Void 源码约定集中在 `src`：
 
-Next.js 的缓存组件和静态参数生成已替换为请求时 SSR。Query 数据默认 30 秒内保持新鲜，写操作使相关 Query 失效；这不是 CDN ISR。后台与登录页使用 `private, no-store`。原有图片 `<img>`、字体 CSS 和正文嵌入保留。
+```text
+src/
+  pages/                 # React Pages；同名 .server.ts 导出 loader/action
+    layout.tsx           # 公共 providers，每次 SSR 独立 QueryClient
+    (blog)/              # 博客布局，URL 不包含组名
+    (studio)/            # 后台布局，登录页在组外
+    studio/login.tsx
+  routes/                # HTTP API，导出 GET/POST/PUT/DELETE
+    api/auth/[...path].ts # Better Auth handler
+    api/posts/index.ts   # /api/posts
+    api/posts/[id].ts    # /api/posts/:id
+    api/posts/_schema.ts # 输入 schema；下划线文件不生成端点
+    api/posts/_data.ts   # API 与 Pages 共用文章查询/写入
+    api/bookmark/        # 书签端点及 _metadata 辅助模块
+    api/s3/              # 上传端点及 _presign 辅助模块
+    api/spotify.ts
+    sitemap.xml.ts
+  middleware/            # 按数字前缀排序：请求 DB、后台授权、API 授权
+  db/                    # D1 schema / Relations v2
+  env.ts                 # Void 服务端变量 schema
+  lib/                   # 认证、数据库上下文、共享工具
+  components/
+    ui/                  # 已使用的 coss/Base UI 组件
+    features/            # blog、studio、editor、comments 等
+    tiptap/              # 编辑器专用 primitives、nodes、tools
+  hooks/
+  styles/
+```
+
+`/`、`/blog`、`/blog/:id`、`/studio/login`、`/studio/posts` 和编辑 URL 保持不变。公开文章与评论直接由 loader 传给组件；保存、创建、删除和评论使用 Void actions，成功后重新获取页面数据。React Query 仅用于 Spotify 等独立客户端请求，不再重复加载页面数据。退出等待 Better Auth 完成并清理客户端 Query 缓存。
 
 ## 验证
 
 ```sh
-bun run lint
-bun run typecheck
-bun test
-bun run build
-bun run start
-# 在另一个终端执行：
+mise exec -- bun run lint
+mise exec -- bun run typecheck
+mise exec -- bun test
+mise exec -- bun run build
+mise exec -- bun run start
+# 对已经运行的开发/生产预览服务：
 TEST_BASE_URL=http://localhost:3000 bun run test:http
-# 测试其他端口：TEST_BASE_URL=http://localhost:3102 bun run test:http
 ```
 
-`bun test` 使用 Bun 原生测试运行器，默认执行离线回归测试；未设置 `TEST_BASE_URL` 时跳过 HTTP 检查。`TEST_BASE_URL=http://localhost:3000 bun run test:http` 对运行中的服务执行 HTTP 冒烟检查：公开页面 SSR、所有已发布文章、元数据、sitemap、404、后台未登录跳转、认证会话、未授权 API 写请求。不会登录或修改数据库。开发环境同样可运行这组检查。
+HTTP smoke 覆盖 SSR、样式、已发布文章、sitemap、404、私有页面与未授权 API。`X-VoidPages` 页面请求、actions 输入校验和鉴权回归也在 HTTP 测试内。成功登录、写入、Google OAuth 和 R2 上传需另外验证；使用独立本地库或预发布资源。系统 HTTP 代理影响 localhost 时设置 `NO_PROXY`，或为测试进程移除代理变量。
 
-还需在预发布环境用实际管理员账户确认：登录/退出、文章创建与编辑、自动保存、评论提交后刷新、R2 上传和 OAuth 回调。未认证的自动检查不能替代这些流程。
+## 部署与迁移
 
-## 部署
+`bun run deploy` 使用 `void deploy --platform cloudflare`。该命令会执行资源和数据库部署，应先阅读 [Cloudflare 说明](docs/cloudflare.md)，核对现有 D1、域名与迁移状态。`void.lock.json` 在 Void 生成后应提交；`.void/` 和 `.void-wrangler.jsonc` 是忽略的生成文件。
 
-Cloudflare Workers 是当前运行环境，开发和构建均使用官方 Cloudflare Vite 插件。执行 `bun run deploy` 发布；`bun run build` 后用 `bun run start` 本地预览。D1、Secrets、迁移和域名设置见 [Cloudflare 部署说明](docs/cloudflare.md)。
+Drizzle ORM / Kit 继续配对固定 `1.0.0-rc.4`，Better Auth 使用 `@better-auth/drizzle-adapter/relations-v2` 并显式传 schema。保留 `drizzle/d1` 的既有迁移内容与名称，通过项目 `db:generate` / `db:migrate*` 命令管理。Void 自带的 Drizzle 0.45/Kit 0.31 不接管应用 schema；本项目不使用 `void/db`、`void/auth`、`void db push` 或 `void db generate`。历史 PostgreSQL 文件保留于 `drizzle/migrations`。
 
-数据库变更用 `bun run db:generate` 生成 `drizzle/d1` 下的 SQLite 迁移，`bun run db:migrate` 应用到远程 D1，`bun run db:migrate:local` 只初始化本地 SQLite。原 PostgreSQL 数据库保留，应用不再读取它，已完成的一次性导入脚本及其 `pg` 依赖已移除。
-
-参考：[官方 Next.js 迁移指南](https://tanstack.com/start/latest/docs/framework/react/migrate-from-next-js)、[部署指南](https://tanstack.com/start/latest/docs/framework/react/guide/hosting)。
-
-## 依赖维护
-
-本轮采用当前兼容版本范围内的更新，并同步 React、React DOM 和对应类型包。本次从原锁文件迁移到 bun.lock，不更新业务依赖版本。
-
-| 依赖                           | 当前版本范围 |
-| ------------------------------ | ------------ |
-| `react`                        | `19.3.0`     |
-| `react-dom`                    | `19.3.0`     |
-| `@types/react`                 | `19.2.14`    |
-| `@types/react-dom`             | `19.2.3`     |
-| `better-auth`                  | `^1.7.4`     |
-| `@tiptap/react`                | `^3.31.3`    |
-| `@aws-sdk/client-s3`           | `^3.1131.0`  |
-| `@base-ui/react`               | `^1.8.0`     |
-| `hono`                         | `^4.13.7`    |
-| `shadcn`                       | `^4.21.0`    |
-| `oxlint`                       | `^1.82.0`    |
-| `drizzle-orm` / `drizzle-kit`  | `1.0.0-rc.4` |
-| `@better-auth/drizzle-adapter` | `1.7.4`      |
-
-`@iconify/react` 属于运行时依赖，shadcn CLI 属于开发依赖。Drizzle ORM / Kit 已配对固定到 `1.0.0-rc.4`（当前 `rc` 标签，仍是预发布版本），Better Auth 使用官方 `@better-auth/drizzle-adapter/relations-v2` 适配器并显式传入 schema；连接配置只传 `relations`。D1 使用 SQLite schema，历史 PostgreSQL 迁移保留在原目录。Table、Motion、Jotai、Day Picker、Resizable Panels、TypeScript 等跨大版本升级，以及 0.x 包的跨兼容范围升级，本轮未进行。
-
-应用已不使用 Next.js；锁文件仍可能包含 Better Auth 的可选 Next.js peer。用 `bun why next` 区分可选依赖与应用入口，不要为消除提示添加 Next.js 配置或隐藏真实 peer 不兼容。
-
-更新后先执行 `bun install --frozen-lockfile`、lint、typecheck 和 build，再针对运行中的开发/生产服务执行 HTTP 冒烟测试。涉及编辑器、认证和上传时，另用测试账户验证成功写入流程；构建通过不能替代这些检查。
-
-迁移过程与验证范围见 [迁移记录](docs/tanstack-start-migration.md)。
-
-2026-09-14 依赖更新验证：兼容依赖升级及 Drizzle RC 适配后，lint、类型检查、构建、开发/生产各 20 项 HTTP 检查通过；peer 检查无问题。额外在 PostgreSQL 强制只读模式下验证 Better Auth 的四类模型读取，以及文章标签、评论用户关联读取。未执行 `db:push` / `db:migrate`，schema、relations 和已有 migration 文件保持不变。实际登录、成功写入和上传仍需测试账户验证。
-
-Drizzle Relations v2 适配依据：[Better Auth 官方文档](https://better-auth.com/docs/adapters/drizzle#drizzle-relations-v2)、[Drizzle 升级说明](https://orm.drizzle.team/docs/relations-v1-v2)。
-
-## 页面设计
-
-保留现有页面布局，仅参考 Yohaku 调整色号、圆角、边框与轻阴影。设计约定见 [docs/design.md](docs/design.md)。
-
-后台目前仅保留文章管理；`/studio` 跳转到 `/studio/posts`，Projects 页面已移除。列表使用统一内容间距和自适应卡片网格，编辑页沿用同一外框并在正文／属性面板内部滚动。
-
-包管理器统一为 Bun 1.4.2，提交 `bun.lock`，安装使用 `bun install --frozen-lockfile`。构建使用 `bun run build`，测试直接使用 `bun test`。Vite/Wrangler 仍保留 Node 22.12+ 运行环境。`bunfig.toml` 关闭自动加载 `.env`，由 Vite 按 mode 读取，避免把 localhost 打包进生产。
+[Void 迁移依据](docs/void-research.md) · [设计约定](docs/design.md)

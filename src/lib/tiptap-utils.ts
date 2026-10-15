@@ -1,8 +1,7 @@
 import type { Node as TiptapNode } from '@tiptap/pm/model';
 import { NodeSelection, Selection, TextSelection } from '@tiptap/pm/state';
 import type { Editor } from '@tiptap/react';
-
-import { hono } from '~/lib/hono';
+import { fetch as apiFetch } from 'void/client';
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -296,18 +295,11 @@ export async function handleImageUpload(
     onProgress?.({ progress: 0 });
 
     // 1. Get presigned URL
-    const response = await hono.api.s3['presigned-url'].$post({
-      json: {
-        fileName: file.name,
-        fileType: file.type,
-      },
+    const data = await apiFetch('/api/s3/presigned-url', {
+      method: 'POST',
+      body: { fileName: file.name, fileType: file.type },
+      retry: 0,
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to get upload URL');
-    }
-
-    const data = await response.json();
 
     if (!data.success) {
       const errorMsg =

@@ -1,17 +1,17 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from '@void/react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
 import { toastManager } from '~/components/ui/toast';
 
 export function PostsRefreshButton() {
-  const queryClient = useQueryClient();
+  const router = useRouter();
   const [isRefreshing, setIsRefreshing] = useState(false);
   async function handleRefresh() {
     if (isRefreshing) return;
     setIsRefreshing(true);
     try {
-      await queryClient.invalidateQueries({ queryKey: ['posts'] });
+      await router.refresh();
     } catch {
       toastManager.add({ type: 'error', title: 'Failed to refresh posts' });
     } finally {

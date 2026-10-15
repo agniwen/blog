@@ -8,7 +8,7 @@ Keep the original paper surfaces: light background/popover `#fefefb`, public pap
 
 Use 6px corners for buttons, 8px for cards, 12px for dialogs and a 16px cap for large media. Keep circular avatars. Borders use a 10% neutral ink alpha; shadows are low-opacity and soft. No heavy avatar drop shadow.
 
-Do not introduce document-wide font/background resets from editor stylesheets. All routes and layouts continue to use TanStack Router's flat file conventions.
+Do not introduce document-wide font/background resets from editor stylesheets. Routes and layouts use Void native Pages directory conventions.
 
 Keep the original frosted/noise background, including its 5% light-mode opacity and 2% dark-mode opacity. Content links use the theme-specific blue tokens; comment surfaces and selection colors follow the semantic theme.
 
@@ -22,7 +22,7 @@ Typography uses MiSans from jsDelivr (`misans@4.1.0`, Chinese subsets, Regular/M
 
 ## Loading states
 
-Use the shared Skeleton primitive and neutral accent fill, with reduced-motion support. Route pending components mirror the actual blog list, article, login form, and editor containers. Static home content does not need a skeleton. TanStack Router waits 300 ms before showing route skeletons and keeps an activated skeleton visible for at least 300 ms; client query placeholders use the same constants via `useDelayedPending`. Keep cached content visible during background refetches. Timing regression checks run with `bun run test:loading`.
+Use the shared Skeleton primitive and neutral accent fill, with reduced-motion support. Void owns page navigation; client widgets use the shared 300 ms delay and 300 ms minimum through `useDelayedPending`. Keep existing content visible during background refetches. Timing regression checks run with `bun run test:loading`.
 
 ## coss UI components
 
@@ -50,6 +50,6 @@ Article and editor typography share the Typeset rhythm (https://ui.shadcn.com/ty
 
 Use `cursor-default` for clickable controls and upload targets; `<a href>` links, including linked cards and buttons rendered as links, keep `cursor-pointer`. Keep text-editing, dragging, and resize cursors where they communicate the actual operation. Non-link interactive elements receive the default arrow through the global base layer.
 
-Spotify embeds use the actual `@spell/spotify-card` registry source in `src/components/spotify-card.tsx` (https://spell.sh/docs/spotify-card), shared by the reader and Tiptap node. Preserve its cover slide, spinning record SVG and blurred artwork; local changes integrate query/snapshot loading, semantic theme colors, max-500 text weight, default button cursors, delayed skeletons, accessible playback errors and per-instance SVG IDs. Legacy Spotify iframe nodes also render through this component. The editor Spotify tool accepts track links, URIs and embed code, with preview, insertion, replacement and deletion.
+Spotify embeds use the actual `@spell/spotify-card` registry source in `src/components/features/spotify-card.tsx` (https://spell.sh/docs/spotify-card), shared by the reader and Tiptap node. Preserve its cover slide, spinning record SVG and blurred artwork; local changes integrate query/snapshot loading, semantic theme colors, max-500 text weight, default button cursors, delayed skeletons, accessible playback errors and per-instance SVG IDs. Legacy Spotify iframe nodes also render through this component. The editor Spotify tool accepts track links, URIs and embed code, with preview, insertion, replacement and deletion.
 
 Input, Textarea, Select, InputGroup and Combobox focus rings use a thin 1px ring with the existing translucent ring color and a 40%-opacity focus border; avoid restoring the coss default 3px halo.

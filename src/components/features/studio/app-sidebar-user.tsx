@@ -1,5 +1,4 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
@@ -26,7 +25,6 @@ import { authClient, useSession } from '~/lib/auth-client';
 export function NavUser() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { isMobile } = useSidebar();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const { data, isPending } = useSession();
 
@@ -39,8 +37,8 @@ export function NavUser() {
       const result = await authClient.signOut();
       if (result.error) throw new Error(result.error.message);
       queryClient.clear();
-      await router.invalidate();
-      await router.navigate({ to: '/studio/login' });
+      // A fresh document also discards Void's in-memory private page snapshots.
+      window.location.assign('/studio/login');
     } catch {
       toastManager.add({ type: 'error', title: '退出登录失败，请重试' });
     } finally {
