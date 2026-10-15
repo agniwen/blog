@@ -17,7 +17,7 @@
     "test": "bun test",
     "build:cloudflare": "vite build --mode cloudflare",
     "preview:cloudflare": "vite preview --mode cloudflare",
-    "deploy": "void deploy --platform cloudflare",
+    "deploy": "bun run build && wrangler deploy --config dist/ssr/wrangler.json",
     "cf:typegen": "bun run build && wrangler types src/worker-env.d.ts --config dist/ssr/wrangler.json --env-file docs/env.example",
     "cf:secrets": "bun scripts/cloudflare-secrets.mjs",
     "test:loading": "bun test tests/pending-indicator.test.mjs",

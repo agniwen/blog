@@ -70,7 +70,7 @@ HTTP smoke 覆盖 SSR、样式、已发布文章、sitemap、404、私有页面�
 
 ## 部署与迁移
 
-`bun run deploy` 使用 `void deploy --platform cloudflare`。该命令会执行资源和数据库部署，应先阅读 [Cloudflare 说明](docs/cloudflare.md)，核对现有 D1、域名与迁移状态。`void.lock.json` 在 Void 生成后应提交；`.void/` 和 `.void-wrangler.jsonc` 是忽略的生成文件。
+`bun run deploy` 使用 `bun run build && wrangler deploy --config dist/ssr/wrangler.json`。该命令复用现有资源并上传构建产物，不自动应用数据库迁移。先阅读 [Cloudflare 说明](docs/cloudflare.md)，核对账户、D1、域名与迁移状态。资源标识在 `void.config.ts` 显式维护；`.void/` 和 `.void-wrangler.jsonc` 是忽略的生成文件。
 
 Drizzle ORM / Kit 继续配对固定 `1.0.0-rc.4`，Better Auth 使用 `@better-auth/drizzle-adapter/relations-v2` 并显式传 schema。保留 `drizzle/d1` 的既有迁移内容与名称，通过项目 `db:generate` / `db:migrate*` 命令管理。Void 自带的 Drizzle 0.45/Kit 0.31 不接管应用 schema；本项目不使用 `void/db`、`void/auth`、`void db push` 或 `void db generate`。历史 PostgreSQL 文件保留于 `drizzle/migrations`。
 

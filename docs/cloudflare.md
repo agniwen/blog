@@ -51,10 +51,12 @@ bun run db:migrate       # 远程已有 blog：先确认目标和待应用列表
 ## 发布
 
 ```sh
-bun run deploy # void deploy --platform cloudflare
+bun run deploy # Void 构建，再由 Wrangler 部署生成的 dist/ssr/wrangler.json
 ```
 
-该命令会构建、解析/创建资源并可能应用迁移。发布前确认账户、现有 D1 migrations 记录和 schema 一致；当前 ORM 与迁移由项目管理，Void 的数据库推断已关闭。保留现有 DB 绑定和迁移配置，不运行自动 schema 生成。首次正式发布后将生成的 `void.lock.json` 提交。
+部署命令使用项目锁定的 Wrangler 和现有 OAuth 登录，上传 Void 生成的 Worker 与静态资源，复用显式配置的现有 D1、域名和 Secrets，不自动应用数据库迁移。发布前运行 `wrangler whoami` 和远程 migration list 检查账户与待应用列表。当前 ORM 与迁移由项目管理，Void 的数据库推断已关闭。
+
+Void 1.1.11 的 `void deploy --platform cloudflare` 使用独立的认证存储，不能直接识别现有 Wrangler OAuth 会话。本项目选择直接部署生成产物，避免重新登录或隐式 provision；该流程不生成 `void.lock.json`，资源标识由 `void.config.ts` 显式维护。
 
 不要把 `.void/`、`dist/`、`.env`、生成配置或 `.dev.vars*` 提交。直接部署继续绑定 `akumanoko.com` 和 `www.akumanoko.com`；aliases 通过中间件 308 到主域名并保留路径/查询，localhost 和预览域名不跳转。
 
