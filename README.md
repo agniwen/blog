@@ -19,6 +19,8 @@ mise exec -- bun run dev
 BETTER_AUTH_URL=http://localhost:3001 bun run dev --port 3001 --strictPort
 ```
 
+本地代码连接线上 D1 使用 `BETTER_AUTH_URL=http://localhost:3000 mise exec -- bun run dev:remote --strictPort`，需要已有 Cloudflare 账户权限。此模式的后台操作及登录会话会直接写入线上库，详见 [远程开发说明](docs/cloudflare.md)。
+
 ## 目录
 
 `void.config.ts` 配置 `sourceDir: 'src'`，所有 Void 源码约定集中在 `src`：

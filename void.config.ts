@@ -40,7 +40,7 @@ export default defineConfig({
         binding: 'DB',
         database_name: 'blog',
         database_id: '7381a7aa-92cc-411d-aabe-35c74abebea6',
-        remote: false,
+        remote: process.env.BLOG_D1_REMOTE === '1',
         migrations_dir: 'drizzle/d1',
         migrations_pattern: 'drizzle/d1/*/migration.sql',
       },
