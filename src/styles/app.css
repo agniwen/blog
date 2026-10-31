@@ -272,6 +272,44 @@
   background-color: var(--background);
 }
 
+/* Keep the portrait circular overall, with shallow, uneven paper fibers. */
+.home-avatar {
+  position: relative;
+  isolation: isolate;
+  filter: drop-shadow(0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent));
+}
+
+.home-avatar::before,
+.home-avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.home-avatar::before {
+  z-index: -1;
+  background: var(--muted);
+  mask: url('/paper-avatar-mask.svg') center / 100% 100% no-repeat;
+}
+
+.home-avatar img {
+  display: block;
+  mask: url('/paper-avatar-mask.svg') center / 100% 100% no-repeat;
+}
+
+.home-avatar::after {
+  background: var(--border);
+  mask: url('/paper-avatar-outline.svg') center / 100% 100% no-repeat;
+}
+
+/* Per-image alpha masks roughen only the edges, preserving image layout/cropping. */
+.post-content img.paper-image,
+.post-content .tiptap.ProseMirror img.paper-image {
+  border-radius: 0;
+  mask: var(--paper-image-mask) center / 100% 100% no-repeat;
+}
+
 /* Clip only the paper surface so focus rings and touch targets stay rectangular. */
 .button-paper {
   --paper-fill: var(--primary);

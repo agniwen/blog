@@ -1,5 +1,6 @@
 import { Calendar } from 'lucide-react';
 
+import { PaperImage } from '~/components/features/blog/paper-image';
 import { TimeDisplay } from '~/components/ui/time-display';
 import type { Props } from '~/pages/(blog)/blog/[id].server';
 
@@ -20,9 +21,10 @@ export function PostContent({ post: data }: Pick<Props, 'post'>) {
   return (
     <div className='post-content'>
       {data?.banner ? (
-        <div className='pointer-events-none relative mb-8 aspect-16/10 rounded-xs bg-border *:select-none'>
-          <img
-            className='relative z-2 aspect-16/10 rounded-xs object-cover'
+        <div className='pointer-events-none relative mb-8 aspect-16/10 *:select-none'>
+          <PaperImage
+            seed={`banner:${data.id}:${data.banner}`}
+            className='relative z-2 aspect-16/10 object-cover'
             src={data.banner}
             alt={data.title ?? ''}
           />
@@ -47,7 +49,7 @@ export function PostContent({ post: data }: Pick<Props, 'post'>) {
       </div>
       <div>
         <div className='tiptap ProseMirror'>
-          <ArticleBody html={data?.htmlContent || ''} />
+          <ArticleBody html={data?.htmlContent || ''} imageSeed={data.id} />
         </div>
       </div>
     </div>

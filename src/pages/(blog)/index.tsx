@@ -10,10 +10,10 @@ export default function Home() {
   return (
     <PageContainer className='home container mx-auto overflow-hidden'>
       <div className='flex min-h-screen w-full flex-col items-center justify-center space-y-8'>
-        <div className='size-24 rounded-full bg-muted'>
+        <div className='home-avatar size-24'>
           <img
             src={clientEnv.NEXT_PUBLIC_AVATAR_URL}
-            className='pointer-events-none w-full shrink-0 rounded-full object-contain shadow-sm ring-1 ring-border'
+            className='pointer-events-none size-full shrink-0 rounded-full object-contain'
             alt='avatar'
           />
         </div>
