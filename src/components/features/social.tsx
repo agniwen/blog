@@ -37,6 +37,8 @@ export function Social({ className }: { className?: string }) {
               render={<a href={s.url} target='_blank' />}
               key={s.url}
               variant='ghost'
+              shape='paper'
+              aria-label={s.name}
               size={'icon-sm'}
             >
               {s.icon}

@@ -50,7 +50,12 @@ export function CommentsMask({ children }: PropsWithChildren) {
               </p>
             </div>
             <div className='p flex items-center justify-center gap-4'>
-              <Button variant='secondary' loading={isSigningIn} onClick={googleSignIn}>
+              <Button
+                variant='secondary'
+                shape='paper'
+                loading={isSigningIn}
+                onClick={googleSignIn}
+              >
                 <Icon className='mr-1 size-4.5' fill='#fff' icon='logos:google-icon' />
                 Google
               </Button>

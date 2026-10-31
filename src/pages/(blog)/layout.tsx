@@ -10,7 +10,9 @@ export default function BlogLayout({ children }: PropsWithChildren) {
         data-website-id='db54fa9c-6564-4c24-a997-058b8012f7b7'
         defer
       />
-      <ScrollArea className='blog-surface h-screen'>{children}</ScrollArea>
+      <ScrollArea className='blog-surface h-screen' layoutScroll>
+        {children}
+      </ScrollArea>
     </MotionProvider>
   );
 }

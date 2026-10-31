@@ -1,52 +1,89 @@
 import { Icon } from '@iconify/react';
 import { Link } from '@void/react';
-import { useIsClient } from 'foxact/use-is-client';
-import { useInView } from 'motion/react';
-import { useRef } from 'react';
+import { m, useReducedMotion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 
-import { Button, buttonVariants } from '~/components/ui/button';
-import { cn } from '~/lib/utils';
+import { Button } from '~/components/ui/button';
 
-export function PostHeader() {
+export function PostHeader({ title }: { title: string }) {
   const ref = useRef<React.ComponentRef<'div'>>(null);
-  const inView = useInView(ref, { initial: true });
-  const isClient = useIsClient();
+  const [{ expanded, animateLayout }, setLayout] = useState({
+    expanded: false,
+    animateLayout: true,
+  });
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    const anchor = ref.current;
+    if (!anchor) return;
+
+    // The anchor stays in flow, so expanding the paper cannot retrigger itself.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        const next = {
+          expanded: entry.boundingClientRect.top < (entry.rootBounds?.top ?? 16),
+          // A large scroll jump has no visible source to animate out of.
+          animateLayout: entry.boundingClientRect.bottom > 0,
+        };
+        setLayout((previous) =>
+          previous.expanded === next.expanded && previous.animateLayout === next.animateLayout
+            ? previous
+            : next,
+        );
+      },
+      { rootMargin: '-16px 0px 0px 0px', threshold: 1 },
+    );
+    observer.observe(anchor);
+    return () => observer.disconnect();
+  }, []);
+
+  const layoutTransition =
+    reducedMotion || !animateLayout
+      ? { duration: 0 }
+      : { type: 'spring' as const, stiffness: 380, damping: 34, mass: 0.8 };
+
   return (
-    <>
-      <div
-        className={cn(
-          'invisible fixed top-0 left-0 z-10 w-full bg-background backdrop-blur-md transition-all',
-          inView ? 'invisible opacity-0' : 'visible opacity-100',
-        )}
+    <div className='mb-12 h-8' ref={ref}>
+      <m.div
+        className='article-sticky-header'
+        data-expanded={expanded}
+        initial={false}
+        layout={!reducedMotion}
+        layoutScroll
+        transition={{ layout: layoutTransition }}
       >
-        <div className='article-container relative grid h-11 grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-3'>
-          <Link
-            href='/blog'
+        <m.div
+          layout={reducedMotion ? false : 'position'}
+          className='shrink-0'
+          transition={{ layout: layoutTransition }}
+        >
+          <Button
+            render={<Link href='/blog' aria-label='返回文章列表' />}
             aria-label='返回文章列表'
-            className={cn(
-              buttonVariants({ size: 'icon-sm', variant: 'ghost' }),
-              'invisible md:visible',
-            )}
+            size='icon-sm'
+            variant='ghost'
           >
             <Icon className='size-4' icon='ri:arrow-left-line' />
-          </Link>
-          <span className='min-w-0 truncate text-center text-sm font-medium'>
-            {isClient ? document?.title.replace('- akumanoko', '') : ''}
-          </span>
-          <span className='size-8' aria-hidden='true' />
-        </div>
-      </div>
-      <div className='mb-12' ref={ref}>
-        <Button
-          render={<Link href='/blog' />}
-          aria-label='返回文章列表'
-          size='icon-sm'
-          variant='ghost'
-          className='text-xl'
+          </Button>
+        </m.div>
+        <m.span
+          className='article-header-title min-w-0 truncate text-left text-sm font-medium'
+          aria-hidden={!expanded}
+          initial={false}
+          layout={reducedMotion ? false : 'position'}
+          animate={{ opacity: expanded ? 1 : 0 }}
+          transition={{
+            layout: layoutTransition,
+            opacity: {
+              duration: reducedMotion ? 0 : 0.16,
+              delay: expanded && !reducedMotion && animateLayout ? 0.1 : 0,
+            },
+          }}
         >
-          <Icon icon='ri:arrow-left-line' />
-        </Button>
-      </div>
-    </>
+          {title}
+        </m.span>
+      </m.div>
+    </div>
   );
 }

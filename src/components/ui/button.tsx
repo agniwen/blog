@@ -11,11 +11,21 @@ import { cn } from '~/lib/utils';
 export const buttonVariants = cva(
   "relative inline-flex shrink-0 cursor-default items-center justify-center gap-2 rounded-md border text-base font-medium whitespace-nowrap transition-[background-color,color,box-shadow] outline-none before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-md)-1px)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 data-loading:text-transparent data-loading:select-none motion-reduce:transition-none sm:text-sm pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0 [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4",
   {
+    compoundVariants: [
+      {
+        shape: 'paper',
+        size: ['icon', 'icon-lg', 'icon-sm', 'icon-xl', 'icon-xs', 'xs', 'sm'],
+        className: 'button-paper-compact',
+      },
+    ],
     defaultVariants: {
       size: 'default',
       variant: 'default',
     },
     variants: {
+      shape: {
+        paper: 'button-paper',
+      },
       size: {
         default: 'h-9 px-[calc(--spacing(3)-1px)] sm:h-9',
         icon: 'size-9 sm:size-9',
@@ -52,6 +62,7 @@ export const buttonVariants = cva(
 export interface ButtonProps extends useRender.ComponentProps<'button'> {
   variant?: VariantProps<typeof buttonVariants>['variant'];
   size?: VariantProps<typeof buttonVariants>['size'];
+  shape?: VariantProps<typeof buttonVariants>['shape'];
   loading?: boolean;
 }
 
@@ -59,6 +70,7 @@ export function Button({
   className,
   variant,
   size,
+  shape,
   render,
   children,
   loading = false,
@@ -79,10 +91,11 @@ export function Button({
         )}
       </>
     ),
-    className: cn(buttonVariants({ className, size, variant })),
+    className: cn(buttonVariants({ className, shape, size, variant })),
     'aria-disabled': loading || undefined,
     'data-loading': loading ? '' : undefined,
     'data-slot': 'button',
+    'data-variant': variant ?? 'default',
     disabled: isDisabled,
     type: typeValue,
   };

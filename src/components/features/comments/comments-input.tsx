@@ -69,6 +69,7 @@ export function CommentsInput({ id }: CommentsInputProps) {
                 aria-label='发送评论'
                 loading={isPending}
                 variant='default'
+                shape='paper'
               >
                 <ArrowUpIcon className='size-4' />发 表
               </Button>

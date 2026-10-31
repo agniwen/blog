@@ -8,7 +8,7 @@ import type { Props } from './[id].server';
 export default function Blog({ post, comments }: Props) {
   return (
     <PageContainer className='article-container pt-12'>
-      <PostHeader />
+      <PostHeader title={post.title ?? 'akumanoko'} />
       <PostContent post={post} />
       <Comments id={post.id} comments={comments} />
     </PageContainer>

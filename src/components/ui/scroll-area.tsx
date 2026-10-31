@@ -1,6 +1,7 @@
 'use client';
 
 import { ScrollArea as ScrollAreaPrimitive } from '@base-ui/react/scroll-area';
+import { m } from 'motion/react';
 import type React from 'react';
 
 import { cn } from '~/lib/utils';
@@ -13,6 +14,7 @@ export function ScrollArea({
   fill = false,
   clampContentMinWidth = true,
   overscrollContain = false,
+  layoutScroll = false,
   ...props
 }: ScrollAreaPrimitive.Root.Props & {
   scrollFade?: boolean;
@@ -20,10 +22,12 @@ export function ScrollArea({
   fill?: boolean;
   clampContentMinWidth?: boolean;
   overscrollContain?: boolean;
+  layoutScroll?: boolean;
 }): React.ReactElement {
   return (
     <ScrollAreaPrimitive.Root className={cn('size-full min-h-0', className)} {...props}>
       <ScrollAreaPrimitive.Viewport
+        render={layoutScroll ? <m.div layoutScroll /> : undefined}
         className={cn(
           'h-full rounded-[inherit] transition-shadow outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
           overscrollContain &&

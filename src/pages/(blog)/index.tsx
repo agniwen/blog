@@ -25,7 +25,12 @@ export default function Home() {
             </p>
           </div>
           <Social />
-          <Button render={<Link href='/blog' />} variant='secondary' className='group px-4'>
+          <Button
+            render={<Link href='/blog' />}
+            variant='secondary'
+            shape='paper'
+            className='group px-4'
+          >
             <span
               aria-hidden='true'
               className='inline-flex motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:-rotate-12 motion-safe:group-focus-visible:-rotate-12'
