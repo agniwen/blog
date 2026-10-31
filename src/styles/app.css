@@ -462,8 +462,24 @@
   outline-offset: 2px;
 }
 
+.home-social .button-paper {
+  filter: none;
+}
+
+.home-social .button-paper::before {
+  opacity: 0;
+  transition:
+    opacity 160ms ease,
+    background-color 160ms ease;
+}
+
+.home-social .button-paper:is(:hover, :active, [data-pressed])::before {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .button-paper::before {
+  .button-paper::before,
+  .home-social .button-paper::before {
     transition: none;
   }
 }

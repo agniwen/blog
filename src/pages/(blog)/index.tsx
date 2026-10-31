@@ -24,7 +24,7 @@ export default function Home() {
               总有一天，我会在这里写下些什么...
             </p>
           </div>
-          <Social />
+          <Social className='home-social' />
           <Button
             render={<Link href='/blog' />}
             variant='secondary'
