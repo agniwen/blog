@@ -43,6 +43,7 @@ export function PostHeader({ title }: { title: string }) {
       ? { duration: 0 }
       : { type: 'spring' as const, stiffness: 380, damping: 34, mass: 0.8 };
 
+  // Navigation resets scroll; only expansion changes should trigger layout animation.
   return (
     <div className='mb-12 h-8' ref={ref}>
       <m.div
@@ -50,11 +51,13 @@ export function PostHeader({ title }: { title: string }) {
         data-expanded={expanded}
         initial={false}
         layout={!reducedMotion}
+        layoutDependency={expanded}
         layoutScroll
         transition={{ layout: layoutTransition }}
       >
         <m.div
           layout={reducedMotion ? false : 'position'}
+          layoutDependency={expanded}
           className='shrink-0'
           transition={{ layout: layoutTransition }}
         >
@@ -72,6 +75,7 @@ export function PostHeader({ title }: { title: string }) {
           aria-hidden={!expanded}
           initial={false}
           layout={reducedMotion ? false : 'position'}
+          layoutDependency={expanded}
           animate={{ opacity: expanded ? 1 : 0 }}
           transition={{
             layout: layoutTransition,
