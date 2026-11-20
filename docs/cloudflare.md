@@ -74,6 +74,20 @@ bun run deploy # Void 构建，再由 Wrangler 部署生成的 dist/ssr/wrangler
 
 部署命令使用项目锁定的 Wrangler 和现有 OAuth 登录，上传 Void 生成的 Worker 与静态资源，复用显式配置的现有 D1、域名和 Secrets，不自动应用数据库迁移。发布前运行 `wrangler whoami` 和远程 migration list 检查账户与待应用列表。当前 ORM 与迁移由项目管理，Void 的数据库推断已关闭。
 
+### Cloudflare Workers Builds
+
+Cloudflare 控制台的构建触发器独立于 `package.json` 的 `deploy` 脚本，需显式使用 Void 生成的配置：
+
+| 设置                     | 值                                                               |
+| ------------------------ | ---------------------------------------------------------------- |
+| 根目录                   | `/`                                                              |
+| 构建命令                 | `bun install --frozen-lockfile && bun run build`                 |
+| 生产分支 `main` 部署命令 | `bun x wrangler deploy --config dist/ssr/wrangler.json`          |
+| 非生产分支版本上传命令   | `bun x wrangler versions upload --config dist/ssr/wrangler.json` |
+| 构建变量                 | `BUN_VERSION=1.4.2`、`NODE_VERSION=24.21.0`                      |
+
+不要使用不带 `--config` 的默认部署命令。仓库不提交根 Wrangler 配置，Void 在构建时生成 `dist/ssr/wrangler.json`；Wrangler 自动检测会将依赖中的 Hono 当作框架，并报 `The detected framework ("Hono") cannot be automatically configured.`。这是部署入口配置问题，无需更换框架或提交生成文件。可先运行 `bun x wrangler deploy --config dist/ssr/wrangler.json --dry-run` 验证产物。参见 [Workers Builds 构建设置](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)和 [Wrangler 自动配置](https://developers.cloudflare.com/workers/framework-guides/automatic-configuration/)。
+
 首次迁移时，Void 1.1.11 的 `void deploy --platform cloudflare` 使用独立的认证存储，不能直接识别现有 Wrangler OAuth 会话。升级到 1.3.0 后继续使用已验证的 Wrangler 产物发布流程；本次未重新测试 Void CLI 登录或部署。该流程不生成 `void.lock.json`，资源标识由 `void.config.ts` 显式维护。
 
 不要把 `.void/`、`dist/`、`.env`、生成配置或 `.dev.vars*` 提交。直接部署继续绑定 `akumanoko.com` 和 `www.akumanoko.com`；aliases 通过中间件 308 到主域名并保留路径/查询，localhost 和预览域名不跳转。
