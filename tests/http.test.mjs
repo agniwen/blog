@@ -66,7 +66,9 @@ test.skipIf(!baseUrl)(
     }
     const login = await request('/studio/login', 200);
     assert.match(login.headers.get('cache-control'), /private, no-store/);
-    assert.match(await login.text(), /button-paper/);
+    const loginHtml = await login.text();
+    assert.match(loginHtml, /Login to your account/);
+    assert.doesNotMatch(loginHtml, /button-paper/);
     const session = await request('/api/auth/get-session', 200);
     assert.match(session.headers.get('cache-control'), /private, no-store/);
     assert.equal(await session.json(), null);

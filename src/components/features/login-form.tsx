@@ -114,7 +114,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
           <form.Subscribe>
             {(state) => {
               return (
-                <Button className='w-full' shape='paper' loading={state.isSubmitting} type='submit'>
+                <Button className='w-full' loading={state.isSubmitting} type='submit'>
                   {state.isSubmitting ? 'Loading...' : 'Login'}
                 </Button>
               );
@@ -130,7 +130,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
           <Button
             className='w-full'
             variant='secondary'
-            shape='paper'
             type='button'
             loading={isSigningIn}
             onClick={googleSignIn}
