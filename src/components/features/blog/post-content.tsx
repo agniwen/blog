@@ -1,9 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Calendar } from 'lucide-react';
 
 import { PaperImage } from '~/components/features/blog/paper-image';
+import { PostBodyLoader } from '~/components/features/post-loader';
 import { TimeDisplay } from '~/components/ui/time-display';
-import { getPost } from '~/server/functions';
+import { useDelayedPending } from '~/hooks/use-delayed-pending';
+import { getPost, type getPosts } from '~/server/functions';
 
 import { ArticleBody } from './article-body';
 
@@ -18,13 +20,26 @@ import '~/components/tiptap/node/paragraph-node/paragraph-node.css';
 import '~/components/tiptap/node/bookmark-node/bookmark-node.css';
 import '~/components/features/editor/simple-editor.css';
 
+type PostSummary = Awaited<ReturnType<typeof getPosts>>[number];
+
 export function PostContent({ id }: { id: string }) {
-  const { data } = useQuery({
+  const queryClient = useQueryClient();
+  const cachedSummary = queryClient
+    .getQueryData<PostSummary[]>(['post-list'])
+    ?.find((item) => item.id === id);
+  const { data, isPending } = useQuery({
     queryKey: ['post-detail', id],
     queryFn() {
       return getPost({ data: id });
     },
+    placeholderData: cachedSummary
+      ? { ...cachedSummary, htmlContent: null as string | null }
+      : undefined,
   });
+
+  const isBodyPending = isPending || data?.htmlContent === null;
+  const showBodySkeleton = useDelayedPending(isBodyPending && !data?.htmlContent);
+
   return (
     <div className='post-content'>
       {data?.banner ? (
@@ -55,9 +70,15 @@ export function PostContent({ id }: { id: string }) {
         </p>
       </div>
       <div>
-        <div className='tiptap ProseMirror'>
-          <ArticleBody html={data?.htmlContent || ''} imageSeed={data?.id ?? id} />
-        </div>
+        {showBodySkeleton ? (
+          <div role='status' aria-label='正在加载文章内容'>
+            <PostBodyLoader />
+          </div>
+        ) : (
+          <div className='tiptap ProseMirror'>
+            <ArticleBody html={data?.htmlContent || ''} imageSeed={data?.id ?? id} />
+          </div>
+        )}
       </div>
     </div>
   );

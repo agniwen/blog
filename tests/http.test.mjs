@@ -33,14 +33,15 @@ test.skipIf(!baseUrl)(
     assert.match(home, /Wen(?:&#x27;|&#39;|')s Blog/);
     assert.match(home, /home-avatar/);
     assert.match(home, /button-paper/);
-    const list = await (await request('/blog', 200)).text();
-    assert.match(list, /button-paper/);
+    const blogRedirect = await request('/blog', 308);
+    assert.equal(blogRedirect.headers.get('location'), '/');
     const ids = [
-      ...new Set([...list.matchAll(/href="\/blog\/([^"?#]+)"/g)].map((match) => match[1])),
+      ...new Set([...home.matchAll(/href="\/blog\/([^"?#]+)"/g)].map((match) => match[1])),
     ];
     const sitemap = await request('/sitemap.xml', 200);
     assert.match(sitemap.headers.get('content-type'), /application\/xml/);
     const xml = await sitemap.text();
+    assert.doesNotMatch(xml, /\/blog<\/loc>/);
     assert.doesNotMatch(xml, /\/studio/);
     for (const id of ids) {
       const article = await (await request(`/blog/${id}`, 200)).text();

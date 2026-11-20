@@ -1,17 +1,25 @@
-import { Icon } from '@iconify/react';
-import { Link } from '@tanstack/react-router';
-import { m, useReducedMotion } from 'motion/react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Link, useRouter } from '@tanstack/react-router';
+import { ArrowLeftIcon, LogOutIcon, MenuIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-import { Button } from '~/components/ui/button';
+import { Menu, MenuItem, MenuPopup, MenuTrigger } from '~/components/ui/menu';
+import { Skeleton } from '~/components/ui/skeleton';
+import { toastManager } from '~/components/ui/toast';
+import { authClient, useSession } from '~/lib/auth-client';
+import { clientEnv } from '~/lib/client-env';
+import { cn } from '~/lib/utils';
 
-export function PostHeader({ title }: { title: string }) {
-  const ref = useRef<React.ComponentRef<'div'>>(null);
-  const [visible, setVisible] = useState(false);
-  const reducedMotion = useReducedMotion();
+export function PostHeader({ title }: { title?: string | null }) {
+  const sentinelRef = useRef<React.ComponentRef<'div'>>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { data: session } = useSession();
 
   useEffect(() => {
-    const anchor = ref.current;
+    const anchor = sentinelRef.current;
     if (!anchor) return;
 
     const observer = new IntersectionObserver(
@@ -19,7 +27,7 @@ export function PostHeader({ title }: { title: string }) {
         if (!entry) return;
         const next =
           !entry.isIntersecting && entry.boundingClientRect.top < (entry.rootBounds?.top ?? 0);
-        setVisible((previous) => (previous === next ? previous : next));
+        setScrolled((previous) => (previous === next ? previous : next));
       },
       { threshold: 0 },
     );
@@ -27,39 +35,102 @@ export function PostHeader({ title }: { title: string }) {
     return () => observer.disconnect();
   }, []);
 
+  async function handleLogout() {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      const result = await authClient.signOut();
+      if (result.error) throw new Error(result.error.message);
+      queryClient.removeQueries({
+        predicate: (query) => {
+          const key = query.queryKey[0];
+          return (
+            key !== 'post-list' && key !== 'post-detail' && key !== 'comments' && key !== 'spotify'
+          );
+        },
+      });
+      await router.invalidate();
+      toastManager.add({ type: 'success', title: '已退出登录' });
+    } catch {
+      toastManager.add({ type: 'error', title: '退出登录失败，请重试' });
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }
+
+  const user = session?.user;
+
   return (
     <>
-      <m.div
-        className='article-sticky-header'
-        data-visible={visible}
-        aria-hidden={!visible}
-        inert={!visible}
-        initial={false}
-        animate={{ y: visible ? 0 : '-160%', opacity: visible ? 1 : 0 }}
-        transition={reducedMotion ? { duration: 0 } : { duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+      <div ref={sentinelRef} aria-hidden='true' className='pointer-events-none h-px w-full' />
+      <header
+        className='article-sticky-header pointer-events-none fixed inset-x-0 top-[calc(0.75rem+env(safe-area-inset-top))] z-20 sm:top-[calc(1.25rem+env(safe-area-inset-top))]'
+        data-scrolled={scrolled}
       >
-        <Button
-          render={<Link to='/blog' aria-label='返回文章列表' />}
-          aria-label='返回文章列表'
-          size='icon-sm'
-          variant='ghost'
-          className='shrink-0'
+        <div
+          className={cn(
+            'mx-auto flex h-10 w-full max-w-[calc(var(--article-width)+var(--article-gutter)*2)] items-center justify-between gap-3 px-4 transition-[max-width,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
+            scrolled && 'md:max-w-full md:px-6',
+          )}
         >
-          <Icon className='size-4' icon='ri:arrow-left-line' />
-        </Button>
-        <span className='min-w-0 truncate text-left text-sm font-medium'>{title}</span>
-      </m.div>
-      <div className='mb-12 h-8' ref={ref}>
-        <Button
-          render={<Link to='/blog' aria-label='返回文章列表' />}
-          aria-label='返回文章列表'
-          size='icon-sm'
-          variant='ghost'
-          shape='paper'
-        >
-          <Icon className='size-4' icon='ri:arrow-left-line' />
-        </Button>
-      </div>
+          <div className='pointer-events-auto'>
+            <Link
+              to='/'
+              viewTransition
+              aria-label='返回首页'
+              className={cn(
+                'group -ml-2 inline-flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors duration-200 outline-none hover:bg-foreground/[0.045] focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none dark:hover:bg-foreground/[0.08]',
+                scrolled &&
+                  'max-md:bg-popover/75 max-md:shadow-2xs max-md:ring-1 max-md:ring-border/50 max-md:backdrop-blur-md max-md:hover:bg-popover/90',
+              )}
+            >
+              <span className='relative inline-flex size-6 shrink-0 items-center justify-center'>
+                <span className='home-avatar size-6 transition-[opacity,transform] duration-200 group-hover:scale-75 group-hover:opacity-0 group-focus-visible:scale-75 group-focus-visible:opacity-0 group-active:scale-100 group-active:opacity-100 motion-reduce:transition-none'>
+                  <img
+                    src={clientEnv.NEXT_PUBLIC_AVATAR_URL}
+                    className='pointer-events-none size-full shrink-0 rounded-full object-contain'
+                    alt='avatar'
+                  />
+                </span>
+                <ArrowLeftIcon
+                  aria-hidden='true'
+                  className='pointer-events-none absolute size-4 scale-75 text-foreground/85 opacity-0 transition-[opacity,transform] duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100 group-active:scale-75 group-active:opacity-0 motion-reduce:transition-none'
+                />
+              </span>
+              {title ? (
+                <span className='text-left text-sm font-medium text-nowrap text-foreground/90'>
+                  {title}
+                </span>
+              ) : (
+                <Skeleton className='h-4 w-28 rounded-sm' />
+              )}
+            </Link>
+          </div>
+
+          {user ? (
+            <div className='pointer-events-auto shrink-0'>
+              <Menu>
+                <MenuTrigger
+                  aria-label='用户菜单'
+                  className={cn(
+                    '-mr-1.5 inline-flex size-8 items-center justify-center rounded-lg text-foreground/80 transition-colors duration-200 outline-none hover:bg-foreground/[0.045] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring data-popup-open:bg-foreground/[0.045] motion-reduce:transition-none dark:hover:bg-foreground/[0.08] dark:data-popup-open:bg-foreground/[0.08]',
+                    scrolled &&
+                      'max-md:bg-popover/75 max-md:shadow-2xs max-md:ring-1 max-md:ring-border/50 max-md:backdrop-blur-md max-md:hover:bg-popover/90 max-md:data-popup-open:bg-popover/90',
+                  )}
+                >
+                  <MenuIcon className='size-4.5' />
+                </MenuTrigger>
+                <MenuPopup align='end' side='bottom' sideOffset={4} className='min-w-32 rounded-lg'>
+                  <MenuItem disabled={isLoggingOut} onClick={handleLogout} className='text-sm'>
+                    <LogOutIcon className='size-4' />
+                    退出登录
+                  </MenuItem>
+                </MenuPopup>
+              </Menu>
+            </div>
+          ) : null}
+        </div>
+      </header>
     </>
   );
 }

@@ -37,7 +37,7 @@ src/
   styles/
 ```
 
-`/`、`/blog`、`/blog/:id`、`/studio/login`、`/studio/posts` 和编辑 URL 保持不变。路由 loader 预取数据并与 TanStack Query SSR 集成，客户端变更后刷新对应 query cache；退出时等待 Better Auth 完成并清理客户端 Query 缓存。
+`/` 首页直接展示个人简介与已发布文章列表，`/blog` 永久重定向（308）至 `/`，`/blog/:id`、`/studio/login`、`/studio/posts` 和编辑 URL 保持不变。路由 loader 预取数据并与 TanStack Query SSR 集成，客户端变更后刷新对应 query cache；退出时等待 Better Auth 完成并清理客户端 Query 缓存。
 
 ## 验证
 

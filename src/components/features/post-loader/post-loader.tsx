@@ -2,18 +2,17 @@ import { Skeleton } from '~/components/ui/skeleton';
 
 export function PostListLoader() {
   return (
-    <div aria-hidden='true' className='grid grid-cols-1 divide-y divide-border/60'>
-      {Array.from({ length: 5 }).map((_, index) => (
-        <div key={index} className='py-3.5'>
-          <div className='space-y-3'>
-            <Skeleton className='h-5 w-2/5 rounded-md' />
-            <div className='flex items-end justify-between gap-12'>
-              <div className='flex-1 space-y-2'>
-                <Skeleton className='h-3 w-full rounded-md' />
-                <Skeleton className='h-3 w-4/5 rounded-md' />
-                <Skeleton className='h-3 w-3/5 rounded-md' />
-              </div>
-              <Skeleton className='h-3 w-24 shrink-0 rounded-md' />
+    <div aria-hidden='true' className='divide-y divide-border/50'>
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div key={index} className='py-3.5 first:pt-2.5 last:pb-2.5'>
+          <div className='space-y-2.5'>
+            <div className='flex items-baseline justify-between gap-4'>
+              <Skeleton className='h-5 w-2/5 rounded-md' />
+              <Skeleton className='h-3.5 w-24 shrink-0 rounded-md' />
+            </div>
+            <div className='space-y-1.5'>
+              <Skeleton className='h-3.5 w-full rounded-md' />
+              <Skeleton className='h-3.5 w-3/4 rounded-md' />
             </div>
           </div>
         </div>
@@ -36,6 +35,23 @@ export function PostCardLoader() {
   );
 }
 
+export function PostBodyLoader() {
+  return (
+    <div className='space-y-4' aria-hidden='true'>
+      <Skeleton className='h-5 w-full rounded-lg' />
+      <Skeleton className='h-5 w-11/12 rounded-lg' />
+      <Skeleton className='h-5 w-10/12 rounded-lg' />
+      <Skeleton className='my-7 h-28 w-full rounded-2xl' />
+      <Skeleton className='h-5 w-full rounded-lg' />
+      <Skeleton className='h-5 w-9/12 rounded-lg' />
+      <Skeleton className='my-7 h-8 w-2/5 rounded-xl' />
+      <Skeleton className='h-5 w-full rounded-lg' />
+      <Skeleton className='h-5 w-10/12 rounded-lg' />
+      <Skeleton className='h-5 w-7/12 rounded-lg' />
+    </div>
+  );
+}
+
 export function PostContentLoader() {
   return (
     <div className='post-content' aria-hidden='true'>
@@ -47,18 +63,7 @@ export function PostContentLoader() {
           <Skeleton className='h-4 w-28 rounded-md' />
         </div>
       </div>
-      <div className='space-y-4'>
-        <Skeleton className='h-5 w-full rounded-lg' />
-        <Skeleton className='h-5 w-11/12 rounded-lg' />
-        <Skeleton className='h-5 w-10/12 rounded-lg' />
-        <Skeleton className='my-7 h-28 w-full rounded-2xl' />
-        <Skeleton className='h-5 w-full rounded-lg' />
-        <Skeleton className='h-5 w-9/12 rounded-lg' />
-        <Skeleton className='my-7 h-8 w-2/5 rounded-xl' />
-        <Skeleton className='h-5 w-full rounded-lg' />
-        <Skeleton className='h-5 w-10/12 rounded-lg' />
-        <Skeleton className='h-5 w-7/12 rounded-lg' />
-      </div>
+      <PostBodyLoader />
     </div>
   );
 }

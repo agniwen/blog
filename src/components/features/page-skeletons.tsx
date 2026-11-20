@@ -1,29 +1,49 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { useParams } from '@tanstack/react-router';
+
+import { PostHeader } from '~/components/features/blog/post-header';
 import { AdminContainer } from '~/components/features/studio/admin-container';
 import { Skeleton } from '~/components/ui/skeleton';
+import type { getPosts } from '~/server/functions';
 
 import { PostContentLoader, PostListLoader } from './post-loader';
 
-function BackSkeleton() {
-  return <Skeleton className='size-8 rounded-md' />;
-}
+type PostSummary = Awaited<ReturnType<typeof getPosts>>[number];
 
-export function BlogListSkeleton() {
+export function HomeSkeleton() {
   return (
-    <div className='article-container pt-12 pb-8' role='status' aria-label='正在加载文章列表'>
-      <div className='mb-8'>
-        <BackSkeleton />
+    <div
+      className='mx-auto w-full max-w-[30rem] px-5 pt-24 pb-16 sm:pt-36 sm:pb-24'
+      role='status'
+      aria-label='正在加载首页'
+    >
+      <div className='flex flex-col items-center' aria-hidden='true'>
+        <Skeleton className='size-18 rounded-full' />
+        <Skeleton className='mt-5 h-7 w-28 rounded-md' />
+        <Skeleton className='mt-2 h-5 w-52 rounded-md' />
+        <div className='mt-5 flex h-8 space-x-5'>
+          {Array.from({ length: 4 }, (_, i) => (
+            <Skeleton key={i} className='size-8 rounded-md' />
+          ))}
+        </div>
       </div>
-      <PostListLoader />
+      <div className='mt-10 sm:mt-12'>
+        <PostListLoader />
+      </div>
     </div>
   );
 }
 
 export function BlogPostSkeleton() {
+  const { id } = useParams({ strict: false });
+  const queryClient = useQueryClient();
+  const cachedTitle = id
+    ? queryClient.getQueryData<PostSummary[]>(['post-list'])?.find((item) => item.id === id)?.title
+    : undefined;
+
   return (
-    <div className='article-container pt-12' role='status' aria-label='正在加载文章'>
-      <div className='mb-12'>
-        <BackSkeleton />
-      </div>
+    <div className='article-container pt-20 sm:pt-24' role='status' aria-label='正在加载文章'>
+      <PostHeader title={cachedTitle} />
       <PostContentLoader />
     </div>
   );

@@ -13,6 +13,8 @@ export function getRouter() {
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
+    scrollToTopSelectors: ['.blog-surface [data-slot="scroll-area-viewport"]'],
+    defaultViewTransition: true,
     defaultPendingMs: PENDING_DELAY_MS,
     defaultPendingMinMs: PENDING_MIN_MS,
     defaultPreload: 'intent',

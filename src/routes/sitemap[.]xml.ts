@@ -21,7 +21,6 @@ export const Route = createFileRoute('/sitemap.xml')({
         const origin = clientEnv.NEXT_PUBLIC_BETTER_AUTH_URL.replace(/\/$/, '');
         const urls = [
           { url: origin, frequency: 'daily', priority: '1', updatedAt: null },
-          { url: `${origin}/blog`, frequency: 'daily', priority: '0.9', updatedAt: null },
           ...posts.map((post) => ({
             url: `${origin}/blog/${encodeURIComponent(post.id)}`,
             frequency: 'weekly',
