@@ -46,7 +46,3 @@ next-env.d.ts
 .dev.vars
 .dev.vars.*
 worker-startup.cpuprofile
-
-# Void generated runtime and local state
-.void/
-.void-wrangler.jsonc

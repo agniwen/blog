@@ -1,8 +1,9 @@
+import { useQuery } from '@tanstack/react-query';
 import { Calendar } from 'lucide-react';
 
 import { PaperImage } from '~/components/features/blog/paper-image';
 import { TimeDisplay } from '~/components/ui/time-display';
-import type { Props } from '~/pages/(blog)/blog/[id].server';
+import { getPost } from '~/server/functions';
 
 import { ArticleBody } from './article-body';
 
@@ -17,7 +18,13 @@ import '~/components/tiptap/node/paragraph-node/paragraph-node.css';
 import '~/components/tiptap/node/bookmark-node/bookmark-node.css';
 import '~/components/features/editor/simple-editor.css';
 
-export function PostContent({ post: data }: Pick<Props, 'post'>) {
+export function PostContent({ id }: { id: string }) {
+  const { data } = useQuery({
+    queryKey: ['post-detail', id],
+    queryFn() {
+      return getPost({ data: id });
+    },
+  });
   return (
     <div className='post-content'>
       {data?.banner ? (
@@ -49,7 +56,7 @@ export function PostContent({ post: data }: Pick<Props, 'post'>) {
       </div>
       <div>
         <div className='tiptap ProseMirror'>
-          <ArticleBody html={data?.htmlContent || ''} imageSeed={data.id} />
+          <ArticleBody html={data?.htmlContent || ''} imageSeed={data?.id ?? id} />
         </div>
       </div>
     </div>

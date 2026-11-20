@@ -2,13 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Void: start development server",
+      "name": "TanStack Start: start development server",
       "type": "node-terminal",
       "request": "launch",
       "command": "bun run dev"
     },
     {
-      "name": "Void: debug client",
+      "name": "TanStack Start: debug client",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:3000"

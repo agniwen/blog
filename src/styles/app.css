@@ -389,8 +389,7 @@
 }
 
 /* Small scraps mix quiet stretches with shallow, uneven tears, not a sawtooth. */
-.button-paper-compact::before,
-.article-sticky-header[data-expanded='false']::before {
+.button-paper-compact::before {
   clip-path: polygon(
     0.5px 0.9px,
     12% 0.4px,
@@ -490,36 +489,24 @@
 }
 
 .article-sticky-header {
-  position: relative;
-  display: flex;
-  width: 2rem;
-  height: 2rem;
-  align-items: center;
-  isolation: isolate;
-}
-
-.article-sticky-header[data-expanded='true'] {
   position: fixed;
   z-index: 10;
   inset-inline: 0;
   top: calc(1rem + env(safe-area-inset-top));
+  display: flex;
   width: max-content;
   min-width: min(27rem, calc(100% - var(--article-gutter) * 2));
   max-width: min(var(--article-width), calc(100% - var(--article-gutter) * 2));
   height: 2.75rem;
   margin-inline: auto;
+  align-items: center;
   gap: 0.75rem;
   padding-inline: 0.5rem;
+  isolation: isolate;
 }
 
-.article-sticky-header[data-expanded='false'] {
-  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--foreground) 8%, transparent));
-}
-
-.article-sticky-header[data-expanded='false'] .article-header-title {
-  position: absolute;
-  width: 0;
-  visibility: hidden;
+.article-sticky-header[data-visible='false'] {
+  pointer-events: none;
 }
 
 /* Mask only the paper, keeping the title, controls and focus outlines intact. */
@@ -533,25 +520,13 @@
 }
 
 .article-sticky-header::before {
-  background: color-mix(in srgb, var(--popover) 72%, transparent);
-  backdrop-filter: blur(8px);
+  background: var(--popover);
   mask: url('/paper-strip-mask.svg') center / 100% 100% no-repeat;
 }
 
 .article-sticky-header::after {
   background: var(--border);
   mask: url('/paper-strip-outline.svg') center / 100% 100% no-repeat;
-}
-
-/* A strip's 630px contour becomes a flat frame when squeezed into a 32px chip. */
-.article-sticky-header[data-expanded='false']::before {
-  background: var(--popover);
-  backdrop-filter: none;
-  mask: none;
-}
-
-.article-sticky-header[data-expanded='false']::after {
-  content: none;
 }
 
 .article-title {
@@ -570,6 +545,13 @@
 @media (width < 48rem) {
   :root {
     --article-font-size: 16.875px;
+  }
+
+  .article-sticky-header {
+    top: calc(0.5rem + env(safe-area-inset-top));
+    width: min(var(--article-width), calc(100% - 1rem));
+    min-width: 0;
+    max-width: none;
   }
 }
 

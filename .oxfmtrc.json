@@ -20,7 +20,7 @@
     "src/generated/**",
     "src/worker-env.d.ts",
     ".wrangler/**",
-    ".void/**",
-    ".void-wrangler.jsonc"
+    "src/routeTree.gen.ts",
+    ".tanstack/**"
   ]
 }

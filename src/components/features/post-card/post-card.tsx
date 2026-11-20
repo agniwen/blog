@@ -4,7 +4,10 @@ import type { posts } from '~/db/schema';
 import { cn } from '~/lib/utils';
 
 interface PostCardProps {
-  post: typeof posts.$inferSelect;
+  post: Omit<typeof posts.$inferSelect, 'createdAt' | 'updatedAt'> & {
+    createdAt: Date | string;
+    updatedAt: Date | string;
+  };
   className?: string;
   showMeta?: boolean;
 }

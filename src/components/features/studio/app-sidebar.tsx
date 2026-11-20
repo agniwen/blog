@@ -1,5 +1,4 @@
-import { Link } from '@void/react';
-import { useRouter } from '@void/react';
+import { Link, useLocation } from '@tanstack/react-router';
 import { CitrusIcon } from 'lucide-react';
 
 import { NavUser } from '~/components/features/studio/app-sidebar-user';
@@ -18,7 +17,7 @@ import {
 } from '~/components/ui/sidebar';
 
 export function AppSidebar() {
-  const pathname = new URL(useRouter().url, 'http://localhost').pathname;
+  const pathname = useLocation({ select: (location) => location.pathname });
 
   return (
     <Sidebar variant='inset'>
@@ -26,7 +25,7 @@ export function AppSidebar() {
         <SidebarMenuButton
           size='lg'
           render={
-            <Link href='/studio/posts'>
+            <Link to='/studio/posts'>
               <div className='flex aspect-square size-8 items-center justify-center rounded-md bg-primary/5'>
                 <CitrusIcon className='size-5 text-primary' />
               </div>
@@ -48,7 +47,7 @@ export function AppSidebar() {
                         <SidebarMenuButton
                           isActive={pathname === menu.href || pathname.startsWith(`${menu.href}/`)}
                           render={
-                            <Link href={menu.href}>
+                            <Link to={menu.href}>
                               {menu.icon}
                               {menu.label}
                             </Link>

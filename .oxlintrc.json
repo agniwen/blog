@@ -14,15 +14,15 @@
     "src/generated/**",
     "src/worker-env.d.ts",
     ".wrangler/**",
-    ".void/**",
-    ".void-wrangler.jsonc"
+    "src/routeTree.gen.ts",
+    ".tanstack/**"
   ],
   "settings": {
     "react": {
       "version": "19.3.0",
       "linkComponents": [
         {
-          "attribute": "href",
+          "attribute": "to",
           "name": "Link"
         }
       ]

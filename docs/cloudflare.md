@@ -1,35 +1,24 @@
-# Void / Cloudflare Workers 与 D1
+# Cloudflare Workers 与 D1
 
-当前应用使用 Void / @void/react 1.3.0 原生 Pages。两个包使用相同的精确版本，满足 React adapter 的 peer 要求。`void.config.ts` 是 Worker、D1、域名配置的唯一入口；`.void-wrangler.jsonc` 由工具生成。工具版本由 mise 管理：Node 24.21.0、Bun 1.4.2。
+当前应用使用 TanStack Start + TanStack Router + Hono + `@cloudflare/vite-plugin`，部署到 Cloudflare Workers。`wrangler.jsonc` 是 Worker、D1 与域名配置的唯一入口；`src/worker.ts` 负责 canonical redirect 与每请求的 Drizzle 上下文。工具版本由 `mise.toml` 管理：Node 24.21.0、Bun 1.4.2。
 
 ## 开发与验证
 
 ```sh
 mise install
 mise exec -- bun install --frozen-lockfile
-cp docs/env.example .env # 已有文件时跳过
+cp .env.example .env # 已有文件时跳过
+bun x wrangler login # 首次或会话过期时登录 Cloudflare 账户
 bun run dev
-# 首次启动生成配置后，在另一终端初始化本地库：
-bun run db:migrate:local
 ```
 
-本地 D1 保存在 `.void`，`remote: false`。开发服务、Wrangler 本地迁移和生产预览均使用这个隔离目录。现有生产 D1 为 `blog`，ID `7381a7aa-92cc-411d-aabe-35c74abebea6`，生产资源标识保持显式配置。没有远程 REST 桥接；Worker 通过原生 DB binding 创建 request-scoped Drizzle。
+本项目不使用本地 D1：`vite.config.ts` 固定启用 `remoteBindings: true`，`wrangler.jsonc` 显式配置生产 D1 `blog`（ID `7381a7aa-92cc-411d-aabe-35c74abebea6`，`"remote": true`）。开发服务与生产预览都会通过 Cloudflare 原生远程绑定直接访问线上 `blog` 数据库；文章、草稿、用户及会话均来自线上库。本地保存、删除、评论及登录会话操作会写入线上真实数据。开发与预览不部署 Worker，也不应用迁移。[远程绑定](https://developers.cloudflare.com/workers/local-development/#remote-bindings)
 
-需要本地代码直接访问现有线上 D1 时，先确认 Wrangler 登录到上面的 Cloudflare 账户，再启动：
+远程连接模式下只做已授权的线上操作，不运行数据填充、清理或认证写入测试脚本。
 
-```sh
-BETTER_AUTH_URL=http://localhost:3000 mise exec -- bun run dev:remote --strictPort
-```
+如果远程会话启动成功但页面查询超时，可先通过 `wrangler d1 execute blog --remote --command 'SELECT 1 AS connected'` 区分 D1 账户权限与远程绑定链路问题。本机 Surge 的 HTTP 系统代理能访问 D1 API，但 `workerd` 仍可能直接连接远程预览地址；这时需检查 Surge 增强模式等流量接管设置。增强模式会改变整机网络路由，需使用者确认后开启。[Surge 增强模式](https://manual.nssurge.com/features/enhanced-mode.html)
 
-`dev:remote` 设置进程开关 `BLOG_D1_REMOTE=1`，让 `cloudflare.d1_databases[].remote` 为 `true`。代码仍在本机运行，DB binding 通过 Cloudflare 原生远程绑定访问生产 `blog` 数据库；草稿、用户及会话也来自线上库。本地保存、删除、评论及登录会话操作会写入线上真实数据。该命令不部署 Worker，也不应用迁移。[远程绑定](https://developers.cloudflare.com/workers/local-development/#remote-bindings)
-
-普通 `bun run dev` 和未设置该开关的 build / preview 继续使用本地库。需要切换模式时先停止当前服务再重新启动。远程模式下只做已授权的线上操作，不运行本地数据填充、清理或认证写入测试脚本。
-
-如果远程会话启动成功但页面查询超时，可先通过 `wrangler d1 execute blog --remote --command 'SELECT 1 AS connected' --config .void-wrangler.jsonc` 区分 D1 账户权限与远程绑定链路问题。本机 Surge 的 HTTP 系统代理能访问 D1 API，但 `workerd` 仍可能直接连接远程预览地址；这时需检查 Surge 增强模式等流量接管设置。增强模式会改变整机网络路由，需使用者确认后开启。[Surge 增强模式](https://manual.nssurge.com/features/enhanced-mode.html)
-
-2026-10-27 验证：使用者开启 Surge 增强模式后，侧边开发服务成功读取生产 `blog` D1；生成绑定确认为 `remote: true`、目标 ID 与上面一致，4 篇公开文章的列表、详情 SSR 和 sitemap 均通过 GET 验证。额外的 `SELECT 1` 检查报告 `rows_written: 0`；未执行远程迁移或线上登录、编辑、删除、评论及上传测试。
-
-`src/middleware/01.database.ts` 负责 canonical redirect 和每次请求的数据库上下文；后台与 API 中间件保护私有读取/写入，并设置 `private, no-store`。`getAuth()` 保留 Better Auth 官方 Relations v2 adapter。`scripts/auth.config.ts` 是独立 Node CLI schema 入口，通过本地模拟绑定生成模型。
+`src/worker.ts` 负责 canonical redirect 和每次请求的数据库上下文（`AsyncLocalStorage`）；`src/routes/_studio.tsx` 与 `src/server/functions.ts` 保护后台和私有读取，Hono `authMiddleware` 执行同源 CSRF 校验与管理员角色鉴权，并设置 `Cache-Control: private, no-store`。`getAuth()` 保留 Better Auth 官方 Relations v2 adapter（工厂位于 `src/lib/auth-options.ts`）。`scripts/auth.config.ts` 是独立 Node CLI schema 入口，仅在生成 schema 时使用 `remoteBindings: false` 隔离模拟绑定。
 
 ```sh
 bun run lint
@@ -44,57 +33,50 @@ TEST_BASE_URL=http://localhost:3000 bun run test:http
 
 已有 `.env` 也需包含 `BETTER_AUTH_URL=http://localhost:3000`；只有旧的 `NEXT_PUBLIC_BETTER_AUTH_URL` 不会配置服务端的认证来源。也可用 `BETTER_AUTH_URL=http://localhost:3000 bun run dev --strictPort` 临时启动本地登录验证。来源不一致时 Better Auth 会返回 `403 Invalid origin`，不应放宽来源校验。
 
-生产预览同样只连接本地库。`bun run start --port 3102 --strictPort` 可单独验证构建产物。生产构建仍使用 `https://akumanoko.com` 的认证配置和 Secure Cookie 前缀，不能把本地 HTTP 预览当作 OAuth 成功验证；本地浏览器登录使用 origin 匹配的开发服务。生产预览的授权请求测试使用同一临时会话的生产 Cookie 名称，未修改生产认证配置。Google OAuth 回调和 R2 CORS 需单独核对。
-
-在同一 checkout 内按顺序运行 dev、build、preview；Void 会更新 `.void` 中的生成入口，验证时避免多个模式同时改写它。
+生产预览同样连接远程 `blog` D1。`bun run start --port 3102 --strictPort` 可单独验证构建产物。生产构建仍使用 `.env.cloudflare` 与 `wrangler.jsonc` 中的 `https://akumanoko.com` 认证配置和 Secure Cookie 前缀，不能把本地 HTTP 预览当作 OAuth 成功验证；本地浏览器登录使用 origin 匹配的开发服务。Google OAuth 回调和 R2 CORS 需单独核对。
 
 ## 变量与 Secrets
 
-Void 只接受根 `.env`；变量清单移至 `docs/env.example`，服务端 schema 为 `src/env.ts`。生产值用 `void secret put NAME --platform cloudflare` 或项目 `bun run cf:secrets` 的八项 allowlist 上传；该操作会更改线上 Secrets，应明确获准后执行。`BETTER_AUTH_URL` 是公开 Worker variable；其余八项 server 值为 Secrets。
+变量清单为根目录 `.env.example`，服务端 schema 为 `src/lib/env.ts`。生产 Secrets 通过项目 `bun run cf:secrets` 上传允许清单内的八项敏感变量（Never send `.env` 全部内容）；该操作会更改线上 Secrets，应明确获准后执行。`BETTER_AUTH_URL` 是公开 Worker variable，配置在 `wrangler.jsonc`；其余八项 server 值为 Secrets。
 
-既有 `NEXT_PUBLIC_*` 公开值继续支持，由 `src/lib/client-env.ts` 和 Vite 的显式映射处理。生产构建使用仓库中的公开默认 origin/avatar 或 build shell 覆盖，防止 `.env` 的 localhost 进入生产。浏览器认证始终使用当前页面 origin。
+既有 `NEXT_PUBLIC_*` 公开值继续支持，由 `src/lib/client-env.ts` 和 `.env.cloudflare`（`--mode cloudflare`）处理，防止 `.env` 的 localhost 进入生产。浏览器认证始终使用当前页面 origin。
 
 ## 迁移兼容性
 
-Drizzle ORM / Kit 配对固定 `1.0.0-rc.4`；Better Auth 的 `@better-auth/drizzle-adapter/relations-v2` 显式传 schema，Drizzle 连接传 relations。Void 自带的是 ORM 0.45 / Kit 0.31，**不接管本项目 schema 和迁移生成**：不导入 `void/db`、`void/auth`，不调用 `void db push` / `void db generate`。
+Drizzle ORM / Kit 配对固定 `1.0.0-rc.4`；Better Auth 的 `@better-auth/drizzle-adapter/relations-v2` 显式传 schema，Drizzle 连接传 relations。
 
-既有 SQLite 文件继续保存在 `drizzle/d1/<timestamp>/migration.sql`，快照和 SQL 内容未重写。`cloudflare.d1_databases` 显式配置此 migrations_dir/pattern，保留 Wrangler 的 `d1_migrations` 历史；本地命令加 `--persist-to .void`，与 dev/preview 一致。Void dev 关于 `src/db/migrations` 的提示不代表应重新生成基线。历史 PostgreSQL 文件仍在 `drizzle/migrations`，不应用到 D1。
+既有 SQLite 文件继续保存在 `drizzle/d1/<timestamp>/migration.sql`，快照和 SQL 内容未重写。`wrangler.jsonc` 的 `d1_databases` 显式配置此 `migrations_dir` / `migrations_pattern`，保留 Wrangler 的 `d1_migrations` 历史。历史 PostgreSQL 文件仍在 `drizzle/migrations`，不应用到 D1。
 
 ```sh
-bun run db:generate      # 使用项目锁定的 Kit
-bun run db:migrate:local # 仅 .void 本地库
-bun run db:migrate       # 远程已有 blog：先确认目标和待应用列表
+bun run db:generate # 使用项目锁定的 Kit
+bun run db:migrate  # 远程已有 blog：先确认目标和待应用列表
 ```
 
 ## 发布
 
 ```sh
-bun run deploy # Void 构建，再由 Wrangler 部署生成的 dist/ssr/wrangler.json
+bun run deploy # bun run build:cloudflare && bun x wrangler deploy
 ```
 
-部署命令使用项目锁定的 Wrangler 和现有 OAuth 登录，上传 Void 生成的 Worker 与静态资源，复用显式配置的现有 D1、域名和 Secrets，不自动应用数据库迁移。发布前运行 `wrangler whoami` 和远程 migration list 检查账户与待应用列表。当前 ORM 与迁移由项目管理，Void 的数据库推断已关闭。
+部署命令使用项目锁定的 Wrangler 和现有 OAuth 登录，上传 `@cloudflare/vite-plugin` 构建出的 Worker 与静态资源，复用显式配置的现有 D1、域名和 Secrets，不自动应用数据库迁移。发布前运行 `wrangler whoami` 和远程 migration list 检查账户与待应用列表。
 
 ### Cloudflare Workers Builds
 
-Cloudflare 控制台的构建触发器独立于 `package.json` 的 `deploy` 脚本，需显式使用 Void 生成的配置：
+Cloudflare 控制台的构建触发器基于根目录 `wrangler.jsonc` 与 `@cloudflare/vite-plugin` 生成的 `.wrangler/deploy/config.json`：
 
-| 设置                     | 值                                                               |
-| ------------------------ | ---------------------------------------------------------------- |
-| 根目录                   | `/`                                                              |
-| 构建命令                 | `bun install --frozen-lockfile && bun run build`                 |
-| 生产分支 `main` 部署命令 | `bun x wrangler deploy --config dist/ssr/wrangler.json`          |
-| 非生产分支版本上传命令   | `bun x wrangler versions upload --config dist/ssr/wrangler.json` |
-| 构建变量                 | `BUN_VERSION=1.4.2`、`NODE_VERSION=24.21.0`                      |
+| 设置                     | 值                                               |
+| ------------------------ | ------------------------------------------------ |
+| 根目录                   | `/`                                              |
+| 构建命令                 | `bun install --frozen-lockfile && bun run build` |
+| 生产分支 `main` 部署命令 | `bun x wrangler deploy`                          |
+| 非生产分支版本上传命令   | `bun x wrangler versions upload`                 |
+| 构建变量                 | `BUN_VERSION=1.4.2`、`NODE_VERSION=24.21.0`      |
 
-不要使用不带 `--config` 的默认部署命令。仓库不提交根 Wrangler 配置，Void 在构建时生成 `dist/ssr/wrangler.json`；Wrangler 自动检测会将依赖中的 Hono 当作框架，并报 `The detected framework ("Hono") cannot be automatically configured.`。这是部署入口配置问题，无需更换框架或提交生成文件。可先运行 `bun x wrangler deploy --config dist/ssr/wrangler.json --dry-run` 验证产物。参见 [Workers Builds 构建设置](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)和 [Wrangler 自动配置](https://developers.cloudflare.com/workers/framework-guides/automatic-configuration/)。
+可先运行 `bun x wrangler deploy --dry-run` 验证产物。参见 [Workers Builds 构建设置](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/)。
 
-首次迁移时，Void 1.1.11 的 `void deploy --platform cloudflare` 使用独立的认证存储，不能直接识别现有 Wrangler OAuth 会话。升级到 1.3.0 后继续使用已验证的 Wrangler 产物发布流程；本次未重新测试 Void CLI 登录或部署。该流程不生成 `void.lock.json`，资源标识由 `void.config.ts` 显式维护。
+不要把 `.tanstack/`、`dist/`、`.wrangler/`、`.env` 或 `.dev.vars*` 提交。直接部署继续绑定 `akumanoko.com` 和 `www.akumanoko.com`；aliases 通过 `src/worker.ts` 308 到主域名并保留路径/查询，localhost 和预览域名不跳转。
 
-不要把 `.void/`、`dist/`、`.env`、生成配置或 `.dev.vars*` 提交。直接部署继续绑定 `akumanoko.com` 和 `www.akumanoko.com`；aliases 通过中间件 308 到主域名并保留路径/查询，localhost 和预览域名不跳转。
-
-## 历史记录（Void 迁移之前）
-
-以下是已有 D1 数据迁入与线上验证记录，不能当作本次 Void 重构的上线证明。
+## 历史记录（PostgreSQL 迁入）
 
 ## PostgreSQL 迁入记录
 

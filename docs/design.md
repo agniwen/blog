@@ -16,13 +16,11 @@ Public standalone buttons opt into `shape='paper'`: homepage social icons, the B
 
 Icon-sized and `xs`/`sm` paper buttons use a quieter contour: mix longer near-straight stretches with occasional shallow tears at uneven intervals and depths. Mirror the decorative surface across neighboring compact buttons for variation; keep the content itself upright. Avoid evenly spaced teeth or identical repeated silhouettes.
 
-The article return button and floating title bar are one persistent paper surface and one return link. A fixed 32px in-flow anchor preserves article spacing. As that anchor crosses the top 16px boundary, Motion's layout animation moves and expands the 32px button into the centered 44px-high title bar, and the title fades in after 100ms; scrolling back reverses the shape change. Keep the arrow at its normal size with a position-only child layout animation. Retain the same link on desktop and mobile so focus and navigation survive the transition. The blog ScrollArea opts into Motion's `layoutScroll` measurement for its actual viewport; other scroll areas keep their normal rendering. Observe only boundary crossings, not every scroll position. Skip spatial animation for offscreen scroll jumps and reduced-motion users.
+The article page separates the stationary in-flow `shape='paper'` return button from the floating title bar. When the in-flow return button scrolls out above the viewport, the centered 44px-high floating title bar slides in smoothly from above the top edge (and retracts upward when scrolling back); reduced-motion users skip the slide transition. Observe only visibility transitions of the return-button anchor, not every scroll position.
 
-The expanded title bar has a minimum width of 27rem (432px), capped at the available article width. Longer titles can expand it up to the article width (630px maximum, excluding container gutters), then truncate. Position it 16px below the viewport's safe top edge. The paper surface uses 72% popover color with an 8px backdrop blur, with irregular tears on all four edges from `public/paper-strip-mask.svg`. `public/paper-strip-outline.svg` traces the same contour with a 1px non-scaling stroke in the semantic border color; keep both SVG contours aligned. Mask only the decorative surface so controls and keyboard outlines remain intact. The title comes from the page's server props, not `document.title`.
+The floating title bar has a minimum width of 27rem (432px), capped at the available article width. Longer titles can expand it up to the article width (630px maximum, excluding container gutters), then truncate. Position it 16px below the viewport's safe top edge; below `48rem` (mobile), use tighter `8px` (`0.5rem`) top and horizontal gaps across the viewport width. The paper surface uses a solid popover fill, with irregular tears on all four edges from `public/paper-strip-mask.svg`. `public/paper-strip-outline.svg` traces the same contour with a 1px non-scaling stroke in the semantic border color; keep both SVG contours aligned. Mask only the decorative surface so controls and keyboard outlines remain intact. The title comes from the route loader data, not `document.title`.
 
-In the collapsed 32px state, reuse the compact paper buttons' irregular polygon, solid popover fill and faint shadow. Disable the long-strip mask, blur and outline in this state: shrinking the wide SVG and its outline produces a flat square frame. Both states still use the same animated surface and return link.
-
-Do not introduce document-wide font/background resets from editor stylesheets. Routes and layouts use Void native Pages directory conventions.
+Do not introduce document-wide font/background resets from editor stylesheets. Routes and layouts use TanStack Router flat route conventions in `src/routes`.
 
 Keep the original frosted/noise background, including its 5% light-mode opacity and 2% dark-mode opacity. Content links use the theme-specific blue tokens; comment surfaces and selection colors follow the semantic theme.
 
@@ -36,7 +34,7 @@ Typography uses MiSans from jsDelivr (`misans@4.1.0`, Chinese subsets, Regular/M
 
 ## Loading states
 
-Use the shared Skeleton primitive and neutral accent fill, with reduced-motion support. Void owns page navigation; client widgets use the shared 300 ms delay and 300 ms minimum through `useDelayedPending`. Keep existing content visible during background refetches. Timing regression checks run with `bun run test:loading`.
+Use the shared Skeleton primitive and neutral accent fill, with reduced-motion support. Route transitions use TanStack Router `pendingComponent` with a shared 300 ms delay and 300 ms minimum, and client widgets share that timing through `useDelayedPending`. Keep existing content visible during background refetches. Timing regression checks run with `bun run test:loading`.
 
 ## coss UI components
 
