@@ -3,6 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { db } from '~/lib/db';
 import { getSiteOrigin, SITE_DESCRIPTION, SITE_TITLE } from '~/lib/site-meta';
 
+/** 转义 XML 特殊字符，防止文章标题或摘要破坏 RSS 文档结构。 */
 function escapeXml(value: string) {
   return value.replace(
     /[<>&'"]/g,
@@ -10,6 +11,7 @@ function escapeXml(value: string) {
   );
 }
 
+/** RSS 2.0 订阅源路由：按创建时间倒序仅输出 `published: true` 的已发布文章，严禁包含草稿。 */
 export const Route = createFileRoute('/rss.xml')({
   server: {
     handlers: {

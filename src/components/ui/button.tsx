@@ -8,6 +8,10 @@ import type * as React from 'react';
 import { Spinner } from '~/components/ui/spinner';
 import { cn } from '~/lib/utils';
 
+/**
+ * 按钮样式变体表。`shape="paper"` 仅裁切装饰性背景纸边并保留矩形焦距环；
+ * 小尺寸图标/按钮会自动追加 `button-paper-compact` 以减弱边缘锯齿。
+ */
 export const buttonVariants = cva(
   "relative inline-flex shrink-0 cursor-default items-center justify-center gap-2 rounded-md border text-base font-medium whitespace-nowrap transition-[background-color,color,box-shadow] outline-none before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-md)-1px)] focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-64 data-loading:text-transparent data-loading:select-none motion-reduce:transition-none sm:text-sm pointer-coarse:after:absolute pointer-coarse:after:size-full pointer-coarse:after:min-h-11 pointer-coarse:after:min-w-11 [&_svg]:pointer-events-none [&_svg]:-mx-0.5 [&_svg]:shrink-0 [&_svg:not([class*='opacity-'])]:opacity-80 [&_svg:not([class*='size-'])]:size-4.5 sm:[&_svg:not([class*='size-'])]:size-4",
   {
@@ -66,6 +70,7 @@ export interface ButtonProps extends useRender.ComponentProps<'button'> {
   loading?: boolean;
 }
 
+/** 通用按钮组件：支持 `shape="paper"` 纸片质感与 `loading` 加载态防连点。 */
 export function Button({
   className,
   variant,

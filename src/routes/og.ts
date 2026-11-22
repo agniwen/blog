@@ -3,6 +3,11 @@ import { createFileRoute } from '@tanstack/react-router';
 import { db } from '~/lib/db';
 import { renderHomeOgImage, renderPostOgImage } from '~/lib/og';
 
+/**
+ * 动态 OG 图片服务端路由：
+ * - `GET /og`：返回首页卡片；
+ * - `GET /og?id=<postId>`：仅渲染 `published: true` 的已发布文章卡片，草稿或缺失统一返回 404 `no-store`。
+ */
 export const Route = createFileRoute('/og')({
   server: {
     handlers: {

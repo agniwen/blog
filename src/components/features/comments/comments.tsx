@@ -12,6 +12,7 @@ interface CommentsProps {
   id: string;
 }
 
+/** 文章评论区容器，负责拉取评论列表与延迟骨架屏切换。 */
 export function Comments(props: CommentsProps) {
   const { id } = props;
   const { data, isPending } = useQuery({

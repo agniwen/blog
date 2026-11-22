@@ -6,6 +6,7 @@ import { comments } from '~/db/schema';
 import { getAuth } from '~/lib/auth';
 import { db } from '~/lib/db';
 
+/** 读取指定已发布文章下的评论列表（包含评论者基础公开信息）；未发布或不存在返回空数组。 */
 export const getComments = createServerFn({ method: 'GET' })
   .validator(z.string().min(1))
   .handler(async ({ data: postId }) => {
@@ -20,6 +21,7 @@ export const getComments = createServerFn({ method: 'GET' })
     });
   });
 
+/** 发表评论 Server Function：服务端独立校验登录态与目标文章的 `published: true` 状态。 */
 export const createComment = createServerFn({ method: 'POST' })
   .validator(z.object({ postId: z.string().min(1), content: z.string().trim().min(1).max(10000) }))
   .handler(async ({ data }) => {

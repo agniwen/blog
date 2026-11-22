@@ -49,6 +49,12 @@ function getDateTime(value: Date | number | string | null | undefined) {
   return date.toISOString();
 }
 
+/**
+ * 日期时间展示组件。
+ *
+ * 刻意在客户端挂载后再通过 `useEffect` 格式化本地可读时间，避免 SSR 时区（UTC）与浏览器时区不一致导致水合报错；
+ * 同时始终在 `<time dateTime>` 中输出标准 ISO 时间供语义与无障碍读取。
+ */
 export function TimeDisplay({ value, fallback = '-', options, className }: TimeDisplayProps) {
   const [displayValue, setDisplayValue] = useState<string | null>(null);
   const format = options?.format;

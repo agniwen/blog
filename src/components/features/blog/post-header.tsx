@@ -10,6 +10,13 @@ import { authClient, useSession } from '~/lib/auth-client';
 import { clientEnv } from '~/lib/client-env';
 import { cn } from '~/lib/utils';
 
+/**
+ * 文章页固定顶部导航栏。
+ *
+ * - 通过 `.home-avatar` 与首页头像共享 View Transition；
+ * - 借助顶部 1px 哨兵元素监听滚动：桌面端下拉时向两侧舒展，移动端展示半透明毛玻璃胶囊底板；
+ * - 退出登录后只清理管理端私有缓存，保留公开文章/评论/Spotify 缓存以免阅读页闪烁。
+ */
 export function PostHeader({ title }: { title?: string | null }) {
   const sentinelRef = useRef<React.ComponentRef<'div'>>(null);
   const [scrolled, setScrolled] = useState(false);

@@ -2,6 +2,9 @@ import type { CSSProperties } from 'react';
 
 type PaperImageStyle = CSSProperties & { '--paper-image-mask': string };
 
+/**
+ * 根据图片唯一标识通过 FNV-1a 哈希生成确定性随机种子，返回水合一致的毛边纸张 SVG mask 变量。
+ */
 export function paperImageStyle(identity: string): PaperImageStyle {
   let seed = 2166136261;
   for (let index = 0; index < identity.length; index++) {

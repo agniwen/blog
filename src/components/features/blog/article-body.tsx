@@ -6,6 +6,7 @@ import { PaperImage } from '~/components/features/blog/paper-image';
 import { SpotifyCard } from '~/components/features/spotify-card';
 import { parseSpotifyTrack, spotifySnapshot } from '~/lib/spotify';
 
+/** 跳过书签 favicon 与表情节点，避免给内联小图标叠加毛边纸张遮罩。 */
 function isInlineIcon(node: Element): boolean {
   if (node.attribs.class?.split(/\s+/).includes('bookmark-favicon')) return true;
   let ancestor: Element | null = node;
@@ -16,6 +17,10 @@ function isInlineIcon(node: Element): boolean {
   return false;
 }
 
+/**
+ * 解析并渲染数据库存储的文章 HTML：
+ * 将正文插图替换为带确定性纸张毛边的 `PaperImage`，并将新旧版本的 Spotify 嵌入节点统一升级为 `SpotifyCard`。
+ */
 export function ArticleBody({ html, imageSeed = '' }: { html: string; imageSeed?: string }) {
   let imageIndex = 0;
   return (

@@ -44,6 +44,12 @@ interface PostFormData {
   jsonContent?: any;
 }
 
+/**
+ * 后台文章新建 / 编辑页核心组件。
+ *
+ * - 传入 `id` 时进入编辑模式，支持 2 秒防抖自动保存与 `Cmd/Ctrl + S` 快捷键保存；
+ * - 未传 `id` 时为新建模式，仅在显式提交时创建草稿并跳转到编辑页。
+ */
 export function UpsertEditor(props: { id?: string }) {
   const { id } = props;
   const editor = useEditor();
@@ -200,6 +206,7 @@ export function UpsertEditor(props: { id?: string }) {
     };
   }, [editor, id, triggerAutoSave]);
 
+  // 仅在首次加载文章后注入编辑器正文：`queueMicrotask` 避开 React 提交期，`emitUpdate: false` 防止误触发自动保存
   useEffect(() => {
     if (post?.data && isInitialLoadRef.current && editor) {
       isInitialLoadRef.current = false;

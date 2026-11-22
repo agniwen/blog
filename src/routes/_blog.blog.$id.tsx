@@ -20,6 +20,10 @@ type PostSummary = Awaited<ReturnType<typeof getPosts>>[number];
 type PostDetail = Awaited<ReturnType<typeof getPost>>;
 
 export const Route = createFileRoute('/_blog/blog/$id')({
+  // 三级数据回退策略，兼顾秒开体验与 SSR 直达 404 状态码：
+  // 1. 已有完整详情缓存时直接返回并后台预取评论；
+  // 2. 从首页跳入且命中 `post-list` 摘要时立即放行渲染，同时异步预取正文与评论；
+  // 3. 首次直达文章 URL 时阻塞查询，未找到则抛出真实 404。
   loader: async ({ context, params }) => {
     const cachedDetail = context.queryClient.getQueryData<PostDetail>(['post-detail', params.id]);
     if (cachedDetail) {

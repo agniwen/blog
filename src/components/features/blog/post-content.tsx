@@ -22,6 +22,12 @@ import '~/components/features/editor/simple-editor.css';
 
 type PostSummary = Awaited<ReturnType<typeof getPosts>>[number];
 
+/**
+ * 文章详情正文视图。
+ *
+ * 从 `['post-list']` 缓存读取摘要作为 `placeholderData`，在正文 HTML 仍在拉取时立即渲染封面、标题与日期，
+ * 避免从首页跳转时出现整页骨架屏闪烁。
+ */
 export function PostContent({ id }: { id: string }) {
   const queryClient = useQueryClient();
   const cachedSummary = queryClient

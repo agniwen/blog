@@ -10,14 +10,17 @@ import type { UseEditorOptions } from '@tiptap/react';
 import { useEditor as useTipTapEditor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
 
-import { SpotifyNode } from '~/components/tiptap/node/spotify-node/spotify-node-extension';
-
 import { BookmarkNode } from '~/components/tiptap/node/bookmark-node/bookmark-node-extension';
 import { HorizontalRule } from '~/components/tiptap/node/horizontal-rule-node/horizontal-rule-node-extension';
 import { IFrameNode } from '~/components/tiptap/node/iframe-node/iframe-node-extension';
 import { ImageUploadNode } from '~/components/tiptap/node/image-upload-node/image-upload-node-extension';
+import { SpotifyNode } from '~/components/tiptap/node/spotify-node/spotify-node-extension';
 import { handleImageUpload, MAX_FILE_SIZE } from '~/lib/tiptap-utils';
 
+/**
+ * Tiptap 编辑器默认配置：`immediatelyRender: false` 避免 SSR 水合不一致，
+ * `shouldRerenderOnTransaction: false` 防止每次键入事务都触发外层组件重渲染。
+ */
 export const defaultEditorOptions = {
   immediatelyRender: false,
   shouldRerenderOnTransaction: false,
@@ -60,6 +63,7 @@ export const defaultEditorOptions = {
     IFrameNode,
   ],
 };
+/** 封装 Tiptap `useEditor`，默认挂载完整博客扩展与图片上传能力。 */
 export function useEditor(options: UseEditorOptions = defaultEditorOptions) {
   return useTipTapEditor(options);
 }

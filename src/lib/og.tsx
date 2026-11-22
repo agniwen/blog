@@ -82,6 +82,12 @@ function rememberBounded<T>(cache: Map<string, T>, key: string, value: T, maxEnt
   cache.set(key, value);
 }
 
+/**
+ * 按渲染文本中的去重字符集向 Google Fonts 动态拉取子集化的 Noto Sans SC `.ttf`。
+ *
+ * 刻意携带旧版 Safari UA，使 Google 返回 Satori 支持的 TTF/OTF（而非 woff2），
+ * 从而无需将十几 MB 的完整中文字体打入 Worker 产物。
+ */
 async function fetchNotoSansScWeight(
   weight: 400 | 500,
   uniqueChars: string,
@@ -116,6 +122,7 @@ async function fetchNotoSansScWeight(
   }
 }
 
+/** 并行加载卡片所需字符集的 400/500 字重字体，全部失败时退回内置默认字体。 */
 async function loadNotoSansScFonts(text: string): Promise<FontEntry[] | undefined> {
   const uniqueChars = [...new Set(`${BASE_FONT_CHARS}${text}`)].toSorted().join('');
   const loaded = await Promise.all(
@@ -195,6 +202,12 @@ function rgbToHex([r, g, b]: [number, number, number]): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+/**
+ * 从封面图在右侧 `760×630` 区域实际可见的 `object-cover` 裁切框内采样计算配色方案。
+ *
+ * 对靠近左侧渐隐交界处的像素赋予更高权重（2.2x），再依据感知亮度决定深色或浅色背景，
+ * 并收敛饱和度生成协调的实色底板与高对比文字层级。
+ */
 function extractBannerPalette(image: PhotonImage): BannerPalette {
   const width = image.get_width();
   const height = image.get_height();
@@ -266,6 +279,10 @@ function extractBannerPalette(image: PhotonImage): BannerPalette {
   };
 }
 
+/**
+ * 使用 Photon WASM 解码并等比缩放封面图（顺便规避 resvg 不支持 WebP 的限制），
+ * 提取适配配色并转为 JPEG Data URI；`finally` 中必须手动 `.free()` 释放 WASM 内存。
+ */
 function decodeBannerWithPalette(bytes: Uint8Array, maxWidth = 1000): CachedBanner | null {
   let input: PhotonImage | null = null;
   let resized: PhotonImage | null = null;
@@ -427,6 +444,7 @@ function formatZhDate(date: Date): string {
   return `${year}年${month}月${day}日`;
 }
 
+/** 渲染首页 / 默认分享卡片（1200×630 PNG）；使用 `ImageResponse.async` 确保渲染异常直接暴露而非静默截断流。 */
 export async function renderHomeOgImage(): Promise<Response> {
   const [avatarDataUri, fonts] = await Promise.all([
     getAvatarDataUri(),
@@ -538,6 +556,12 @@ export async function renderHomeOgImage(): Promise<Response> {
   );
 }
 
+/**
+ * 渲染已发布文章详情页 OG 卡片（1200×630 PNG）。
+ *
+ * 有封面时采用右侧满幅封面 + 从右向左的同色系渐隐融合布局；无封面或抓图失败时优雅降级为纯排版暖纸卡片。
+ * 注意：Satori 会遍历所有 style 键名，不可传入 `backgroundImage: undefined`，须用条件展开省略该属性。
+ */
 export async function renderPostOgImage(post: OgPostData): Promise<Response> {
   const [avatarDataUri, banner] = await Promise.all([
     getAvatarDataUri(),
