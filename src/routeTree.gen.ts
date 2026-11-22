@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as BlogRouteImport } from './routes/_blog'
 import { Route as StudioRouteImport } from './routes/_studio'
+import { Route as OgRouteImport } from './routes/og'
+import { Route as RssDotxmlRouteImport } from './routes/rss[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as BlogIndexRouteImport } from './routes/_blog.index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
@@ -28,6 +30,16 @@ const BlogRoute = BlogRouteImport.update({
 } as any)
 const StudioRoute = StudioRouteImport.update({
   id: '/_studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OgRoute = OgRouteImport.update({
+  id: '/og',
+  path: '/og',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RssDotxmlRoute = RssDotxmlRouteImport.update({
+  id: '/rss.xml',
+  path: '/rss.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -85,6 +97,8 @@ const StudioStudioPostsUpsertIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof BlogIndexRoute
+  '/og': typeof OgRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/$': typeof ApiSplatRoute
   '/studio/login': typeof StudioLoginRoute
@@ -97,6 +111,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof BlogIndexRoute
+  '/og': typeof OgRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/$': typeof ApiSplatRoute
   '/studio/login': typeof StudioLoginRoute
@@ -111,6 +127,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_blog': typeof BlogRouteWithChildren
   '/_studio': typeof StudioRouteWithChildren
+  '/og': typeof OgRoute
+  '/rss.xml': typeof RssDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/$': typeof ApiSplatRoute
   '/studio/login': typeof StudioLoginRoute
@@ -126,6 +144,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/og'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/api/$'
     | '/studio/login'
@@ -138,6 +158,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/og'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/api/$'
     | '/studio/login'
@@ -151,6 +173,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_blog'
     | '/_studio'
+    | '/og'
+    | '/rss.xml'
     | '/sitemap.xml'
     | '/api/$'
     | '/studio/login'
@@ -166,6 +190,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   BlogRoute: typeof BlogRouteWithChildren
   StudioRoute: typeof StudioRouteWithChildren
+  OgRoute: typeof OgRoute
+  RssDotxmlRoute: typeof RssDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiSplatRoute: typeof ApiSplatRoute
   StudioLoginRoute: typeof StudioLoginRoute
@@ -185,6 +211,20 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof StudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/og': {
+      id: '/og'
+      path: '/og'
+      fullPath: '/og'
+      preLoaderRoute: typeof OgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rss.xml': {
+      id: '/rss.xml'
+      path: '/rss.xml'
+      fullPath: '/rss.xml'
+      preLoaderRoute: typeof RssDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -294,6 +334,8 @@ const StudioRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   BlogRoute: BlogRouteWithChildren,
   StudioRoute: StudioRouteWithChildren,
+  OgRoute: OgRoute,
+  RssDotxmlRoute: RssDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiSplatRoute: ApiSplatRoute,
   StudioLoginRoute: StudioLoginRoute,

@@ -17,7 +17,12 @@ test.skipIf(!baseUrl)(
   'HTTP smoke checks against TEST_BASE_URL',
   async () => {
     const home = await (await request('/', 200)).text();
-    assert.match(home, /<title>akumanoko<\/title>/);
+    assert.match(home, /<html[^>]*\blang="zh-CN"/);
+    assert.match(home, /<title>Wen(?:&#x27;|&#39;|')s Blog<\/title>/);
+    assert.match(home, /property="og:image"/);
+    assert.match(home, /name="twitter:card"\s+content="summary_large_image"/);
+    assert.match(home, /rel="canonical"/);
+    assert.match(home, /type="application\/rss\+xml"/);
     assert.doesNotMatch(home, /Switched to client rendering because|Cannot find module/);
     // Font CDN stylesheets may precede the application stylesheet in production.
     const stylesheet = [...home.matchAll(/<link\b[^>]*>/g)]
@@ -47,9 +52,45 @@ test.skipIf(!baseUrl)(
       const article = await (await request(`/blog/${id}`, 200)).text();
       assert.match(article, /<h1[^>]*>[^<]+<\/h1>/);
       assert.match(article, /<meta name="description" content="/);
+      assert.match(article, /property="og:type"\s+content="article"/);
+      assert.match(
+        article,
+        new RegExp(`property="og:image"[^>]*content="[^"]*\\/og\\?id=${encodeURIComponent(id)}`),
+      );
+      assert.match(article, /name="twitter:card"\s+content="summary_large_image"/);
+      assert.match(article, /rel="canonical"/);
       assert.match(article, /class="tiptap ProseMirror"/);
       assert.match(article, /article-sticky-header/);
       assert.ok(xml.includes(`/blog/${id}</loc>`), 'published article missing from sitemap');
+    }
+    const homeOg = await request('/og', 200);
+    assert.match(homeOg.headers.get('content-type'), /image\/png/);
+    assert.match(homeOg.headers.get('cache-control'), /public/);
+    const homeOgBytes = new Uint8Array(await homeOg.arrayBuffer());
+    assert.deepEqual([...homeOgBytes.subarray(0, 4)], [0x89, 0x50, 0x4e, 0x47]);
+
+    if (ids.length > 0) {
+      const postOg = await request(`/og?id=${encodeURIComponent(ids[0])}`, 200);
+      assert.match(postOg.headers.get('content-type'), /image\/png/);
+      const postOgBytes = new Uint8Array(await postOg.arrayBuffer());
+      assert.deepEqual([...postOgBytes.subarray(0, 4)], [0x89, 0x50, 0x4e, 0x47]);
+    }
+
+    const missingOg = await request('/og?id=migration-smoke-missing-post', 404);
+    assert.match(missingOg.headers.get('cache-control'), /no-store/);
+
+    const robots = await request('/robots.txt', 200);
+    const robotsText = await robots.text();
+    assert.match(robotsText, /Disallow:\s*\/studio/);
+    assert.match(robotsText, /Sitemap:/);
+
+    const rss = await request('/rss.xml', 200);
+    assert.match(rss.headers.get('content-type'), /application\/rss\+xml/);
+    const rssXml = await rss.text();
+    assert.match(rssXml, /<rss version="2\.0"/);
+    assert.doesNotMatch(rssXml, /\/studio/);
+    for (const id of ids) {
+      assert.ok(rssXml.includes(`/blog/${id}</link>`), 'published article missing from rss');
     }
     await request('/blog/migration-smoke-missing-post', 404);
     await request('/migration-smoke-missing-route', 404);

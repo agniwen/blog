@@ -12,6 +12,7 @@ export const Route = createFileRoute('/_studio')({
     if ((await getSession())?.user.role !== 'admin')
       throw redirect({ to: '/', headers: { 'Cache-Control': 'private, no-store' } });
   },
+  head: () => ({ meta: [{ name: 'robots', content: 'noindex, nofollow' }] }),
   headers: () => ({ 'Cache-Control': 'private, no-store' }),
   pendingComponent: StudioSkeleton,
   component: Studio,

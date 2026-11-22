@@ -37,6 +37,7 @@ export const postsRouter = factory
       .update(posts)
       .set({
         ...rest,
+        updatedAt: new Date(),
       })
       .where(eq(posts.id, id))
       .returning();

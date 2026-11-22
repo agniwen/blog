@@ -6,6 +6,14 @@ import { Comments } from '~/components/features/comments';
 import { getComments } from '~/components/features/comments/actions';
 import { BlogPostSkeleton } from '~/components/features/page-skeletons';
 import { PageContainer } from '~/components/ui/page-container';
+import {
+  buildPostOgUrl,
+  getSiteOrigin,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_WIDTH,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+} from '~/lib/site-meta';
 import { getPost, type getPosts } from '~/server/functions';
 
 type PostSummary = Awaited<ReturnType<typeof getPosts>>[number];
@@ -48,12 +56,48 @@ export const Route = createFileRoute('/_blog/blog/$id')({
     });
     return post;
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: loaderData?.title ?? 'akumanoko' },
-      { name: 'description', content: loaderData?.description ?? 'akumanoko' },
-    ],
-  }),
+  head: ({ loaderData, params }) => {
+    const origin = getSiteOrigin();
+    const postTitle = loaderData?.title || SITE_TITLE;
+    const description = loaderData?.description || loaderData?.summary || SITE_DESCRIPTION;
+    const url = `${origin}/blog/${encodeURIComponent(params.id)}`;
+    const ogImage = buildPostOgUrl(origin, params.id, loaderData?.updatedAt);
+    const meta: Array<Record<string, string>> = [
+      { title: loaderData?.title ? `${loaderData.title} · ${SITE_TITLE}` : SITE_TITLE },
+      { name: 'description', content: description },
+      { property: 'og:site_name', content: SITE_TITLE },
+      { property: 'og:locale', content: 'zh_CN' },
+      { property: 'og:type', content: 'article' },
+      { property: 'og:title', content: postTitle },
+      { property: 'og:description', content: description },
+      { property: 'og:url', content: url },
+      { property: 'og:image', content: ogImage },
+      { property: 'og:image:width', content: String(OG_IMAGE_WIDTH) },
+      { property: 'og:image:height', content: String(OG_IMAGE_HEIGHT) },
+      { property: 'og:image:type', content: 'image/png' },
+      { property: 'og:image:alt', content: postTitle },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: postTitle },
+      { name: 'twitter:description', content: description },
+      { name: 'twitter:image', content: ogImage },
+    ];
+    if (loaderData?.createdAt) {
+      meta.push({
+        property: 'article:published_time',
+        content: new Date(loaderData.createdAt).toISOString(),
+      });
+    }
+    if (loaderData?.updatedAt) {
+      meta.push({
+        property: 'article:modified_time',
+        content: new Date(loaderData.updatedAt).toISOString(),
+      });
+    }
+    return {
+      meta,
+      links: [{ rel: 'canonical', href: url }],
+    };
+  },
   pendingComponent: BlogPostSkeleton,
   component: BlogPage,
 });

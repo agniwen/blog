@@ -5,27 +5,59 @@ import NotFound from '~/components/features/not-found';
 import { Background } from '~/components/ui/background';
 import { Button } from '~/components/ui/button';
 import { ToastProvider } from '~/components/ui/toast';
+import {
+  buildHomeOgUrl,
+  getSiteOrigin,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_WIDTH,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+} from '~/lib/site-meta';
 
 import '~/styles/app.css';
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'akumanoko' },
-      { name: 'description', content: 'akumanoko' },
-    ],
-    links: [
-      { rel: 'icon', href: '/favicon.ico' },
-      { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossOrigin: 'anonymous' },
-      ...['Regular', 'Medium'].map((weight) => ({
-        rel: 'stylesheet',
-        href: `https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-${weight}.min.css`,
-        crossOrigin: 'anonymous' as const,
-      })),
-    ],
-  }),
+  head: () => {
+    const origin = getSiteOrigin();
+    const ogImage = buildHomeOgUrl(origin);
+    return {
+      meta: [
+        { charSet: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { title: SITE_TITLE },
+        { name: 'description', content: SITE_DESCRIPTION },
+        { property: 'og:site_name', content: SITE_TITLE },
+        { property: 'og:locale', content: 'zh_CN' },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:title', content: SITE_TITLE },
+        { property: 'og:description', content: SITE_DESCRIPTION },
+        { property: 'og:url', content: `${origin}/` },
+        { property: 'og:image', content: ogImage },
+        { property: 'og:image:width', content: String(OG_IMAGE_WIDTH) },
+        { property: 'og:image:height', content: String(OG_IMAGE_HEIGHT) },
+        { property: 'og:image:type', content: 'image/png' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: SITE_TITLE },
+        { name: 'twitter:description', content: SITE_DESCRIPTION },
+        { name: 'twitter:image', content: ogImage },
+      ],
+      links: [
+        { rel: 'icon', href: '/favicon.ico' },
+        {
+          rel: 'alternate',
+          type: 'application/rss+xml',
+          title: `${SITE_TITLE} RSS`,
+          href: '/rss.xml',
+        },
+        { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossOrigin: 'anonymous' },
+        ...['Regular', 'Medium'].map((weight) => ({
+          rel: 'stylesheet',
+          href: `https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-${weight}.min.css`,
+          crossOrigin: 'anonymous' as const,
+        })),
+      ],
+    };
+  },
   notFoundComponent: NotFound,
   errorComponent: ({ reset }) => (
     <main className='p-8'>
@@ -35,7 +67,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   ),
   component: () => <Outlet />,
   shellComponent: ({ children }) => (
-    <html suppressHydrationWarning lang='en'>
+    <html suppressHydrationWarning lang='zh-CN'>
       <head>
         <HeadContent />
       </head>

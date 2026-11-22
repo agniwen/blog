@@ -5,11 +5,42 @@ import { HomeSkeleton } from '~/components/features/page-skeletons';
 import { Social } from '~/components/features/social';
 import { PageContainer } from '~/components/ui/page-container';
 import { clientEnv } from '~/lib/client-env';
+import {
+  buildHomeOgUrl,
+  getSiteOrigin,
+  OG_IMAGE_HEIGHT,
+  OG_IMAGE_WIDTH,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+} from '~/lib/site-meta';
 import { getPosts } from '~/server/functions';
 
 export const Route = createFileRoute('/_blog/')({
   loader: ({ context }) =>
     context.queryClient.query({ queryKey: ['post-list'], queryFn: () => getPosts() }),
+  head: () => {
+    const origin = getSiteOrigin();
+    const ogImage = buildHomeOgUrl(origin);
+    return {
+      meta: [
+        { title: SITE_TITLE },
+        { name: 'description', content: SITE_DESCRIPTION },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:title', content: SITE_TITLE },
+        { property: 'og:description', content: SITE_DESCRIPTION },
+        { property: 'og:url', content: `${origin}/` },
+        { property: 'og:image', content: ogImage },
+        { property: 'og:image:width', content: String(OG_IMAGE_WIDTH) },
+        { property: 'og:image:height', content: String(OG_IMAGE_HEIGHT) },
+        { property: 'og:image:type', content: 'image/png' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: SITE_TITLE },
+        { name: 'twitter:description', content: SITE_DESCRIPTION },
+        { name: 'twitter:image', content: ogImage },
+      ],
+      links: [{ rel: 'canonical', href: `${origin}/` }],
+    };
+  },
   pendingComponent: HomeSkeleton,
   component: Home,
 });
