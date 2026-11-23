@@ -150,15 +150,22 @@ function StudioTagsPage() {
     { value: 'name-asc', label: '按名称' },
   ];
 
+  const countMeta = data
+    ? hasActiveFilters
+      ? `显示 ${filteredTags.length} / ${tagsList.length} 个`
+      : `共 ${tagsList.length} 个`
+    : undefined;
+
   return (
     <AdminContainer className='space-y-6'>
-      <StudioPageHeader title='标签管理' description='创建、重命名或删除文章分类标签' />
+      <StudioPageHeader
+        title='标签管理'
+        description='创建、重命名或删除文章分类标签'
+        meta={countMeta}
+      />
 
       <div className='space-y-4'>
         <StudioFilterBar
-          totalCount={tagsList.length}
-          filteredCount={filteredTags.length}
-          unit='个'
           hasActiveFilters={hasActiveFilters}
           onReset={handleResetFilters}
           actions={

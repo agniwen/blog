@@ -141,15 +141,22 @@ function StudioCommentsPage() {
     { value: 'oldest', label: '最早发表' },
   ];
 
+  const countMeta = data
+    ? hasActiveFilters
+      ? `显示 ${filteredComments.length} / ${allComments.length} 条`
+      : `共 ${allComments.length} 条`
+    : undefined;
+
   return (
     <AdminContainer className='space-y-6'>
-      <StudioPageHeader title='评论管理' description='集中查看、快捷回复或删除读者评论' />
+      <StudioPageHeader
+        title='评论管理'
+        description='集中查看、快捷回复或删除读者评论'
+        meta={countMeta}
+      />
 
       <div className='space-y-4'>
         <StudioFilterBar
-          totalCount={allComments.length}
-          filteredCount={filteredComments.length}
-          unit='条'
           hasActiveFilters={hasActiveFilters}
           onReset={handleResetFilters}
           actions={

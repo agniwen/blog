@@ -8,16 +8,21 @@ import { cn } from '~/lib/utils';
 export function StudioPageHeader({
   title,
   description,
+  meta,
   actions,
 }: {
   title: string;
   description?: string;
+  meta?: string;
   actions?: React.ReactNode;
 }) {
   return (
     <div className='flex flex-wrap items-center justify-between gap-3'>
       <div>
-        <h1 className='text-lg font-medium text-foreground'>{title}</h1>
+        <div className='flex items-baseline gap-2'>
+          <h1 className='text-lg font-medium text-foreground'>{title}</h1>
+          {meta ? <span className='text-xs text-muted-foreground tabular-nums'>{meta}</span> : null}
+        </div>
         {description ? <p className='text-xs text-muted-foreground'>{description}</p> : null}
       </div>
       {actions ? <div className='flex flex-wrap items-center gap-2'>{actions}</div> : null}
@@ -28,18 +33,12 @@ export function StudioPageHeader({
 export function StudioFilterBar({
   children,
   actions,
-  totalCount,
-  filteredCount,
-  unit = '项',
   hasActiveFilters = false,
   onReset,
   className,
 }: {
   children: React.ReactNode;
   actions?: React.ReactNode;
-  totalCount?: number;
-  filteredCount?: number;
-  unit?: string;
   hasActiveFilters?: boolean;
   onReset?: () => void;
   className?: string;
@@ -52,13 +51,6 @@ export function StudioFilterBar({
           <RotateCcwIcon className='size-3.5' />
           重置
         </Button>
-      ) : null}
-      {totalCount !== undefined ? (
-        <span className='px-1 text-xs text-muted-foreground tabular-nums'>
-          {hasActiveFilters && filteredCount !== undefined
-            ? `显示 ${filteredCount} / ${totalCount} ${unit}`
-            : `共 ${totalCount} ${unit}`}
-        </span>
       ) : null}
       {actions}
     </div>

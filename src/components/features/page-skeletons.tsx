@@ -115,7 +115,6 @@ export function PostsSkeleton() {
         <Skeleton className='h-8 w-36 rounded-lg' />
         <Skeleton className='h-8 w-32 rounded-lg' />
         <Skeleton className='h-8 w-32 rounded-lg' />
-        <Skeleton className='h-4 w-12 rounded-sm' />
         <Skeleton className='h-8 w-16 rounded-md' />
         <Skeleton className='h-8 w-24 rounded-md' />
       </div>

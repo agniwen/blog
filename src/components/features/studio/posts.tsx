@@ -18,6 +18,7 @@ import { PostsCreateButton } from '~/components/features/studio/posts-create-but
 import { PostsRefreshButton } from '~/components/features/studio/posts-refresh-button';
 import {
   StudioFilterBar,
+  StudioPageHeader,
   StudioSearchInput,
   StudioSegmentedFilter,
 } from '~/components/features/studio/studio-filter-bar';
@@ -164,8 +165,26 @@ export function Posts() {
     setConfirmDialogOpen(true);
   }
 
+  const totalCount = posts?.data.length ?? 0;
+  const hasActiveFilters =
+    search.trim().length > 0 ||
+    statusFilter !== 'all' ||
+    tagFilter !== 'all' ||
+    sortOrder !== 'created-desc';
+
+  const countMeta = posts
+    ? hasActiveFilters
+      ? `显示 ${filteredPosts.length} / ${totalCount} 篇`
+      : `共 ${totalCount} 篇`
+    : undefined;
+
   if (isLoading && !posts) {
-    return <PostsSkeleton />;
+    return (
+      <div className='space-y-6'>
+        <StudioPageHeader title='文章管理' description='创建、编辑与发布博客文章' />
+        <PostsSkeleton />
+      </div>
+    );
   }
 
   const tagItems = [
@@ -178,12 +197,6 @@ export function Posts() {
     { value: 'updated-desc', label: '最近更新' },
   ];
 
-  const hasActiveFilters =
-    search.trim().length > 0 ||
-    statusFilter !== 'all' ||
-    tagFilter !== 'all' ||
-    sortOrder !== 'created-desc';
-
   function handleResetFilters() {
     setSearch('');
     setStatusFilter('all');
@@ -193,20 +206,24 @@ export function Posts() {
 
   return (
     <>
-      <div className='space-y-4 pb-4'>
-        <StudioFilterBar
-          totalCount={posts?.data.length ?? 0}
-          filteredCount={filteredPosts.length}
-          unit='篇'
-          hasActiveFilters={hasActiveFilters}
-          onReset={handleResetFilters}
-          actions={
-            <>
-              <PostsRefreshButton />
-              <PostsCreateButton />
-            </>
-          }
-        >
+      <div className='space-y-6 pb-4'>
+        <StudioPageHeader
+          title='文章管理'
+          description='创建、编辑与发布博客文章'
+          meta={countMeta}
+        />
+
+        <div className='space-y-4'>
+          <StudioFilterBar
+            hasActiveFilters={hasActiveFilters}
+            onReset={handleResetFilters}
+            actions={
+              <>
+                <PostsRefreshButton />
+                <PostsCreateButton />
+              </>
+            }
+          >
           <StudioSearchInput
             value={search}
             onChange={setSearch}
@@ -378,6 +395,7 @@ export function Posts() {
             })}
           </div>
         )}
+        </div>
       </div>
 
       <AlertDialog

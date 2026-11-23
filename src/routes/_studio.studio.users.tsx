@@ -147,15 +147,22 @@ function StudioUsersPage() {
     { value: 'comments-desc', label: '评论最多' },
   ];
 
+  const countMeta = data
+    ? hasActiveFilters
+      ? `显示 ${filteredUsers.length} / ${allUsers.length} 人`
+      : `共 ${allUsers.length} 人`
+    : undefined;
+
   return (
     <AdminContainer className='space-y-6'>
-      <StudioPageHeader title='用户管理' description='查看登录评论用户与封禁状态管理' />
+      <StudioPageHeader
+        title='用户管理'
+        description='查看登录评论用户与封禁状态管理'
+        meta={countMeta}
+      />
 
       <div className='space-y-4'>
         <StudioFilterBar
-          totalCount={allUsers.length}
-          filteredCount={filteredUsers.length}
-          unit='人'
           hasActiveFilters={hasActiveFilters}
           onReset={handleResetFilters}
           actions={

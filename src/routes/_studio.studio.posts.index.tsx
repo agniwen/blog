@@ -3,7 +3,6 @@ import { createFileRoute } from '@tanstack/react-router';
 import { PostsSkeleton } from '~/components/features/page-skeletons';
 import { AdminContainer } from '~/components/features/studio/admin-container';
 import { Posts } from '~/components/features/studio/posts';
-import { StudioPageHeader } from '~/components/features/studio/studio-filter-bar';
 import { Skeleton } from '~/components/ui/skeleton';
 
 export const Route = createFileRoute('/_studio/studio/posts/')({
@@ -21,8 +20,7 @@ export const Route = createFileRoute('/_studio/studio/posts/')({
 
 function PostsPage() {
   return (
-    <AdminContainer className='space-y-6'>
-      <StudioPageHeader title='文章管理' description='创建、编辑与发布博客文章' />
+    <AdminContainer>
       <Posts />
     </AdminContainer>
   );
