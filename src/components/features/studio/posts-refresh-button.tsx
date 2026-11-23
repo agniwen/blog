@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
+import { RefreshCwIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -13,14 +14,15 @@ export function PostsRefreshButton() {
     try {
       await queryClient.invalidateQueries({ queryKey: ['posts'] });
     } catch {
-      toastManager.add({ type: 'error', title: 'Failed to refresh posts' });
+      toastManager.add({ type: 'error', title: '刷新文章列表失败' });
     } finally {
       setIsRefreshing(false);
     }
   }
   return (
-    <Button loading={isRefreshing} onClick={handleRefresh} variant='secondary'>
-      Refresh
+    <Button size='sm' loading={isRefreshing} onClick={handleRefresh} variant='secondary'>
+      <RefreshCwIcon className='size-3.5' />
+      刷新
     </Button>
   );
 }

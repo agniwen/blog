@@ -1,5 +1,6 @@
 import { useRouter } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
+import { PlusIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -23,14 +24,15 @@ export function PostsCreateButton() {
       }
     } catch (err) {
       console.error('Failed to create post', err);
-      toastManager.add({ type: 'error', title: 'Failed to create post' });
+      toastManager.add({ type: 'error', title: '新建文章失败' });
     } finally {
       setIsCreating(false);
     }
   }
   return (
-    <Button loading={isCreating} onClick={handleCreate}>
-      New Post
+    <Button size='sm' loading={isCreating} onClick={handleCreate}>
+      <PlusIcon className='size-3.5' />
+      新建文章
     </Button>
   );
 }

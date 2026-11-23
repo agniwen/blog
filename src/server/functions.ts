@@ -19,6 +19,9 @@ export const getPosts = createServerFn({ method: 'GET' }).handler(async () => {
     columns: { jsonContent: false, htmlContent: false, textContent: false },
     where: { published: true },
     orderBy: { createdAt: 'desc' },
+    with: {
+      tags: { columns: { id: true, name: true } },
+    },
   });
 });
 
@@ -30,6 +33,9 @@ export const getPost = createServerFn({ method: 'GET' })
       (await db().query.posts.findFirst({
         columns: { jsonContent: false, textContent: false },
         where: { id, published: true },
+        with: {
+          tags: { columns: { id: true, name: true } },
+        },
       })) ?? null
     );
   });
@@ -41,6 +47,11 @@ export const getAdminPost = createServerFn({ method: 'GET' })
     setResponseHeader('Cache-Control', 'private, no-store');
     const session = await getAuth().api.getSession({ headers: getRequestHeaders() });
     if (session?.user.role !== 'admin') throw new Error('Unauthorized');
-    const post = await db().query.posts.findFirst({ where: { id } });
+    const post = await db().query.posts.findFirst({
+      where: { id },
+      with: {
+        tags: { columns: { id: true, name: true } },
+      },
+    });
     return success(post ? { ...post, jsonContent: z.json().parse(post.jsonContent) } : null);
   });

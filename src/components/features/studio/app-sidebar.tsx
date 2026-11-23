@@ -42,10 +42,13 @@ export function AppSidebar() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {menuGroup.children.map((menu) => {
+                    const isActive = menu.exact
+                      ? pathname === menu.href
+                      : pathname === menu.href || pathname.startsWith(`${menu.href}/`);
                     return (
                       <SidebarMenuItem key={menu.label}>
                         <SidebarMenuButton
-                          isActive={pathname === menu.href || pathname.startsWith(`${menu.href}/`)}
+                          isActive={isActive}
                           render={
                             <Link to={menu.href}>
                               {menu.icon}

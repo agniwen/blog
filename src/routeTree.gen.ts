@@ -20,6 +20,9 @@ import { Route as StudioLoginRouteImport } from './routes/studio.login'
 import { Route as BlogBlogIndexRouteImport } from './routes/_blog.blog.index'
 import { Route as BlogBlogIdRouteImport } from './routes/_blog.blog.$id'
 import { Route as StudioStudioIndexRouteImport } from './routes/_studio.studio.index'
+import { Route as StudioStudioCommentsRouteImport } from './routes/_studio.studio.comments'
+import { Route as StudioStudioTagsRouteImport } from './routes/_studio.studio.tags'
+import { Route as StudioStudioUsersRouteImport } from './routes/_studio.studio.users'
 import { Route as StudioStudioPostsIndexRouteImport } from './routes/_studio.studio.posts.index'
 import { Route as StudioStudioPostsUpsertIndexRouteImport } from './routes/_studio.studio.posts.upsert.index'
 import { Route as StudioStudioPostsUpsertIdRouteImport } from './routes/_studio.studio.posts.upsert.$id'
@@ -77,6 +80,21 @@ const StudioStudioIndexRoute = StudioStudioIndexRouteImport.update({
   path: '/studio/',
   getParentRoute: () => StudioRoute,
 } as any)
+const StudioStudioCommentsRoute = StudioStudioCommentsRouteImport.update({
+  id: '/studio/comments',
+  path: '/studio/comments',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioStudioTagsRoute = StudioStudioTagsRouteImport.update({
+  id: '/studio/tags',
+  path: '/studio/tags',
+  getParentRoute: () => StudioRoute,
+} as any)
+const StudioStudioUsersRoute = StudioStudioUsersRouteImport.update({
+  id: '/studio/users',
+  path: '/studio/users',
+  getParentRoute: () => StudioRoute,
+} as any)
 const StudioStudioPostsIndexRoute = StudioStudioPostsIndexRouteImport.update({
   id: '/studio/posts/',
   path: '/studio/posts/',
@@ -103,6 +121,9 @@ export interface FileRoutesByFullPath {
   '/api/$': typeof ApiSplatRoute
   '/studio/login': typeof StudioLoginRoute
   '/blog/$id': typeof BlogBlogIdRoute
+  '/studio/comments': typeof StudioStudioCommentsRoute
+  '/studio/tags': typeof StudioStudioTagsRoute
+  '/studio/users': typeof StudioStudioUsersRoute
   '/blog/': typeof BlogBlogIndexRoute
   '/studio/': typeof StudioStudioIndexRoute
   '/studio/posts/': typeof StudioStudioPostsIndexRoute
@@ -117,6 +138,9 @@ export interface FileRoutesByTo {
   '/api/$': typeof ApiSplatRoute
   '/studio/login': typeof StudioLoginRoute
   '/blog/$id': typeof BlogBlogIdRoute
+  '/studio/comments': typeof StudioStudioCommentsRoute
+  '/studio/tags': typeof StudioStudioTagsRoute
+  '/studio/users': typeof StudioStudioUsersRoute
   '/blog': typeof BlogBlogIndexRoute
   '/studio': typeof StudioStudioIndexRoute
   '/studio/posts': typeof StudioStudioPostsIndexRoute
@@ -134,6 +158,9 @@ export interface FileRoutesById {
   '/studio/login': typeof StudioLoginRoute
   '/_blog/': typeof BlogIndexRoute
   '/_blog/blog/$id': typeof BlogBlogIdRoute
+  '/_studio/studio/comments': typeof StudioStudioCommentsRoute
+  '/_studio/studio/tags': typeof StudioStudioTagsRoute
+  '/_studio/studio/users': typeof StudioStudioUsersRoute
   '/_blog/blog/': typeof BlogBlogIndexRoute
   '/_studio/studio/': typeof StudioStudioIndexRoute
   '/_studio/studio/posts/': typeof StudioStudioPostsIndexRoute
@@ -150,6 +177,9 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/studio/login'
     | '/blog/$id'
+    | '/studio/comments'
+    | '/studio/tags'
+    | '/studio/users'
     | '/blog/'
     | '/studio/'
     | '/studio/posts/'
@@ -164,6 +194,9 @@ export interface FileRouteTypes {
     | '/api/$'
     | '/studio/login'
     | '/blog/$id'
+    | '/studio/comments'
+    | '/studio/tags'
+    | '/studio/users'
     | '/blog'
     | '/studio'
     | '/studio/posts'
@@ -180,6 +213,9 @@ export interface FileRouteTypes {
     | '/studio/login'
     | '/_blog/'
     | '/_blog/blog/$id'
+    | '/_studio/studio/comments'
+    | '/_studio/studio/tags'
+    | '/_studio/studio/users'
     | '/_blog/blog/'
     | '/_studio/studio/'
     | '/_studio/studio/posts/'
@@ -276,6 +312,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudioStudioIndexRouteImport
       parentRoute: typeof StudioRoute
     }
+    '/_studio/studio/comments': {
+      id: '/_studio/studio/comments'
+      path: '/studio/comments'
+      fullPath: '/studio/comments'
+      preLoaderRoute: typeof StudioStudioCommentsRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/_studio/studio/tags': {
+      id: '/_studio/studio/tags'
+      path: '/studio/tags'
+      fullPath: '/studio/tags'
+      preLoaderRoute: typeof StudioStudioTagsRouteImport
+      parentRoute: typeof StudioRoute
+    }
+    '/_studio/studio/users': {
+      id: '/_studio/studio/users'
+      path: '/studio/users'
+      fullPath: '/studio/users'
+      preLoaderRoute: typeof StudioStudioUsersRouteImport
+      parentRoute: typeof StudioRoute
+    }
     '/_studio/studio/posts/': {
       id: '/_studio/studio/posts/'
       path: '/studio/posts'
@@ -315,6 +372,9 @@ const BlogRouteChildren: BlogRouteChildren = {
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 interface StudioRouteChildren {
+  StudioStudioCommentsRoute: typeof StudioStudioCommentsRoute
+  StudioStudioTagsRoute: typeof StudioStudioTagsRoute
+  StudioStudioUsersRoute: typeof StudioStudioUsersRoute
   StudioStudioIndexRoute: typeof StudioStudioIndexRoute
   StudioStudioPostsIndexRoute: typeof StudioStudioPostsIndexRoute
   StudioStudioPostsUpsertIdRoute: typeof StudioStudioPostsUpsertIdRoute
@@ -322,6 +382,9 @@ interface StudioRouteChildren {
 }
 
 const StudioRouteChildren: StudioRouteChildren = {
+  StudioStudioCommentsRoute: StudioStudioCommentsRoute,
+  StudioStudioTagsRoute: StudioStudioTagsRoute,
+  StudioStudioUsersRoute: StudioStudioUsersRoute,
   StudioStudioIndexRoute: StudioStudioIndexRoute,
   StudioStudioPostsIndexRoute: StudioStudioPostsIndexRoute,
   StudioStudioPostsUpsertIdRoute: StudioStudioPostsUpsertIdRoute,

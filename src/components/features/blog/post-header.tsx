@@ -1,9 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
-import { ArrowLeftIcon, LogOutIcon, MenuIcon } from 'lucide-react';
+import { ArrowLeftIcon, LayoutDashboardIcon, LogOutIcon, MenuIcon, PencilIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
-import { Menu, MenuItem, MenuPopup, MenuTrigger } from '~/components/ui/menu';
+import { Menu, MenuItem, MenuPopup, MenuSeparator, MenuTrigger } from '~/components/ui/menu';
 import { Skeleton } from '~/components/ui/skeleton';
 import { toastManager } from '~/components/ui/toast';
 import { authClient, useSession } from '~/lib/auth-client';
@@ -17,7 +17,7 @@ import { cn } from '~/lib/utils';
  * - 借助顶部 1px 哨兵元素监听滚动：桌面端下拉时向两侧舒展，移动端展示半透明毛玻璃胶囊底板；
  * - 退出登录后只清理管理端私有缓存，保留公开文章/评论/Spotify 缓存以免阅读页闪烁。
  */
-export function PostHeader({ title }: { title?: string | null }) {
+export function PostHeader({ title, postId }: { title?: string | null; postId?: string }) {
   const sentinelRef = useRef<React.ComponentRef<'div'>>(null);
   const [scrolled, setScrolled] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -66,6 +66,7 @@ export function PostHeader({ title }: { title?: string | null }) {
   }
 
   const user = session?.user;
+  const isAdmin = user?.role === 'admin';
 
   return (
     <>
@@ -80,13 +81,13 @@ export function PostHeader({ title }: { title?: string | null }) {
             scrolled && 'md:max-w-full md:px-6',
           )}
         >
-          <div className='pointer-events-auto'>
+          <div className='pointer-events-auto min-w-0'>
             <Link
               to='/'
               viewTransition
               aria-label='返回首页'
               className={cn(
-                'group -ml-2 inline-flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors duration-200 outline-none hover:bg-foreground/[0.045] focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none dark:hover:bg-foreground/[0.08]',
+                'group -ml-2 inline-flex max-w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors duration-200 outline-none hover:bg-foreground/[0.045] focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none dark:hover:bg-foreground/[0.08]',
                 scrolled &&
                   'max-md:bg-popover/75 max-md:shadow-2xs max-md:ring-1 max-md:ring-border/50 max-md:backdrop-blur-md max-md:hover:bg-popover/90',
               )}
@@ -105,7 +106,7 @@ export function PostHeader({ title }: { title?: string | null }) {
                 />
               </span>
               {title ? (
-                <span className='text-left text-sm font-medium text-nowrap text-foreground/90'>
+                <span className='max-w-[calc(100vw-11rem)] truncate text-left text-sm font-medium text-foreground/90 md:max-w-md'>
                   {title}
                 </span>
               ) : (
@@ -127,7 +128,25 @@ export function PostHeader({ title }: { title?: string | null }) {
                 >
                   <MenuIcon className='size-4.5' />
                 </MenuTrigger>
-                <MenuPopup align='end' side='bottom' sideOffset={4} className='min-w-32 rounded-lg'>
+                <MenuPopup align='end' side='bottom' sideOffset={4} className='min-w-36 rounded-lg'>
+                  {isAdmin && postId ? (
+                    <MenuItem
+                      render={<Link to='/studio/posts/upsert/$id' params={{ id: postId }} />}
+                      className='text-sm'
+                    >
+                      <PencilIcon className='size-4' />
+                      编辑此文
+                    </MenuItem>
+                  ) : null}
+                  {isAdmin ? (
+                    <>
+                      <MenuItem render={<Link to='/studio' />} className='text-sm'>
+                        <LayoutDashboardIcon className='size-4' />
+                        进入 Studio
+                      </MenuItem>
+                      <MenuSeparator />
+                    </>
+                  ) : null}
                   <MenuItem disabled={isLoggingOut} onClick={handleLogout} className='text-sm'>
                     <LogOutIcon className='size-4' />
                     退出登录

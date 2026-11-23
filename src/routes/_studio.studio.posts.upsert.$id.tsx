@@ -6,6 +6,7 @@ import { UpsertEditor } from '~/components/features/studio/upsert-editor';
 import { getAdminPost } from '~/server/functions';
 
 export const Route = createFileRoute('/_studio/studio/posts/upsert/$id')({
+  pendingMs: 0,
   loader: async ({ context, params }) => {
     const result = await context.queryClient.query({
       queryKey: ['admin-post-detail', params.id],

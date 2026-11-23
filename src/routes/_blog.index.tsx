@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { z } from 'zod';
 
 import { PostList } from '~/components/features/blog/post-list';
 import { HomeSkeleton } from '~/components/features/page-skeletons';
@@ -16,6 +17,9 @@ import {
 import { getPosts } from '~/server/functions';
 
 export const Route = createFileRoute('/_blog/')({
+  validateSearch: z.object({
+    tag: z.string().optional(),
+  }),
   loader: ({ context }) =>
     context.queryClient.query({ queryKey: ['post-list'], queryFn: () => getPosts() }),
   head: () => {

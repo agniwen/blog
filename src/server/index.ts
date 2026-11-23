@@ -5,10 +5,15 @@ import { getAuth } from '~/lib/auth';
 import type { Env } from './env';
 import { betterAuthMiddleware } from './middleware/better-auth';
 import { drizzleMiddleware } from './middleware/drizzle';
+import { aiRouter } from './routes/ai';
 import { bookmarkRouter } from './routes/bookmark';
+import { commentsRouter } from './routes/comments';
+import { dashboardRouter } from './routes/dashboard';
 import { postsRouter } from './routes/posts/route';
 import { s3Router } from './routes/s3';
 import { spotifyRouter } from './routes/spotify';
+import { tagsRouter } from './routes/tags';
+import { usersRouter } from './routes/users';
 
 /**
  * Hono API 主应用（由 `/api/*` 捕获路由转发）。
@@ -28,4 +33,9 @@ export const app = new Hono<Env>()
   .basePath('/api')
   .route('/s3', s3Router)
   .route('/posts', postsRouter)
+  .route('/tags', tagsRouter)
+  .route('/comments', commentsRouter)
+  .route('/users', usersRouter)
+  .route('/dashboard', dashboardRouter)
+  .route('/ai', aiRouter)
   .route('/bookmark', bookmarkRouter);

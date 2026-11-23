@@ -25,16 +25,21 @@ const socials = [
     url: 'mailto:wisakura@outlook.com',
     icon: <Icon className='size-5' icon='ri:mail-line' />,
   },
+  {
+    name: 'RSS',
+    url: '/rss.xml',
+    icon: <Icon className='size-5' icon='ri:rss-line' />,
+  },
 ];
 
 export function Social({ className }: { className?: string }) {
   return (
-    <div className={cn('flex h-8 space-x-5', className)}>
+    <div className={cn('flex h-8 items-center space-x-4', className)}>
       <AnimatePresence>
         {socials.map((s) => {
           return (
             <Button
-              render={<a href={s.url} target='_blank' />}
+              render={<a href={s.url} target='_blank' rel='noreferrer' />}
               key={s.url}
               variant='ghost'
               shape='paper'

@@ -111,7 +111,7 @@ function BlogPage() {
   const post = Route.useLoaderData();
   return (
     <PageContainer className='article-container pt-20 sm:pt-24'>
-      <PostHeader title={post.title ?? 'akumanoko'} />
+      <PostHeader title={post.title ?? 'akumanoko'} postId={id} />
       <PostContent id={id} />
       <Comments id={id} />
     </PageContainer>

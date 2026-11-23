@@ -4,11 +4,13 @@ export const postsCreateSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   slug: z.string().optional(),
-  banner: z.url().optional(),
+  banner: z.union([z.url(), z.literal('')]).optional(),
   summary: z.string().optional(),
   published: z.boolean().optional(),
   htmlContent: z.string().optional(),
+  textContent: z.string().optional(),
   jsonContent: z.any().optional(),
+  tagIds: z.array(z.string()).optional(),
 });
 
 export const postsUpdateSchema = postsCreateSchema.extend({
