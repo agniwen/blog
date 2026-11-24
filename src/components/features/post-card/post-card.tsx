@@ -1,4 +1,4 @@
-import { ImageIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 import { Badge } from '~/components/ui/badge';
 import { TimeDisplay } from '~/components/ui/time-display';
@@ -34,7 +34,7 @@ export function PostCard(props: PostCardProps) {
           <img className='size-full object-cover' src={post.banner} alt={post.title || ''} />
         ) : (
           <div className='flex size-full items-center justify-center text-muted-foreground/40'>
-            <ImageIcon className='size-6' />
+            <Icon icon='lucide:image' className='size-6' />
           </div>
         )}
       </div>

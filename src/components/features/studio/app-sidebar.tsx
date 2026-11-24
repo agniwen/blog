@@ -1,5 +1,5 @@
 import { Link, useLocation } from '@tanstack/react-router';
-import { CitrusIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 import { NavUser } from '~/components/features/studio/app-sidebar-user';
 import { menus } from '~/components/features/studio/menu';
@@ -27,7 +27,7 @@ export function AppSidebar() {
           render={
             <Link to='/studio/posts'>
               <div className='flex aspect-square size-8 items-center justify-center rounded-md bg-primary/5'>
-                <CitrusIcon className='size-5 text-primary' />
+                <Icon icon='lucide:citrus' className='size-5 text-primary' />
               </div>
               <div className='flex-1 text-left text-sm leading-tight font-medium'>BLOG</div>
             </Link>

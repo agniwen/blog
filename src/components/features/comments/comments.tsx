@@ -3,8 +3,8 @@ import { useState } from 'react';
 
 import { CommentsLoader } from '~/components/features/post-loader';
 import { useDelayedPending } from '~/hooks/use-delayed-pending';
+import { fetchPublicComments } from '~/lib/api';
 
-import { getComments } from './actions';
 import { CommentsInput } from './comments-input';
 import { CommentsList } from './comments-list';
 import { CommentsMask } from './comments-mask';
@@ -20,7 +20,7 @@ export function Comments(props: CommentsProps) {
   const [replyTo, setReplyTo] = useState<ReplyTarget | null>(null);
   const { data, isPending } = useQuery({
     queryKey: ['comments', id],
-    queryFn: () => getComments({ data: id }),
+    queryFn: () => fetchPublicComments(id),
   });
 
   const showSkeleton = useDelayedPending(isPending && !data);

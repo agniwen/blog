@@ -1,14 +1,14 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { ArrowUpIcon, XIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
 import { InputGroup, InputGroupAddon, InputGroupTextarea } from '~/components/ui/input-group';
 import { Separator } from '~/components/ui/separator';
 import { toastManager } from '~/components/ui/toast';
+import { createComment } from '~/lib/api';
 import { authClient } from '~/lib/auth-client';
 
-import { createComment } from './actions';
 import type { ReplyTarget } from './comments-type';
 
 interface CommentsInputProps {
@@ -44,7 +44,7 @@ export function CommentsInput({ id, replyTo, onCancelReply }: CommentsInputProps
       parentId: replyTo?.id,
     };
     try {
-      await createComment({ data: create });
+      await createComment(create);
       toastManager.add({ type: 'success', title: replyTo ? '回复成功' : '评论成功' });
       setComment('');
       onCancelReply?.();
@@ -72,7 +72,7 @@ export function CommentsInput({ id, replyTo, onCancelReply }: CommentsInputProps
               aria-label='取消回复'
               className='inline-flex items-center gap-1 transition-colors hover:text-foreground'
             >
-              <XIcon className='size-3.5' />
+              <Icon icon='lucide:x' className='size-3.5' />
               取消
             </button>
           </div>
@@ -97,7 +97,7 @@ export function CommentsInput({ id, replyTo, onCancelReply }: CommentsInputProps
                 variant='default'
                 shape='paper'
               >
-                <ArrowUpIcon className='size-4' />发 表
+                <Icon icon='lucide:arrow-up' className='size-4' />发 表
               </Button>
             </InputGroupAddon>
           </InputGroup>

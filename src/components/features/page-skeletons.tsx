@@ -4,11 +4,9 @@ import { useParams } from '@tanstack/react-router';
 import { PostHeader } from '~/components/features/blog/post-header';
 import { AdminContainer } from '~/components/features/studio/admin-container';
 import { Skeleton } from '~/components/ui/skeleton';
-import type { getPosts } from '~/server/functions';
+import type { PostSummary } from '~/lib/api';
 
 import { PostContentLoader, PostListLoader } from './post-loader';
-
-type PostSummary = Awaited<ReturnType<typeof getPosts>>[number];
 
 export function HomeSkeleton() {
   return (

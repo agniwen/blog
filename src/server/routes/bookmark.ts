@@ -1,12 +1,31 @@
 import { zValidator } from '@hono/zod-validator';
 import { z } from 'zod';
 
+import {
+  assertSafeUrl,
+  extractOgMeta,
+  readResponseBytes,
+  safeFetch,
+} from '~/lib/bookmark-parser';
 import { env } from '~/lib/env';
 import { fail, success } from '~/lib/result';
 import { getS3Client } from '~/lib/s3';
 import { authMiddleware } from '~/server/middleware/auth';
 
 import { factory } from '../factory';
+
+const MAX_HTML_BYTES = 1024 * 1024; // 1 MB
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+const IMAGE_MIME_EXT: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'image/avif': 'avif',
+  'image/svg+xml': 'svg',
+};
 
 const urlSchema = z.object({
   url: z.url('Invalid URL'),
@@ -22,122 +41,80 @@ interface OGData {
 }
 
 /**
- * Download an image from a URL and upload it to R2
- * Returns the CDN URL of the uploaded image
+ * Download an image from a validated external URL and upload it to R2.
+ * Returns the CDN URL of the uploaded image.
  */
 async function downloadAndUploadImage(imageUrl: string): Promise<string | undefined> {
   try {
-    // Fetch the image
-    const response = await fetch(imageUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; BookmarkBot/1.0)',
-      },
-    });
-
+    const response = await safeFetch(imageUrl);
     if (!response.ok) {
-      console.error(`Failed to fetch image: ${response.status}`);
       return undefined;
     }
 
-    // Get the content type
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const rawContentType = response.headers.get('content-type') || '';
+    const mimeType = rawContentType.split(';')[0]?.trim().toLowerCase() || '';
+    const ext = IMAGE_MIME_EXT[mimeType];
+    if (!ext) {
+      await response.body?.cancel();
+      return undefined;
+    }
 
-    // Get the image buffer
-    const imageBuffer = await response.arrayBuffer();
+    const imageBytes = await readResponseBytes(response, MAX_IMAGE_BYTES);
+    if (imageBytes.byteLength === 0) {
+      return undefined;
+    }
 
-    // Generate a unique key for the image
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const ext = contentType.split('/')[1] || 'jpg';
-    const key = `assets/bookmarks/images/${timestamp}-${randomString}.${ext}`;
+    const key = `assets/bookmarks/images/${Date.now()}-${crypto.randomUUID()}.${ext}`;
     const [{ PutObjectCommand }, s3] = await Promise.all([
       import('@aws-sdk/client-s3'),
       getS3Client(),
     ]);
 
-    // Upload to R2
-    const command = new PutObjectCommand({
-      Bucket: env.R2_BUCKET_NAME,
-      Key: key,
-      Body: new Uint8Array(imageBuffer),
-      ContentType: contentType,
-    });
+    await s3.send(
+      new PutObjectCommand({
+        Bucket: env.R2_BUCKET_NAME,
+        Key: key,
+        Body: imageBytes,
+        ContentType: mimeType,
+      }),
+    );
 
-    await s3.send(command);
-
-    // Return the CDN URL
     return `${env.CLOUDFLARE_CDN_URL}/${key}`;
   } catch (error) {
-    console.error('Error downloading and uploading image:', error);
+    console.error('Error downloading and uploading bookmark image:', error);
     return undefined;
   }
 }
 
 async function fetchOGData(url: string): Promise<OGData> {
-  try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; BookmarkBot/1.0)',
-      },
-    });
+  const safeUrl = assertSafeUrl(url).href;
+  const response = await safeFetch(safeUrl);
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch URL');
-    }
-
-    const html = await response.text();
-
-    // Parse OG tags
-    const ogTitle = html.match(/<meta\s+property="og:title"\s+content="([^"]*)"/i)?.[1];
-    const ogDescription = html.match(/<meta\s+property="og:description"\s+content="([^"]*)"/i)?.[1];
-    const ogImage = html.match(/<meta\s+property="og:image"\s+content="([^"]*)"/i)?.[1];
-    const ogSiteName = html.match(/<meta\s+property="og:site_name"\s+content="([^"]*)"/i)?.[1];
-
-    // Fallback to regular meta tags
-    const title = ogTitle || html.match(/<title>([^<]*)<\/title>/i)?.[1];
-    const description =
-      ogDescription || html.match(/<meta\s+name="description"\s+content="([^"]*)"/i)?.[1];
-    const favicon = html.match(/<link\s+rel="(?:icon|shortcut icon)"\s+href="([^"]*)"/i)?.[1];
-
-    // Resolve relative URLs
-    const baseUrl = new URL(url);
-    const resolveUrl = (relativeUrl?: string) => {
-      if (!relativeUrl) return undefined;
-      try {
-        return new URL(relativeUrl, baseUrl).href;
-      } catch {
-        return relativeUrl;
-      }
-    };
-
-    const resolvedImageUrl = resolveUrl(ogImage);
-
-    // Download and upload image to our R2 storage to avoid CORS/403 issues
-    let proxyImageUrl = resolvedImageUrl;
-    if (resolvedImageUrl) {
-      const uploadedUrl = await downloadAndUploadImage(resolvedImageUrl);
-      if (uploadedUrl) {
-        proxyImageUrl = uploadedUrl;
-      }
-    }
-
-    const result = {
-      title: title?.trim(),
-      description: description?.trim(),
-      image: proxyImageUrl,
-      url,
-      siteName: ogSiteName?.trim(),
-      favicon: resolveUrl(favicon),
-    };
-
-    // Debug: log the parsed OG data
-    console.error('Fetched OG data:', { ogImage, resolvedImageUrl, proxyImageUrl, result });
-
-    return result;
-  } catch (error) {
-    console.error('Error fetching OG data:', error);
-    throw error;
+  if (!response.ok) {
+    await response.body?.cancel();
+    throw new Error(`Failed to fetch URL (${response.status})`);
   }
+
+  const htmlBytes = await readResponseBytes(response, MAX_HTML_BYTES);
+  const html = new TextDecoder().decode(htmlBytes);
+  const meta = extractOgMeta(html, response.url || safeUrl);
+
+  let proxyImageUrl = meta.image;
+  if (meta.image) {
+    const uploadedUrl = await downloadAndUploadImage(meta.image);
+    if (uploadedUrl) {
+      proxyImageUrl = uploadedUrl;
+    }
+  }
+
+  return {
+    title: meta.title,
+    description: meta.description,
+    image: proxyImageUrl,
+    url: safeUrl,
+    siteName: meta.siteName,
+    favicon: meta.favicon,
+  };
 }
 
 export const bookmarkRouter = factory
@@ -149,7 +126,11 @@ export const bookmarkRouter = factory
       const ogData = await fetchOGData(url);
       return c.json(success(ogData));
     } catch (error) {
-      console.error('Failed to fetch OG data:', error);
-      return c.json(fail(error instanceof Error ? error.message : 'Failed to fetch OG data'), 500);
+      const message = error instanceof Error ? error.message : 'Failed to fetch OG data';
+      const isClientError =
+        message.includes('Only http') ||
+        message.includes('Blocked private') ||
+        message.includes('credentials');
+      return c.json(fail(message), isClientError ? 400 : 500);
     }
   });

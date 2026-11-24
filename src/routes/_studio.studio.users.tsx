@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { BanIcon, RefreshCwIcon, ShieldCheckIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 
 import { UsersAdminSkeleton } from '~/components/features/page-skeletons';
@@ -172,7 +172,7 @@ function StudioUsersPage() {
               loading={isFetching && !isLoading}
               onClick={() => void refetch()}
             >
-              <RefreshCwIcon className='size-3.5' />
+              <Icon icon='lucide:refresh-cw' className='size-3.5' />
               刷新
             </Button>
           }
@@ -291,12 +291,12 @@ function StudioUsersPage() {
                     >
                       {isBanned ? (
                         <>
-                          <ShieldCheckIcon className='size-3.5' />
+                          <Icon icon='lucide:shield-check' className='size-3.5' />
                           解封
                         </>
                       ) : (
                         <>
-                          <BanIcon className='size-3.5' />
+                          <Icon icon='lucide:ban' className='size-3.5' />
                           封禁
                         </>
                       )}

@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 
 import { getAuth } from '~/lib/auth';
+import { success } from '~/lib/result';
 
 import type { Env } from './env';
 import { betterAuthMiddleware } from './middleware/better-auth';
@@ -31,6 +32,14 @@ export const app = new Hono<Env>()
   .route('/api/spotify', spotifyRouter)
   .use(drizzleMiddleware, betterAuthMiddleware)
   .basePath('/api')
+  .get('/session', (c) => {
+    c.header('Cache-Control', 'private, no-store');
+    return c.json(
+      success(
+        c.var.user ? { user: { id: c.var.user.id, role: c.var.user.role ?? null } } : null,
+      ),
+    );
+  })
   .route('/s3', s3Router)
   .route('/posts', postsRouter)
   .route('/tags', tagsRouter)

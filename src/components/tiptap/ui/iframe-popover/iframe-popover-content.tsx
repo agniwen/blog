@@ -1,6 +1,6 @@
 import { parseSpotifyTrack } from '~/lib/spotify';
 import type { Editor } from '@tiptap/react';
-import { CornerDownLeftIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import * as React from 'react';
 
 import { Button, ButtonGroup } from '~/components/tiptap/ui-primitive/button';
@@ -68,7 +68,7 @@ export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentPr
               disabled={!code.trim()}
               data-style='ghost'
             >
-              <CornerDownLeftIcon className='tiptap-button-icon' />
+              <Icon icon='lucide:corner-down-left' className='tiptap-button-icon' />
             </Button>
           </ButtonGroup>
         </CardItemGroup>

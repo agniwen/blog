@@ -1,6 +1,6 @@
 import { useRouter } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { PlusIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -31,7 +31,7 @@ export function PostsCreateButton() {
   }
   return (
     <Button size='sm' loading={isCreating} onClick={handleCreate}>
-      <PlusIcon className='size-3.5' />
+      <Icon icon='lucide:plus' className='size-3.5' />
       新建文章
     </Button>
   );

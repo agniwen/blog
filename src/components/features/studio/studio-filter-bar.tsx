@@ -1,4 +1,4 @@
-import { RotateCcwIcon, SearchIcon, XIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import type React from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -48,7 +48,7 @@ export function StudioFilterBar({
       {children}
       {hasActiveFilters && onReset ? (
         <Button type='button' size='sm' variant='ghost' onClick={onReset}>
-          <RotateCcwIcon className='size-3.5' />
+          <Icon icon='lucide:rotate-ccw' className='size-3.5' />
           重置
         </Button>
       ) : null}
@@ -71,7 +71,7 @@ export function StudioSearchInput({
   return (
     <InputGroup className={cn('w-full sm:w-56', className)}>
       <InputGroupAddon align='inline-start'>
-        <SearchIcon className='size-3.5 text-muted-foreground' />
+        <Icon icon='lucide:search' className='size-3.5 text-muted-foreground' />
       </InputGroupAddon>
       <InputGroupInput
         value={value}
@@ -87,7 +87,7 @@ export function StudioSearchInput({
             aria-label='清空搜索'
             onClick={() => onChange('')}
           >
-            <XIcon className='size-3.5' />
+            <Icon icon='lucide:x' className='size-3.5' />
           </Button>
         </InputGroupAddon>
       ) : null}

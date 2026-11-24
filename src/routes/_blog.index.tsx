@@ -14,14 +14,14 @@ import {
   SITE_DESCRIPTION,
   SITE_TITLE,
 } from '~/lib/site-meta';
-import { getPosts } from '~/server/functions';
+import { fetchPublicPosts } from '~/lib/api';
 
 export const Route = createFileRoute('/_blog/')({
   validateSearch: z.object({
     tag: z.string().optional(),
   }),
   loader: ({ context }) =>
-    context.queryClient.query({ queryKey: ['post-list'], queryFn: () => getPosts() }),
+    context.queryClient.query({ queryKey: ['post-list'], queryFn: () => fetchPublicPosts() }),
   head: () => {
     const origin = getSiteOrigin();
     const ogImage = buildHomeOgUrl(origin);

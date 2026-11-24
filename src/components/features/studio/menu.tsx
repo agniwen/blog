@@ -1,4 +1,4 @@
-import { FileTextIcon, LayoutDashboardIcon, MessageSquareIcon, TagIcon, UsersIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 export const menus = [
   {
@@ -6,7 +6,7 @@ export const menus = [
     children: [
       {
         label: '仪表盘',
-        icon: <LayoutDashboardIcon />,
+        icon: <Icon icon='lucide:layout-dashboard' className='size-4'  />,
         href: '/studio' as const,
         exact: true,
       },
@@ -15,15 +15,15 @@ export const menus = [
   {
     label: '管理',
     children: [
-      { label: '文章', icon: <FileTextIcon />, href: '/studio/posts' as const, exact: false },
-      { label: '标签', icon: <TagIcon />, href: '/studio/tags' as const, exact: false },
+      { label: '文章', icon: <Icon icon='lucide:file-text' className='size-4'  />, href: '/studio/posts' as const, exact: false },
+      { label: '标签', icon: <Icon icon='lucide:tag' className='size-4'  />, href: '/studio/tags' as const, exact: false },
       {
         label: '评论',
-        icon: <MessageSquareIcon />,
+        icon: <Icon icon='lucide:message-square' className='size-4'  />,
         href: '/studio/comments' as const,
         exact: false,
       },
-      { label: '用户', icon: <UsersIcon />, href: '/studio/users' as const, exact: false },
+      { label: '用户', icon: <Icon icon='lucide:users' className='size-4'  />, href: '/studio/users' as const, exact: false },
     ],
   },
 ];

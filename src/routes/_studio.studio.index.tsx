@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { FileTextIcon, MessageSquareIcon, TagIcon, TypeIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 import { DashboardSkeleton } from '~/components/features/page-skeletons';
 import { AdminContainer } from '~/components/features/studio/admin-container';
@@ -42,25 +42,25 @@ function StudioDashboardPage() {
         <>
           <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
             <StatCard
-              icon={<FileTextIcon className='size-4 text-muted-foreground' />}
+              icon={<Icon icon='lucide:file-text' className='size-4 text-muted-foreground' />}
               label='文章总数'
               value={stats.counts.totalPosts}
               hint={`已发布 ${stats.counts.publishedPosts} · 草稿 ${stats.counts.draftPosts}`}
             />
             <StatCard
-              icon={<MessageSquareIcon className='size-4 text-muted-foreground' />}
+              icon={<Icon icon='lucide:message-square' className='size-4 text-muted-foreground' />}
               label='评论总数'
               value={stats.counts.totalComments}
               hint={`参与用户 ${stats.counts.totalUsers} 人`}
             />
             <StatCard
-              icon={<TagIcon className='size-4 text-muted-foreground' />}
+              icon={<Icon icon='lucide:tag' className='size-4 text-muted-foreground' />}
               label='标签总数'
               value={stats.counts.totalTags}
               hint='用于文章分类检索'
             />
             <StatCard
-              icon={<TypeIcon className='size-4 text-muted-foreground' />}
+              icon={<Icon icon='lucide:type' className='size-4 text-muted-foreground' />}
               label='累计字数'
               value={stats.counts.totalWords.toLocaleString()}
               hint='所有文章正文合计'

@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useSearch } from '@tanstack/react-router';
-import { XIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 
 import { TimeDisplay } from '~/components/ui/time-display';
-import { getPosts } from '~/server/functions';
+import { fetchPublicPosts } from '~/lib/api';
 
 export function PostList() {
   const { tag } = useSearch({ from: '/_blog/' });
   const { data } = useQuery({
     queryKey: ['post-list'],
     async queryFn() {
-      return getPosts();
+      return fetchPublicPosts();
     },
   });
 
@@ -30,7 +30,7 @@ export function PostList() {
             search={{}}
             className='inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground'
           >
-            <XIcon className='size-3.5' />
+            <Icon icon='lucide:x' className='size-3.5' />
             清除
           </Link>
         </div>

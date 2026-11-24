@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, redirect, useLocation } from '@tanstack/react-router';
-import { ExternalLinkIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import type { PropsWithChildren } from 'react';
 
 import { StudioSkeleton } from '~/components/features/page-skeletons';
@@ -7,13 +7,13 @@ import { AppSidebar } from '~/components/features/studio/app-sidebar';
 import { AppThemeToggle } from '~/components/features/studio/app-theme-toggle';
 import { Button } from '~/components/ui/button';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar';
-import { getSession } from '~/server/functions';
+import { fetchSession } from '~/lib/api';
 
 export const Route = createFileRoute('/_studio')({
   beforeLoad: async ({ context }) => {
     const session = await context.queryClient.ensureQueryData({
       queryKey: ['studio-session'],
-      queryFn: () => getSession(),
+      queryFn: () => fetchSession(),
       staleTime: 30_000,
     });
     if (session?.user.role !== 'admin')
@@ -84,7 +84,7 @@ function StudioLayout({ children }: PropsWithChildren) {
               render={<Link to='/' />}
               className='text-muted-foreground'
             >
-              <ExternalLinkIcon className='size-3.5' />
+              <Icon icon='lucide:external-link' className='size-3.5' />
               返回博客
             </Button>
             <AppThemeToggle />

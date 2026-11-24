@@ -1,17 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ArrowUpIcon,
-  Calendar,
-  CheckIcon,
-  ClockIcon,
-  LinkIcon,
-  ListIcon,
-  SparklesIcon,
-  XIcon,
-} from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { useMemo, useRef, useState } from 'react';
 
 import { PaperImage } from '~/components/features/blog/paper-image';
@@ -30,8 +19,8 @@ import { toastManager } from '~/components/ui/toast';
 import { useArticleEnhancements } from '~/hooks/use-article-enhancements';
 import { useDelayedPending } from '~/hooks/use-delayed-pending';
 import { countArticleWords, estimateReadingMinutes } from '~/lib/article-utils';
+import { fetchPublicPost, fetchPublicPosts, type PostSummary } from '~/lib/api';
 import { cn } from '~/lib/utils';
-import { getPost, getPosts } from '~/server/functions';
 
 import { ArticleBody } from './article-body';
 
@@ -45,8 +34,6 @@ import '~/components/tiptap/node/heading-node/heading-node.css';
 import '~/components/tiptap/node/paragraph-node/paragraph-node.css';
 import '~/components/tiptap/node/bookmark-node/bookmark-node.css';
 import '~/components/features/editor/simple-editor.css';
-
-type PostSummary = Awaited<ReturnType<typeof getPosts>>[number];
 
 /**
  * 文章详情正文视图。
@@ -67,7 +54,7 @@ export function PostContent({ id }: { id: string }) {
   const { data, isPending } = useQuery({
     queryKey: ['post-detail', id],
     queryFn() {
-      return getPost({ data: id });
+      return fetchPublicPost(id);
     },
     placeholderData: cachedSummary
       ? { ...cachedSummary, htmlContent: null as string | null }
@@ -76,7 +63,7 @@ export function PostContent({ id }: { id: string }) {
 
   const { data: postList } = useQuery({
     queryKey: ['post-list'],
-    queryFn: () => getPosts(),
+    queryFn: () => fetchPublicPosts(),
   });
 
   const isBodyPending = isPending || data?.htmlContent === null;
@@ -149,7 +136,7 @@ export function PostContent({ id }: { id: string }) {
         <h1 className='article-title mb-5'>{data?.title}</h1>
         <div className='flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground'>
           <span className='inline-flex items-center gap-1.5'>
-            <Calendar className='size-3.5' />
+            <Icon icon='lucide:calendar' className='size-3.5' />
             <TimeDisplay value={data?.createdAt} options={{ format: 'YYYY年MM月DD日' }} />
           </span>
           {showUpdatedAt ? (
@@ -160,7 +147,7 @@ export function PostContent({ id }: { id: string }) {
           ) : null}
           {wordCount > 0 ? (
             <span className='inline-flex items-center gap-1.5'>
-              <ClockIcon className='size-3.5' />约 {wordCount.toLocaleString()} 字 ·{' '}
+              <Icon icon='lucide:clock' className='size-3.5' />约 {wordCount.toLocaleString()} 字 ·{' '}
               {estimateReadingMinutes(wordCount)} 分钟
             </span>
           ) : null}
@@ -186,10 +173,9 @@ export function PostContent({ id }: { id: string }) {
           aria-label='文章摘要'
           className='mb-8 border-l-2 border-border/80 py-0.5 pl-3.5 text-sm leading-relaxed text-muted-foreground'
         >
-          <SparklesIcon
+          <Icon icon='lucide:sparkles'
             aria-hidden='true'
-            className='mr-1.5 inline-block size-3.5 align-[-2px] text-muted-foreground/75'
-          />
+            className='mr-1.5 inline-block size-3.5 align-[-2px] text-muted-foreground/75' />
           {data.summary}
         </blockquote>
       ) : null}
@@ -202,7 +188,7 @@ export function PostContent({ id }: { id: string }) {
             onClick={() => setTocOpen(true)}
             className='fixed right-5 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-30 inline-flex size-9 items-center justify-center rounded-lg bg-popover/75 text-foreground/80 shadow-2xs ring-1 ring-border/50 backdrop-blur-md transition-colors hover:bg-popover/90 hover:text-foreground xl:hidden'
           >
-            <ListIcon className='size-4.5' />
+            <Icon icon='lucide:list' className='size-4.5' />
           </button>
 
           <Sheet open={tocOpen} onOpenChange={setTocOpen}>
@@ -210,7 +196,7 @@ export function PostContent({ id }: { id: string }) {
               <div className='mx-auto mt-2.5 h-1 w-9 shrink-0 rounded-full bg-border' />
               <SheetHeader className='flex-row items-center justify-between px-5 pt-3 pb-2'>
                 <SheetTitle className='flex items-center gap-2 text-base font-medium'>
-                  <ListIcon className='size-4 text-muted-foreground' />
+                  <Icon icon='lucide:list' className='size-4 text-muted-foreground' />
                   目录
                 </SheetTitle>
                 <span className='pr-8 text-xs text-muted-foreground tabular-nums'>
@@ -261,7 +247,7 @@ export function PostContent({ id }: { id: string }) {
           className='fixed top-28 right-8 hidden max-h-[calc(100vh-9rem)] w-48 overflow-y-auto xl:block'
         >
           <p className='mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground/80'>
-            <ListIcon className='size-3' />
+            <Icon icon='lucide:list' className='size-3' />
             目录
           </p>
           <nav className='flex flex-col gap-1 border-l border-border/70 pl-3'>
@@ -298,11 +284,11 @@ export function PostContent({ id }: { id: string }) {
         <footer className='mt-12 space-y-6 border-t border-border/60 pt-6'>
           <div className='flex items-center justify-between gap-2'>
             <Button variant='ghost' size='sm' onClick={handleCopyLink}>
-              {copiedLink ? <CheckIcon className='size-3.5' /> : <LinkIcon className='size-3.5' />}
+              {copiedLink ? <Icon icon='lucide:check' className='size-3.5' /> : <Icon icon='lucide:link' className='size-3.5' />}
               {copiedLink ? '已复制链接' : '复制链接'}
             </Button>
             <Button variant='ghost' size='sm' onClick={handleBackToTop}>
-              <ArrowUpIcon className='size-3.5' />
+              <Icon icon='lucide:arrow-up' className='size-3.5' />
               返回顶部
             </Button>
           </div>
@@ -319,7 +305,7 @@ export function PostContent({ id }: { id: string }) {
                   className='group flex flex-col gap-1 rounded-lg border border-border/70 bg-card/50 px-3.5 py-2.5 transition-colors hover:bg-accent/50'
                 >
                   <span className='inline-flex items-center gap-1 text-[11px] text-muted-foreground'>
-                    <ArrowLeftIcon className='size-3' />
+                    <Icon icon='lucide:arrow-left' className='size-3' />
                     上一篇
                   </span>
                   <span className='line-clamp-1 text-sm font-medium text-foreground'>
@@ -337,7 +323,7 @@ export function PostContent({ id }: { id: string }) {
                 >
                   <span className='inline-flex items-center gap-1 text-[11px] text-muted-foreground'>
                     下一篇
-                    <ArrowRightIcon className='size-3' />
+                    <Icon icon='lucide:arrow-right' className='size-3' />
                   </span>
                   <span className='line-clamp-1 text-sm font-medium text-foreground'>
                     {nextPost.title}
@@ -363,7 +349,7 @@ export function PostContent({ id }: { id: string }) {
             aria-label='关闭预览'
             className='fixed top-4 right-4 inline-flex size-9 items-center justify-center rounded-lg bg-popover/90 text-foreground shadow-sm transition-colors hover:bg-popover'
           >
-            <XIcon className='size-4' />
+            <Icon icon='lucide:x' className='size-4' />
           </button>
           <img
             src={lightboxImage.src}

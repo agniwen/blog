@@ -1,6 +1,13 @@
 import { createId } from '@paralleldrive/cuid2';
 import { sql } from 'drizzle-orm';
-import { integer, sqliteTable, primaryKey, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import {
+  index,
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/sqlite-core';
 
 export const accounts = sqliteTable('accounts', {
   id: text().primaryKey().$defaultFn(createId),
@@ -20,16 +27,23 @@ export const accounts = sqliteTable('accounts', {
   updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
 });
 
-export const comments = sqliteTable('comments', {
-  id: text().primaryKey().$defaultFn(createId),
-  postId: text('post_id').notNull(),
-  userId: text('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  parentId: text('parent_id'),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
-  content: text().notNull(),
-});
+export const comments = sqliteTable(
+  'comments',
+  {
+    id: text().primaryKey().$defaultFn(createId),
+    postId: text('post_id').notNull(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    parentId: text('parent_id'),
+    createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+    content: text().notNull(),
+  },
+  (table) => [
+    index('comments_post_id_idx').on(table.postId),
+    index('comments_parent_id_idx').on(table.parentId),
+  ],
+);
 
 export const postTags = sqliteTable(
   'post_tags',
@@ -64,7 +78,10 @@ export const posts = sqliteTable(
       .default(sql`(unixepoch() * 1000)`)
       .notNull(),
   },
-  (table) => [uniqueIndex('posts_slug_unique').on(table.slug)],
+  (table) => [
+    uniqueIndex('posts_slug_unique').on(table.slug),
+    index('posts_published_created_at_idx').on(table.published, table.createdAt),
+  ],
 );
 
 export const sessions = sqliteTable(

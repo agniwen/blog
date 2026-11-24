@@ -79,8 +79,10 @@ export const tagsRouter = factory
   )
   .delete('/:id', authMiddleware, zValidator('param', tagParamSchema), async (c) => {
     const { id } = c.req.valid('param');
-    await c.var.db.delete(postTags).where(eq(postTags.tagId, id));
-    const [deleted] = await c.var.db.delete(tags).where(eq(tags.id, id)).returning();
+    const [, [deleted]] = await c.var.db.batch([
+      c.var.db.delete(postTags).where(eq(postTags.tagId, id)),
+      c.var.db.delete(tags).where(eq(tags.id, id)).returning(),
+    ]);
     if (!deleted) {
       return c.json({ message: '标签不存在' }, 404);
     }

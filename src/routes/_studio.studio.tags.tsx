@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { CheckIcon, PencilIcon, PlusIcon, Trash2Icon, XIcon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 
 import { TagsSkeleton } from '~/components/features/page-skeletons';
@@ -177,7 +177,7 @@ function StudioTagsPage() {
                 className='w-40 sm:w-44'
               />
               <Button size='sm' type='submit' loading={isCreating}>
-                <PlusIcon className='size-3.5' />
+                <Icon icon='lucide:plus' className='size-3.5' />
                 新建标签
               </Button>
             </form>
@@ -240,7 +240,7 @@ function StudioTagsPage() {
                           onClick={() => handleSaveRename(tag.id)}
                           aria-label='保存'
                         >
-                          <CheckIcon className='size-3.5' />
+                          <Icon icon='lucide:check' className='size-3.5' />
                         </Button>
                         <Button
                           type='button'
@@ -249,7 +249,7 @@ function StudioTagsPage() {
                           onClick={() => setEditingId(null)}
                           aria-label='取消'
                         >
-                          <XIcon className='size-3.5' />
+                          <Icon icon='lucide:x' className='size-3.5' />
                         </Button>
                       </div>
                     ) : (
@@ -280,7 +280,7 @@ function StudioTagsPage() {
                             setEditingName(tag.name);
                           }}
                         >
-                          <PencilIcon className='size-3.5' />
+                          <Icon icon='lucide:pencil' className='size-3.5' />
                         </Button>
                         <Button
                           type='button'
@@ -290,7 +290,7 @@ function StudioTagsPage() {
                           className='text-destructive hover:text-destructive'
                           onClick={() => setDeleteTarget({ id: tag.id, name: tag.name })}
                         >
-                          <Trash2Icon className='size-3.5' />
+                          <Icon icon='lucide:trash-2' className='size-3.5' />
                         </Button>
                       </div>
                     ) : null}

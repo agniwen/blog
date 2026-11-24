@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import type { InferUserFromClient } from 'better-auth';
 import dayjs from 'dayjs';
-import { ReplyIcon, Trash2Icon } from 'lucide-react';
+import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 
 import {
@@ -17,10 +17,10 @@ import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
 import { TimeDisplay } from '~/components/ui/time-display';
 import { toastManager } from '~/components/ui/toast';
+import { deleteComment } from '~/lib/api';
 import { authClient } from '~/lib/auth-client';
 import { cn } from '~/lib/utils';
 
-import { deleteComment } from './actions';
 import type { CommentWithUser, ReplyTarget } from './comments-type';
 
 interface CommentListProps {
@@ -82,7 +82,7 @@ export function CommentsList({ postId, list, onReply }: CommentListProps) {
     if (!deleteId || isDeleting) return;
     setIsDeleting(true);
     try {
-      await deleteComment({ data: deleteId });
+      await deleteComment(deleteId);
       toastManager.add({ type: 'success', title: '评论已删除' });
       setDeleteId(null);
       await queryClient.invalidateQueries({ queryKey: ['comments', postId] });
@@ -249,7 +249,7 @@ function CommentsListItem({
               }
               className='inline-flex items-center gap-1 transition-colors hover:text-foreground'
             >
-              <ReplyIcon className='size-3' />
+              <Icon icon='lucide:reply' className='size-3' />
               回复
             </button>
             {canDelete ? (
@@ -258,7 +258,7 @@ function CommentsListItem({
                 onClick={() => onDelete(comment.id)}
                 className='inline-flex items-center gap-1 transition-colors hover:text-destructive'
               >
-                <Trash2Icon className='size-3' />
+                <Icon icon='lucide:trash-2' className='size-3' />
                 删除
               </button>
             ) : null}

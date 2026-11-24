@@ -3,9 +3,14 @@ import { createFileRoute, notFound } from '@tanstack/react-router';
 import { PostContent } from '~/components/features/blog/post-content';
 import { PostHeader } from '~/components/features/blog/post-header';
 import { Comments } from '~/components/features/comments';
-import { getComments } from '~/components/features/comments/actions';
 import { BlogPostSkeleton } from '~/components/features/page-skeletons';
 import { PageContainer } from '~/components/ui/page-container';
+import {
+  fetchPublicComments,
+  fetchPublicPost,
+  type PostDetail,
+  type PostSummary,
+} from '~/lib/api';
 import {
   buildPostOgUrl,
   getSiteOrigin,
@@ -14,10 +19,6 @@ import {
   SITE_DESCRIPTION,
   SITE_TITLE,
 } from '~/lib/site-meta';
-import { getPost, type getPosts } from '~/server/functions';
-
-type PostSummary = Awaited<ReturnType<typeof getPosts>>[number];
-type PostDetail = Awaited<ReturnType<typeof getPost>>;
 
 export const Route = createFileRoute('/_blog/blog/$id')({
   // 三级数据回退策略，兼顾秒开体验与 SSR 直达 404 状态码：
@@ -29,7 +30,7 @@ export const Route = createFileRoute('/_blog/blog/$id')({
     if (cachedDetail) {
       void context.queryClient.prefetchQuery({
         queryKey: ['comments', params.id],
-        queryFn: () => getComments({ data: params.id }),
+        queryFn: () => fetchPublicComments(params.id),
       });
       return cachedDetail;
     }
@@ -40,23 +41,23 @@ export const Route = createFileRoute('/_blog/blog/$id')({
     if (cachedSummary) {
       void context.queryClient.prefetchQuery({
         queryKey: ['post-detail', params.id],
-        queryFn: () => getPost({ data: params.id }),
+        queryFn: () => fetchPublicPost(params.id),
       });
       void context.queryClient.prefetchQuery({
         queryKey: ['comments', params.id],
-        queryFn: () => getComments({ data: params.id }),
+        queryFn: () => fetchPublicComments(params.id),
       });
       return cachedSummary;
     }
 
     const post = await context.queryClient.query({
       queryKey: ['post-detail', params.id],
-      queryFn: () => getPost({ data: params.id }),
+      queryFn: () => fetchPublicPost(params.id),
     });
     if (!post) throw notFound();
     await context.queryClient.query({
       queryKey: ['comments', params.id],
-      queryFn: () => getComments({ data: params.id }),
+      queryFn: () => fetchPublicComments(params.id),
     });
     return post;
   },

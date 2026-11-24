@@ -1,6 +1,6 @@
 'use client';
 
-import { SiSpotify } from '@icons-pack/react-simple-icons';
+import { Icon } from '@iconify/react';
 // Installed from @spell/spotify-card (https://spell.sh/docs/spotify-card).
 // Local adaptations: query/snapshot loading, theme tokens, accessible playback,
 // unique SVG IDs for multiple tracks, and article typography isolation.
@@ -361,7 +361,7 @@ export function SpotifyCard({ url, className, metadata }: SpotifyCardProps) {
             className='cursor-pointer'
             aria-label={`在 Spotify 中打开 ${data.title}`}
           >
-            <SiSpotify size={18} className='text-muted-foreground' />
+            <Icon icon='simple-icons:spotify' width={18} height={18} className='text-muted-foreground' />
           </a>
         </div>
         <div className='pl-6 text-end'>

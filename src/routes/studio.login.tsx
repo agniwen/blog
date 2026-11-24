@@ -2,11 +2,11 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 
 import { LoginForm } from '~/components/features/login-form';
 import { LoginSkeleton } from '~/components/features/page-skeletons';
-import { getSession } from '~/server/functions';
+import { fetchSession } from '~/lib/api';
 
 export const Route = createFileRoute('/studio/login')({
   beforeLoad: async () => {
-    if ((await getSession())?.user.role === 'admin')
+    if ((await fetchSession())?.user.role === 'admin')
       throw redirect({ to: '/studio', headers: { 'Cache-Control': 'private, no-store' } });
   },
   head: () => ({ meta: [{ name: 'robots', content: 'noindex, nofollow' }] }),
