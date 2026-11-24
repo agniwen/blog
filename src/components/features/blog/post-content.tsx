@@ -6,7 +6,6 @@ import { useMemo, useRef, useState } from 'react';
 import { PaperImage } from '~/components/features/blog/paper-image';
 import { PostBodyLoader } from '~/components/features/post-loader';
 import { Badge } from '~/components/ui/badge';
-import { Button } from '~/components/ui/button';
 import {
   Sheet,
   SheetHeader,
@@ -16,6 +15,7 @@ import {
 } from '~/components/ui/sheet';
 import { TimeDisplay } from '~/components/ui/time-display';
 import { toastManager } from '~/components/ui/toast';
+import { Tooltip, TooltipPopup, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 import { useArticleEnhancements } from '~/hooks/use-article-enhancements';
 import { useDelayedPending } from '~/hooks/use-delayed-pending';
 import { countArticleWords, estimateReadingMinutes } from '~/lib/article-utils';
@@ -280,59 +280,96 @@ export function PostContent({ id }: { id: string }) {
         )}
       </div>
 
-      {!isBodyPending ? (
-        <footer className='mt-12 space-y-6 border-t border-border/60 pt-6'>
-          <div className='flex items-center justify-between gap-2'>
-            <Button variant='ghost' size='sm' onClick={handleCopyLink}>
-              {copiedLink ? <Icon icon='lucide:check' className='size-3.5' /> : <Icon icon='lucide:link' className='size-3.5' />}
-              {copiedLink ? '已复制链接' : '复制链接'}
-            </Button>
-            <Button variant='ghost' size='sm' onClick={handleBackToTop}>
-              <Icon icon='lucide:arrow-up' className='size-3.5' />
-              返回顶部
-            </Button>
-          </div>
-
-          {prevPost || nextPost ? (
-            <nav
-              aria-label='上下篇导航'
-              className='grid grid-cols-1 gap-3 sm:grid-cols-2'
-            >
-              {prevPost ? (
-                <Link
-                  to='/blog/$id'
-                  params={{ id: prevPost.id }}
-                  className='group flex flex-col gap-1 rounded-lg border border-border/70 bg-card/50 px-3.5 py-2.5 transition-colors hover:bg-accent/50'
-                >
-                  <span className='inline-flex items-center gap-1 text-[11px] text-muted-foreground'>
-                    <Icon icon='lucide:arrow-left' className='size-3' />
-                    上一篇
-                  </span>
-                  <span className='line-clamp-1 text-sm font-medium text-foreground'>
-                    {prevPost.title}
-                  </span>
-                </Link>
-              ) : (
-                <div className='hidden sm:block' />
-              )}
-              {nextPost ? (
-                <Link
-                  to='/blog/$id'
-                  params={{ id: nextPost.id }}
-                  className='group flex flex-col items-end gap-1 rounded-lg border border-border/70 bg-card/50 px-3.5 py-2.5 text-right transition-colors hover:bg-accent/50'
-                >
-                  <span className='inline-flex items-center gap-1 text-[11px] text-muted-foreground'>
-                    下一篇
-                    <Icon icon='lucide:arrow-right' className='size-3' />
-                  </span>
-                  <span className='line-clamp-1 text-sm font-medium text-foreground'>
-                    {nextPost.title}
-                  </span>
-                </Link>
-              ) : null}
-            </nav>
-          ) : null}
+      {!isBodyPending && (prevPost || nextPost) ? (
+        <footer className='mt-12 border-t border-border/60 pt-6'>
+          <nav aria-label='上下篇导航' className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+            {prevPost ? (
+              <Link
+                to='/blog/$id'
+                params={{ id: prevPost.id }}
+                className='group flex flex-col gap-1 rounded-lg border border-border/70 bg-card/50 px-3.5 py-2.5 transition-colors hover:bg-accent/50'
+              >
+                <span className='inline-flex items-center gap-1 text-[11px] text-muted-foreground'>
+                  <Icon icon='lucide:arrow-left' className='size-3' />
+                  上一篇
+                </span>
+                <span className='line-clamp-1 text-sm font-medium text-foreground'>
+                  {prevPost.title}
+                </span>
+              </Link>
+            ) : (
+              <div className='hidden sm:block' />
+            )}
+            {nextPost ? (
+              <Link
+                to='/blog/$id'
+                params={{ id: nextPost.id }}
+                className='group flex flex-col items-end gap-1 rounded-lg border border-border/70 bg-card/50 px-3.5 py-2.5 text-right transition-colors hover:bg-accent/50'
+              >
+                <span className='inline-flex items-center gap-1 text-[11px] text-muted-foreground'>
+                  下一篇
+                  <Icon icon='lucide:arrow-right' className='size-3' />
+                </span>
+                <span className='line-clamp-1 text-sm font-medium text-foreground'>
+                  {nextPost.title}
+                </span>
+              </Link>
+            ) : null}
+          </nav>
         </footer>
+      ) : null}
+
+      {!isBodyPending ? (
+        <TooltipProvider delay={150}>
+          <div
+            role='toolbar'
+            aria-label='文章工具栏'
+            className={cn(
+              'fixed z-20 flex flex-col items-center gap-1.5 lg:right-auto lg:bottom-8 lg:left-[calc(50%+var(--article-width)/2+1.5rem)]',
+              'right-4',
+              tocItems.length >= 2
+                ? 'bottom-[calc(4.75rem+env(safe-area-inset-bottom))]'
+                : 'bottom-[calc(1.5rem+env(safe-area-inset-bottom))]',
+            )}
+          >
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <button
+                    type='button'
+                    onClick={handleCopyLink}
+                    aria-label={copiedLink ? '已复制链接' : '复制链接'}
+                    className='inline-flex size-8 items-center justify-center bg-transparent text-muted-foreground/75 transition-colors hover:text-foreground focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
+                  />
+                }
+              >
+                <Icon
+                  icon={copiedLink ? 'lucide:check' : 'lucide:link'}
+                  className='size-4'
+                />
+              </TooltipTrigger>
+              <TooltipPopup side='right'>
+                {copiedLink ? '已复制链接' : '复制链接'}
+              </TooltipPopup>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <button
+                    type='button'
+                    onClick={handleBackToTop}
+                    aria-label='返回顶部'
+                    className='inline-flex size-8 items-center justify-center bg-transparent text-muted-foreground/75 transition-colors hover:text-foreground focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
+                  />
+                }
+              >
+                <Icon icon='lucide:arrow-up' className='size-4' />
+              </TooltipTrigger>
+              <TooltipPopup side='right'>返回顶部</TooltipPopup>
+            </Tooltip>
+          </div>
+        </TooltipProvider>
       ) : null}
 
       {lightboxImage ? (

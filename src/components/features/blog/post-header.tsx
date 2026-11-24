@@ -77,7 +77,7 @@ export function PostHeader({ title, postId }: { title?: string | null; postId?: 
       >
         <div
           className={cn(
-            'mx-auto flex h-10 w-full max-w-[calc(var(--article-width)+var(--article-gutter)*2)] items-center justify-between gap-3 px-4 transition-[max-width,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
+            'mx-auto flex min-h-10 w-full max-w-[calc(var(--article-width)+var(--article-gutter)*2)] items-center justify-between gap-3 px-4 transition-[max-width,padding] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
             scrolled && 'md:max-w-full md:px-6',
           )}
         >
@@ -105,7 +105,7 @@ export function PostHeader({ title, postId }: { title?: string | null; postId?: 
                   className='pointer-events-none absolute size-4 scale-75 text-foreground/85 opacity-0 transition-[opacity,transform] duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100 group-active:scale-75 group-active:opacity-0 motion-reduce:transition-none' />
               </span>
               {title ? (
-                <span className='max-w-[calc(100vw-11rem)] truncate text-left text-sm font-medium text-foreground/90 md:max-w-md'>
+                <span className='text-left text-sm leading-snug font-medium text-foreground/90'>
                   {title}
                 </span>
               ) : (
