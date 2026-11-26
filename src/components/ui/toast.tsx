@@ -2,6 +2,7 @@
 
 import { Toast } from '@base-ui/react/toast';
 import { Icon as IconifyIcon } from '@iconify/react';
+import { memo, useMemo } from 'react';
 import type React from 'react';
 
 import { buttonVariants } from '~/components/ui/button';
@@ -49,6 +50,25 @@ function upsertReplayClassName(toast: { type?: string; updateKey?: number }): st
   return isEven ? 'animate-toast-success-even' : 'animate-toast-success-odd';
 }
 
+/**
+ * 隔离 Iconify 图标渲染：Chromium 在使用 `TrustedHTML` 时每次重渲染都会创建新对象，
+ * 若不 memoize，React 会重复改写 `<svg>` 的 `innerHTML`，进而触发 Base UI
+ * `Toast.Content` 的 `MutationObserver` -> `recalculateHeight(true)` 导致无限渲染死循环。
+ */
+const ToastIcon = memo(function ToastIcon({ icon }: { icon: string }) {
+  return (
+    <div
+      className='[&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:h-lh [&>svg]:w-4'
+      data-slot='toast-icon'
+    >
+      <IconifyIcon
+        icon={icon}
+        className='in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=loading]:animate-spin in-data-[type=loading]:opacity-80 in-data-[type=success]:text-success in-data-[type=warning]:text-warning'
+      />
+    </div>
+  );
+});
+
 function Toasts({
   position,
   portalProps,
@@ -57,7 +77,7 @@ function Toasts({
   portalProps?: React.ComponentProps<typeof Toast.Portal>;
 }): React.ReactElement {
   const { toasts } = Toast.useToastManager();
-  const swipeDirection = getSwipeDirection(position);
+  const swipeDirection = useMemo(() => getSwipeDirection(position), [position]);
 
   return (
     <Toast.Portal data-slot='toast-portal' {...portalProps}>
@@ -132,17 +152,7 @@ function Toasts({
             >
               <Toast.Content className='pointer-events-auto flex items-center justify-between gap-1.5 overflow-hidden px-3.5 py-3 text-sm transition-opacity duration-250 data-behind:opacity-0 data-behind:not-data-expanded:pointer-events-none data-expanded:opacity-100'>
                 <div className='flex gap-2'>
-                  {iconName && (
-                    <div
-                      className='[&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:h-lh [&>svg]:w-4'
-                      data-slot='toast-icon'
-                    >
-                      <IconifyIcon
-                        icon={iconName}
-                        className='in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=loading]:animate-spin in-data-[type=loading]:opacity-80 in-data-[type=success]:text-success in-data-[type=warning]:text-warning'
-                      />
-                    </div>
-                  )}
+                  {iconName && <ToastIcon icon={iconName} />}
 
                   <div className='flex flex-col gap-0.5'>
                     <Toast.Title className='font-medium' data-slot='toast-title' />
@@ -213,17 +223,7 @@ function AnchoredToasts({
                 ) : (
                   <Toast.Content className='pointer-events-auto flex items-center justify-between gap-1.5 overflow-hidden px-3.5 py-3 text-sm'>
                     <div className='flex gap-2'>
-                      {iconName && (
-                        <div
-                          className='[&_svg]:pointer-events-none [&_svg]:shrink-0 [&>svg]:h-lh [&>svg]:w-4'
-                          data-slot='toast-icon'
-                        >
-                          <IconifyIcon
-                            icon={iconName}
-                            className='in-data-[type=error]:text-destructive in-data-[type=info]:text-info in-data-[type=loading]:animate-spin in-data-[type=loading]:opacity-80 in-data-[type=success]:text-success in-data-[type=warning]:text-warning'
-                          />
-                        </div>
-                      )}
+                      {iconName && <ToastIcon icon={iconName} />}
 
                       <div className='flex flex-col gap-0.5'>
                         <Toast.Title className='font-medium' data-slot='toast-title' />

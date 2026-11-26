@@ -1,6 +1,6 @@
+import { Icon } from '@iconify/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
-import { Icon } from '@iconify/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { Menu, MenuItem, MenuPopup, MenuSeparator, MenuTrigger } from '~/components/ui/menu';
@@ -81,13 +81,13 @@ export function PostHeader({ title, postId }: { title?: string | null; postId?: 
             scrolled && 'md:max-w-full md:px-6',
           )}
         >
-          <div className='pointer-events-auto min-w-0'>
+          <div className='pointer-events-auto -ml-2 shrink-0'>
             <Link
               to='/'
               viewTransition
               aria-label='返回首页'
               className={cn(
-                'group -ml-2 inline-flex max-w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors duration-200 outline-none hover:bg-foreground/[0.045] focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none dark:hover:bg-foreground/[0.08]',
+                'group inline-flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm font-medium text-foreground transition-colors duration-200 outline-none hover:bg-foreground/[0.045] focus-visible:ring-2 focus-visible:ring-ring motion-reduce:transition-none dark:hover:bg-foreground/[0.08]',
                 scrolled &&
                   'max-md:bg-popover/75 max-md:shadow-2xs max-md:ring-1 max-md:ring-border/50 max-md:backdrop-blur-md max-md:hover:bg-popover/90',
               )}
@@ -100,12 +100,14 @@ export function PostHeader({ title, postId }: { title?: string | null; postId?: 
                     alt='avatar'
                   />
                 </span>
-                <Icon icon='lucide:arrow-left'
+                <Icon
+                  icon='lucide:arrow-left'
                   aria-hidden='true'
-                  className='pointer-events-none absolute size-4 scale-75 text-foreground/85 opacity-0 transition-[opacity,transform] duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100 group-active:scale-75 group-active:opacity-0 motion-reduce:transition-none' />
+                  className='pointer-events-none absolute size-4 scale-75 text-foreground/85 opacity-0 transition-[opacity,transform] duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100 group-active:scale-75 group-active:opacity-0 motion-reduce:transition-none'
+                />
               </span>
               {title ? (
-                <span className='text-left text-sm leading-snug font-medium text-foreground/90'>
+                <span className='text-left text-sm leading-snug font-medium whitespace-nowrap text-foreground/90'>
                   {title}
                 </span>
               ) : (

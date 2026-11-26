@@ -1,25 +1,19 @@
+import { Icon } from '@iconify/react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { Icon } from '@iconify/react';
-import { useMemo, useRef, useState } from 'react';
+import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PaperImage } from '~/components/features/blog/paper-image';
 import { PostBodyLoader } from '~/components/features/post-loader';
 import { Badge } from '~/components/ui/badge';
-import {
-  Sheet,
-  SheetHeader,
-  SheetPanel,
-  SheetPopup,
-  SheetTitle,
-} from '~/components/ui/sheet';
+import { Sheet, SheetHeader, SheetPanel, SheetPopup, SheetTitle } from '~/components/ui/sheet';
 import { TimeDisplay } from '~/components/ui/time-display';
 import { toastManager } from '~/components/ui/toast';
 import { Tooltip, TooltipPopup, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 import { useArticleEnhancements } from '~/hooks/use-article-enhancements';
 import { useDelayedPending } from '~/hooks/use-delayed-pending';
-import { countArticleWords, estimateReadingMinutes } from '~/lib/article-utils';
 import { fetchPublicPost, fetchPublicPosts, type PostSummary } from '~/lib/api';
+import { countArticleWords, estimateReadingMinutes } from '~/lib/article-utils';
 import { cn } from '~/lib/utils';
 
 import { ArticleBody } from './article-body';
@@ -44,7 +38,6 @@ import '~/components/features/editor/simple-editor.css';
 export function PostContent({ id }: { id: string }) {
   const queryClient = useQueryClient();
   const bodyRef = useRef<HTMLDivElement>(null);
-  const [copiedLink, setCopiedLink] = useState(false);
   const [tocOpen, setTocOpen] = useState(false);
 
   const cachedSummary = queryClient
@@ -94,25 +87,10 @@ export function PostContent({ id }: { id: string }) {
     };
   }, [postList, id]);
 
-  async function handleCopyLink() {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopiedLink(true);
-      toastManager.add({ type: 'success', title: '已复制文章链接' });
-      setTimeout(() => setCopiedLink(false), 1800);
-    } catch {
-      toastManager.add({ type: 'error', title: '复制失败' });
-    }
-  }
-
-  function handleBackToTop() {
-    const scrollViewport = bodyRef.current?.closest('[data-slot="scroll-area-viewport"]');
-    if (scrollViewport) {
-      scrollViewport.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }
+  const renderedBody = useMemo(
+    () => <ArticleBody html={data?.htmlContent || ''} imageSeed={data?.id ?? id} />,
+    [data?.htmlContent, data?.id, id],
+  );
 
   return (
     <div className='post-content relative'>
@@ -141,8 +119,7 @@ export function PostContent({ id }: { id: string }) {
           </span>
           {showUpdatedAt ? (
             <span className='inline-flex items-center gap-1'>
-              更新于{' '}
-              <TimeDisplay value={data?.updatedAt} options={{ format: 'YYYY年MM月DD日' }} />
+              更新于 <TimeDisplay value={data?.updatedAt} options={{ format: 'YYYY年MM月DD日' }} />
             </span>
           ) : null}
           {wordCount > 0 ? (
@@ -173,9 +150,11 @@ export function PostContent({ id }: { id: string }) {
           aria-label='文章摘要'
           className='mb-8 border-l-2 border-border/80 py-0.5 pl-3.5 text-sm leading-relaxed text-muted-foreground'
         >
-          <Icon icon='lucide:sparkles'
+          <Icon
+            icon='lucide:sparkles'
             aria-hidden='true'
-            className='mr-1.5 inline-block size-3.5 align-[-2px] text-muted-foreground/75' />
+            className='mr-1.5 inline-block size-3.5 align-[-2px] text-muted-foreground/75'
+          />
           {data.summary}
         </blockquote>
       ) : null}
@@ -274,9 +253,7 @@ export function PostContent({ id }: { id: string }) {
             <PostBodyLoader />
           </div>
         ) : (
-          <div className='tiptap ProseMirror'>
-            <ArticleBody html={data?.htmlContent || ''} imageSeed={data?.id ?? id} />
-          </div>
+          <div className='tiptap ProseMirror'>{renderedBody}</div>
         )}
       </div>
 
@@ -319,58 +296,7 @@ export function PostContent({ id }: { id: string }) {
         </footer>
       ) : null}
 
-      {!isBodyPending ? (
-        <TooltipProvider delay={150}>
-          <div
-            role='toolbar'
-            aria-label='文章工具栏'
-            className={cn(
-              'fixed z-20 flex flex-col items-center gap-1.5 lg:right-auto lg:bottom-8 lg:left-[calc(50%+var(--article-width)/2+1.5rem)]',
-              'right-4',
-              tocItems.length >= 2
-                ? 'bottom-[calc(4.75rem+env(safe-area-inset-bottom))]'
-                : 'bottom-[calc(1.5rem+env(safe-area-inset-bottom))]',
-            )}
-          >
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <button
-                    type='button'
-                    onClick={handleCopyLink}
-                    aria-label={copiedLink ? '已复制链接' : '复制链接'}
-                    className='inline-flex size-8 items-center justify-center bg-transparent text-muted-foreground/75 transition-colors hover:text-foreground focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
-                  />
-                }
-              >
-                <Icon
-                  icon={copiedLink ? 'lucide:check' : 'lucide:link'}
-                  className='size-4'
-                />
-              </TooltipTrigger>
-              <TooltipPopup side='right'>
-                {copiedLink ? '已复制链接' : '复制链接'}
-              </TooltipPopup>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <button
-                    type='button'
-                    onClick={handleBackToTop}
-                    aria-label='返回顶部'
-                    className='inline-flex size-8 items-center justify-center bg-transparent text-muted-foreground/75 transition-colors hover:text-foreground focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
-                  />
-                }
-              >
-                <Icon icon='lucide:arrow-up' className='size-4' />
-              </TooltipTrigger>
-              <TooltipPopup side='right'>返回顶部</TooltipPopup>
-            </Tooltip>
-          </div>
-        </TooltipProvider>
-      ) : null}
+      {!isBodyPending ? <ArticleToolbar bodyRef={bodyRef} hasToc={tocItems.length >= 2} /> : null}
 
       {lightboxImage ? (
         <div
@@ -397,5 +323,89 @@ export function PostContent({ id }: { id: string }) {
         </div>
       ) : null}
     </div>
+  );
+}
+
+const TOOLBAR_BUTTON_CLASS =
+  'inline-flex size-8 items-center justify-center bg-transparent text-muted-foreground/75 transition-colors hover:text-foreground focus-visible:rounded-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none';
+
+function ArticleToolbar({
+  bodyRef,
+  hasToc,
+}: {
+  bodyRef: RefObject<HTMLDivElement | null>;
+  hasToc: boolean;
+}) {
+  const [copiedLink, setCopiedLink] = useState(false);
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+    };
+  }, []);
+
+  async function handleCopyLink() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      toastManager.add({ type: 'success', title: '已复制文章链接' });
+      if (resetTimerRef.current) clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = setTimeout(() => {
+        setCopiedLink(false);
+        resetTimerRef.current = null;
+      }, 1800);
+    } catch {
+      toastManager.add({ type: 'error', title: '复制失败' });
+    }
+  }
+
+  function handleBackToTop() {
+    const scrollViewport = bodyRef.current?.closest('[data-slot="scroll-area-viewport"]');
+    if (scrollViewport) {
+      scrollViewport.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  return (
+    <TooltipProvider delay={150}>
+      <div
+        role='toolbar'
+        aria-label='文章工具栏'
+        className={cn(
+          'fixed z-20 flex flex-col items-center gap-1.5 lg:right-auto lg:bottom-8 lg:left-[calc(50%+var(--article-width)/2+1.5rem)]',
+          'right-4',
+          hasToc
+            ? 'bottom-[calc(4.75rem+env(safe-area-inset-bottom))]'
+            : 'bottom-[calc(1.5rem+env(safe-area-inset-bottom))]',
+        )}
+      >
+        <Tooltip>
+          <TooltipTrigger
+            type='button'
+            onClick={handleCopyLink}
+            aria-label={copiedLink ? '已复制链接' : '复制链接'}
+            className={TOOLBAR_BUTTON_CLASS}
+          >
+            <Icon icon={copiedLink ? 'lucide:check' : 'lucide:link'} className='size-4' />
+          </TooltipTrigger>
+          <TooltipPopup side='right'>{copiedLink ? '已复制链接' : '复制链接'}</TooltipPopup>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger
+            type='button'
+            onClick={handleBackToTop}
+            aria-label='返回顶部'
+            className={TOOLBAR_BUTTON_CLASS}
+          >
+            <Icon icon='lucide:arrow-up' className='size-4' />
+          </TooltipTrigger>
+          <TooltipPopup side='right'>返回顶部</TooltipPopup>
+        </Tooltip>
+      </div>
+    </TooltipProvider>
   );
 }
