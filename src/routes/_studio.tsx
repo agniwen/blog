@@ -1,5 +1,5 @@
+import { IconExternalLink } from '@tabler/icons-react';
 import { createFileRoute, Link, Outlet, redirect, useLocation } from '@tanstack/react-router';
-import { Icon } from '@iconify/react';
 import type { PropsWithChildren } from 'react';
 
 import { StudioSkeleton } from '~/components/features/page-skeletons';
@@ -84,7 +84,7 @@ function StudioLayout({ children }: PropsWithChildren) {
               render={<Link to='/' />}
               className='text-muted-foreground'
             >
-              <Icon icon='lucide:external-link' className='size-3.5' />
+              <IconExternalLink className='size-3.5' />
               返回博客
             </Button>
             <AppThemeToggle />

@@ -1,7 +1,13 @@
+import {
+  IconArrowBackUp,
+  IconExternalLink,
+  IconRefresh,
+  IconSend,
+  IconTrash,
+} from '@tabler/icons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 
 import { CommentsAdminSkeleton } from '~/components/features/page-skeletons';
@@ -166,7 +172,7 @@ function StudioCommentsPage() {
               loading={isFetching && !isLoading}
               onClick={() => void refetch()}
             >
-              <Icon icon='lucide:refresh-cw' className='size-3.5' />
+              <IconRefresh className='size-3.5' />
               刷新
             </Button>
           }
@@ -252,7 +258,7 @@ function StudioCommentsPage() {
                             className='inline-flex items-center gap-1 hover:text-foreground'
                           >
                             文章：{comment.post.title || '无标题'}
-                            <Icon icon='lucide:external-link' className='size-3' />
+                            <IconExternalLink className='size-3' />
                           </a>
                         ) : null}
                       </div>
@@ -273,7 +279,7 @@ function StudioCommentsPage() {
                         }
                       }}
                     >
-                      <Icon icon='lucide:reply' className='size-3.5' />
+                      <IconArrowBackUp className='size-3.5' />
                       回复
                     </Button>
                     <Button
@@ -283,7 +289,7 @@ function StudioCommentsPage() {
                       className='text-destructive hover:text-destructive'
                       onClick={() => setDeleteId(comment.id)}
                     >
-                      <Icon icon='lucide:trash-2' className='size-3.5' />
+                      <IconTrash className='size-3.5' />
                       删除
                     </Button>
                   </div>
@@ -316,7 +322,7 @@ function StudioCommentsPage() {
                         loading={isReplying}
                         onClick={() => handleReplySubmit(comment.postId, comment.id)}
                       >
-                        <Icon icon='lucide:send' className='size-3' />
+                        <IconSend className='size-3' />
                         发送回复
                       </Button>
                     </div>

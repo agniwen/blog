@@ -1,10 +1,10 @@
-import { parseSpotifyTrack } from '~/lib/spotify';
+import { IconCornerDownLeft } from '@tabler/icons-react';
 import type { Editor } from '@tiptap/react';
-import { Icon } from '@iconify/react';
 import * as React from 'react';
 
 import { Button, ButtonGroup } from '~/components/tiptap/ui-primitive/button';
 import { Card, CardBody, CardItemGroup } from '~/components/tiptap/ui-primitive/card';
+import { parseSpotifyTrack } from '~/lib/spotify';
 
 import { Input, InputGroup } from '../../ui-primitive/input';
 
@@ -68,7 +68,7 @@ export function IFramePopoverContent({ editor, onClose }: IFramePopoverContentPr
               disabled={!code.trim()}
               data-style='ghost'
             >
-              <Icon icon='lucide:corner-down-left' className='tiptap-button-icon' />
+              <IconCornerDownLeft className='tiptap-button-icon' />
             </Button>
           </ButtonGroup>
         </CardItemGroup>

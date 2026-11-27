@@ -1,7 +1,7 @@
+import { IconArrowBackUp, IconTrash } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { InferUserFromClient } from 'better-auth';
 import dayjs from 'dayjs';
-import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 
 import {
@@ -192,7 +192,7 @@ function CommentsListItem({
         />
       </div>
       <div
-        className={cn('min-w-0 max-w-[85%]', {
+        className={cn('max-w-[85%] min-w-0', {
           'text-right': isSelfComment,
         })}
       >
@@ -219,14 +219,12 @@ function CommentsListItem({
 
         <p
           className={cn(
-            'inline-block bg-secondary px-3 py-2 text-left text-sm leading-relaxed whitespace-pre-wrap break-words',
+            'inline-block bg-secondary px-3 py-2 text-left text-sm leading-relaxed break-words whitespace-pre-wrap',
             isSelfComment ? 'rounded-t-xl rounded-bl-xl' : 'rounded-t-xl rounded-br-xl',
           )}
         >
           {replyToName ? (
-            <span className='mr-1.5 text-xs font-medium text-muted-foreground'>
-              @{replyToName}
-            </span>
+            <span className='mr-1.5 text-xs font-medium text-muted-foreground'>@{replyToName}</span>
           ) : null}
           {comment.content}
         </p>
@@ -249,7 +247,7 @@ function CommentsListItem({
               }
               className='inline-flex items-center gap-1 transition-colors hover:text-foreground'
             >
-              <Icon icon='lucide:reply' className='size-3' />
+              <IconArrowBackUp className='size-3' />
               回复
             </button>
             {canDelete ? (
@@ -258,7 +256,7 @@ function CommentsListItem({
                 onClick={() => onDelete(comment.id)}
                 className='inline-flex items-center gap-1 transition-colors hover:text-destructive'
               >
-                <Icon icon='lucide:trash-2' className='size-3' />
+                <IconTrash className='size-3' />
                 删除
               </button>
             ) : null}

@@ -1,10 +1,10 @@
+import { IconDownload, IconExternalLink, IconPlus, IconSparkles } from '@tabler/icons-react';
 import { useForm } from '@tanstack/react-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import dayjs from 'dayjs';
 import { parseResponse } from 'hono/client';
 import { isNil } from 'lodash-es';
-import { Icon } from '@iconify/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
@@ -31,8 +31,8 @@ import {
 import { Spinner } from '~/components/ui/spinner';
 import { toastManager } from '~/components/ui/toast';
 import { useEditor } from '~/hooks/use-editor';
-import { countArticleWords, estimateReadingMinutes } from '~/lib/article-utils';
 import { fetchAdminPost } from '~/lib/api';
+import { countArticleWords, estimateReadingMinutes } from '~/lib/article-utils';
 import { hono } from '~/lib/hono';
 
 interface PostFormData {
@@ -469,7 +469,7 @@ export function UpsertEditor(props: { id?: string }) {
                         loading={isCreatingTag}
                         onClick={handleCreateTag}
                       >
-                        <Icon icon='lucide:plus' className='size-3.5' />
+                        <IconPlus className='size-3.5' />
                       </Button>
                     </InputGroupAddon>
                   </InputGroup>
@@ -525,7 +525,7 @@ export function UpsertEditor(props: { id?: string }) {
                                 onClick={handleGenerateSummary}
                                 className='rounded-md'
                               >
-                                <Icon icon='lucide:sparkles' className='size-4' /> AI 生成
+                                <IconSparkles className='size-4' /> AI 生成
                               </Button>
                             </div>
                           </InputGroupAddon>
@@ -596,7 +596,7 @@ export function UpsertEditor(props: { id?: string }) {
           </div>
           <div className='flex items-center gap-1'>
             <Button type='button' variant='ghost' size='xs' onClick={handleExportMarkdown}>
-              <Icon icon='lucide:download' className='size-3.5' />
+              <IconDownload className='size-3.5' />
               导出文本
             </Button>
             {id && form.state.values.published ? (
@@ -605,7 +605,7 @@ export function UpsertEditor(props: { id?: string }) {
                 size='xs'
                 render={<a href={`/blog/${id}`} target='_blank' rel='noreferrer' />}
               >
-                <Icon icon='lucide:external-link' className='size-3.5' />
+                <IconExternalLink className='size-3.5' />
                 查看文章
               </Button>
             ) : null}

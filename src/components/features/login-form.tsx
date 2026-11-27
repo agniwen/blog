@@ -1,9 +1,9 @@
-import { Icon } from '@iconify/react';
 import { useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
 import { z } from 'zod';
 
+import { GoogleIcon } from '~/components/features/brand-icons';
 import { Button } from '~/components/ui/button';
 import { Field, FieldLabel } from '~/components/ui/field';
 import { Input } from '~/components/ui/input';
@@ -134,7 +134,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
             loading={isSigningIn}
             onClick={googleSignIn}
           >
-            <Icon className='mr-1 size-4.5' icon='logos:google-icon' />
+            <GoogleIcon className='mr-1 size-4.5' />
             Login with Google
           </Button>
         </Field>

@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { IconArrowUp, IconX } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -72,7 +72,7 @@ export function CommentsInput({ id, replyTo, onCancelReply }: CommentsInputProps
               aria-label='取消回复'
               className='inline-flex items-center gap-1 transition-colors hover:text-foreground'
             >
-              <Icon icon='lucide:x' className='size-3.5' />
+              <IconX className='size-3.5' />
               取消
             </button>
           </div>
@@ -90,7 +90,7 @@ export function CommentsInput({ id, replyTo, onCancelReply }: CommentsInputProps
             <InputGroupAddon align='block-end'>
               <Separator className='flex-1 bg-transparent' orientation='vertical' />
               <Button type='submit' aria-label='发送评论' loading={isPending} variant='secondary'>
-                <Icon icon='lucide:arrow-up' className='size-4' />发 表
+                <IconArrowUp className='size-4' />发 表
               </Button>
             </InputGroupAddon>
           </InputGroup>

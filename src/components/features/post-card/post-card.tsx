@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { IconPhoto } from '@tabler/icons-react';
 
 import { Badge } from '~/components/ui/badge';
 import { TimeDisplay } from '~/components/ui/time-display';
@@ -34,7 +34,7 @@ export function PostCard(props: PostCardProps) {
           <img className='size-full object-cover' src={post.banner} alt={post.title || ''} />
         ) : (
           <div className='flex size-full items-center justify-center text-muted-foreground/40'>
-            <Icon icon='lucide:image' className='size-6' />
+            <IconPhoto className='size-6' />
           </div>
         )}
       </div>
@@ -48,7 +48,11 @@ export function PostCard(props: PostCardProps) {
         {post.tags && post.tags.length > 0 ? (
           <div className='flex flex-wrap gap-1'>
             {post.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag.id} variant='secondary' className='h-4 px-1.5 text-[10px] font-normal'>
+              <Badge
+                key={tag.id}
+                variant='secondary'
+                className='h-4 px-1.5 text-[10px] font-normal'
+              >
                 #{tag.name}
               </Badge>
             ))}

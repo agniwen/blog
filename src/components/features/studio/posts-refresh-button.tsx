@@ -1,5 +1,5 @@
+import { IconRefresh } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Icon } from '@iconify/react';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -21,7 +21,7 @@ export function PostsRefreshButton() {
   }
   return (
     <Button size='sm' loading={isRefreshing} onClick={handleRefresh} variant='secondary'>
-      <Icon icon='lucide:refresh-cw' className='size-3.5' />
+      <IconRefresh className='size-3.5' />
       刷新
     </Button>
   );

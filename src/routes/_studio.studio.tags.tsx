@@ -1,7 +1,7 @@
+import { IconCheck, IconPencil, IconPlus, IconTrash, IconX } from '@tabler/icons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 
 import { TagsSkeleton } from '~/components/features/page-skeletons';
@@ -177,7 +177,7 @@ function StudioTagsPage() {
                 className='w-40 sm:w-44'
               />
               <Button size='sm' type='submit' loading={isCreating}>
-                <Icon icon='lucide:plus' className='size-3.5' />
+                <IconPlus className='size-3.5' />
                 新建标签
               </Button>
             </form>
@@ -206,7 +206,9 @@ function StudioTagsPage() {
           <TagsSkeleton />
         ) : filteredTags.length === 0 ? (
           <div className='rounded-lg border border-dashed border-border py-14 text-center text-sm text-muted-foreground'>
-            {tagsList.length === 0 ? '暂无标签，在上方输入名称即可创建' : '没有符合当前筛选条件的标签'}
+            {tagsList.length === 0
+              ? '暂无标签，在上方输入名称即可创建'
+              : '没有符合当前筛选条件的标签'}
           </div>
         ) : (
           <div className='divide-y divide-border rounded-lg border border-border bg-card/60'>
@@ -240,7 +242,7 @@ function StudioTagsPage() {
                           onClick={() => handleSaveRename(tag.id)}
                           aria-label='保存'
                         >
-                          <Icon icon='lucide:check' className='size-3.5' />
+                          <IconCheck className='size-3.5' />
                         </Button>
                         <Button
                           type='button'
@@ -249,7 +251,7 @@ function StudioTagsPage() {
                           onClick={() => setEditingId(null)}
                           aria-label='取消'
                         >
-                          <Icon icon='lucide:x' className='size-3.5' />
+                          <IconX className='size-3.5' />
                         </Button>
                       </div>
                     ) : (
@@ -280,7 +282,7 @@ function StudioTagsPage() {
                             setEditingName(tag.name);
                           }}
                         >
-                          <Icon icon='lucide:pencil' className='size-3.5' />
+                          <IconPencil className='size-3.5' />
                         </Button>
                         <Button
                           type='button'
@@ -290,7 +292,7 @@ function StudioTagsPage() {
                           className='text-destructive hover:text-destructive'
                           onClick={() => setDeleteTarget({ id: tag.id, name: tag.name })}
                         >
-                          <Icon icon='lucide:trash-2' className='size-3.5' />
+                          <IconTrash className='size-3.5' />
                         </Button>
                       </div>
                     ) : null}

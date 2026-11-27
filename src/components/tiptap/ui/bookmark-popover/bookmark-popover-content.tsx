@@ -1,5 +1,5 @@
+import { IconCornerDownLeft } from '@tabler/icons-react';
 import type { Editor } from '@tiptap/react';
-import { Icon } from '@iconify/react';
 import * as React from 'react';
 
 import { Button, ButtonGroup } from '~/components/tiptap/ui-primitive/button';
@@ -99,7 +99,7 @@ export function BookmarkPopoverContent({ editor, onClose }: BookmarkPopoverConte
               disabled={loading || !url.trim()}
               data-style='ghost'
             >
-              <Icon icon='lucide:corner-down-left' className='tiptap-button-icon' />
+              <IconCornerDownLeft className='tiptap-button-icon' />
             </Button>
           </ButtonGroup>
         </CardItemGroup>

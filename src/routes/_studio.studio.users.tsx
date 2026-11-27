@@ -1,7 +1,7 @@
+import { IconBan, IconRefresh, IconShieldCheck } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 
 import { UsersAdminSkeleton } from '~/components/features/page-skeletons';
@@ -172,12 +172,16 @@ function StudioUsersPage() {
               loading={isFetching && !isLoading}
               onClick={() => void refetch()}
             >
-              <Icon icon='lucide:refresh-cw' className='size-3.5' />
+              <IconRefresh className='size-3.5' />
               刷新
             </Button>
           }
         >
-          <StudioSearchInput value={search} onChange={setSearch} placeholder='搜索用户名或邮箱...' />
+          <StudioSearchInput
+            value={search}
+            onChange={setSearch}
+            placeholder='搜索用户名或邮箱...'
+          />
           <StudioSegmentedFilter
             value={banFilter}
             onChange={setBanFilter}
@@ -291,12 +295,12 @@ function StudioUsersPage() {
                     >
                       {isBanned ? (
                         <>
-                          <Icon icon='lucide:shield-check' className='size-3.5' />
+                          <IconShieldCheck className='size-3.5' />
                           解封
                         </>
                       ) : (
                         <>
-                          <Icon icon='lucide:ban' className='size-3.5' />
+                          <IconBan className='size-3.5' />
                           封禁
                         </>
                       )}

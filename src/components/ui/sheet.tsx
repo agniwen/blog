@@ -3,7 +3,7 @@
 import { Dialog as SheetPrimitive } from '@base-ui/react/dialog';
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
-import { Icon } from '@iconify/react';
+import { IconX } from '@tabler/icons-react';
 import type React from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -110,7 +110,7 @@ export function SheetPopup({
               render={<Button size='icon' variant='ghost' />}
               {...closeProps}
             >
-              <Icon icon='lucide:x' className='size-4'  />
+              <IconX className='size-4' />
             </SheetPrimitive.Close>
           )}
         </SheetPrimitive.Popup>

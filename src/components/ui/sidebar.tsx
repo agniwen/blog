@@ -1,8 +1,8 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { useRender } from '@base-ui/react/use-render';
+import { IconLayoutSidebar } from '@tabler/icons-react';
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
-import { Icon } from '@iconify/react';
 import * as React from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -262,7 +262,7 @@ function SidebarTrigger({ className, onClick, ...props }: React.ComponentProps<t
       }}
       {...props}
     >
-      <Icon icon='lucide:panel-left' className='size-4'  />
+      <IconLayoutSidebar className='size-4' />
       <span className='sr-only'>Toggle Sidebar</span>
     </Button>
   );

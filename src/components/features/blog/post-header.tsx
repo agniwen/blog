@@ -1,4 +1,10 @@
-import { Icon } from '@iconify/react';
+import {
+  IconArrowLeft,
+  IconLayoutDashboard,
+  IconLogout,
+  IconMenu2,
+  IconPencil,
+} from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
@@ -100,8 +106,7 @@ export function PostHeader({ title, postId }: { title?: string | null; postId?: 
                     alt='avatar'
                   />
                 </span>
-                <Icon
-                  icon='lucide:arrow-left'
+                <IconArrowLeft
                   aria-hidden='true'
                   className='pointer-events-none absolute size-4 scale-75 text-foreground/85 opacity-0 transition-[opacity,transform] duration-200 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:scale-100 group-focus-visible:opacity-100 group-active:scale-75 group-active:opacity-0 motion-reduce:transition-none'
                 />
@@ -127,7 +132,7 @@ export function PostHeader({ title, postId }: { title?: string | null; postId?: 
                       'max-md:bg-popover/75 max-md:shadow-2xs max-md:ring-1 max-md:ring-border/50 max-md:backdrop-blur-md max-md:hover:bg-popover/90 max-md:data-popup-open:bg-popover/90',
                   )}
                 >
-                  <Icon icon='lucide:menu' className='size-4.5' />
+                  <IconMenu2 className='size-4.5' />
                 </MenuTrigger>
                 <MenuPopup align='end' side='bottom' sideOffset={4} className='min-w-36 rounded-lg'>
                   {isAdmin && postId ? (
@@ -135,21 +140,21 @@ export function PostHeader({ title, postId }: { title?: string | null; postId?: 
                       render={<Link to='/studio/posts/upsert/$id' params={{ id: postId }} />}
                       className='text-sm'
                     >
-                      <Icon icon='lucide:pencil' className='size-4' />
+                      <IconPencil className='size-4' />
                       编辑此文
                     </MenuItem>
                   ) : null}
                   {isAdmin ? (
                     <>
                       <MenuItem render={<Link to='/studio' />} className='text-sm'>
-                        <Icon icon='lucide:layout-dashboard' className='size-4' />
+                        <IconLayoutDashboard className='size-4' />
                         进入 Studio
                       </MenuItem>
                       <MenuSeparator />
                     </>
                   ) : null}
                   <MenuItem disabled={isLoggingOut} onClick={handleLogout} className='text-sm'>
-                    <Icon icon='lucide:log-out' className='size-4' />
+                    <IconLogout className='size-4' />
                     退出登录
                   </MenuItem>
                 </MenuPopup>

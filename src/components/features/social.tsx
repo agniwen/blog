@@ -1,56 +1,35 @@
-import { Icon } from '@iconify/react';
-import { AnimatePresence } from 'motion/react';
-
-import { Button } from '~/components/ui/button';
+import {
+  BilibiliIcon,
+  GithubIcon,
+  MailIcon,
+  RssIcon,
+  XIcon,
+} from '~/components/features/brand-icons';
 import { cn } from '~/lib/utils';
 
 const socials = [
-  {
-    name: 'Twitter',
-    url: 'https://x.com/agniwen',
-    icon: <Icon className='size-5' icon='ri:twitter-x-fill' />,
-  },
-  {
-    name: 'github',
-    url: 'https://github.com/agniwen',
-    icon: <Icon className='size-5' icon='ri:github-line' />,
-  },
-  {
-    name: 'bilibili',
-    url: 'https://space.bilibili.com/2940875',
-    icon: <Icon className='size-5' icon='ri:bilibili-line' />,
-  },
-  {
-    name: 'email',
-    url: 'mailto:wisakura@outlook.com',
-    icon: <Icon className='size-5' icon='ri:mail-line' />,
-  },
-  {
-    name: 'RSS',
-    url: '/rss.xml',
-    icon: <Icon className='size-5' icon='ri:rss-line' />,
-  },
-];
+  { name: 'Twitter', url: 'https://x.com/agniwen', Icon: XIcon },
+  { name: 'github', url: 'https://github.com/agniwen', Icon: GithubIcon },
+  { name: 'bilibili', url: 'https://space.bilibili.com/2940875', Icon: BilibiliIcon },
+  { name: 'email', url: 'mailto:wisakura@outlook.com', Icon: MailIcon },
+  { name: 'RSS', url: '/rss.xml', Icon: RssIcon },
+] as const;
 
 export function Social({ className }: { className?: string }) {
   return (
-    <div className={cn('-ml-1.5 flex h-8 items-center space-x-4', className)}>
-      <AnimatePresence>
-        {socials.map((s) => {
-          return (
-            <Button
-              render={<a href={s.url} target='_blank' rel='noreferrer' />}
-              key={s.url}
-              variant='ghost'
-              shape='paper'
-              aria-label={s.name}
-              size={'icon-sm'}
-            >
-              {s.icon}
-            </Button>
-          );
-        })}
-      </AnimatePresence>
+    <div className={cn('-ml-1.5 flex h-8 items-center gap-1.5', className)}>
+      {socials.map((social) => (
+        <a
+          key={social.url}
+          href={social.url}
+          target={social.url.startsWith('mailto:') ? undefined : '_blank'}
+          rel={social.url.startsWith('mailto:') ? undefined : 'noreferrer'}
+          aria-label={social.name}
+          className='inline-flex size-8 items-center justify-center rounded-md text-foreground/72 transition-colors outline-none hover:bg-accent/50 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring'
+        >
+          <social.Icon className='size-5' />
+        </a>
+      ))}
     </div>
   );
 }

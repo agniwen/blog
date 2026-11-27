@@ -1,5 +1,5 @@
+import { IconTrash } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Icon } from '@iconify/react';
 import { useState } from 'react';
 
 import { SpotifyCard } from '~/components/features/spotify-card';
@@ -63,7 +63,7 @@ export function SpotifyForm({
             title='删除歌曲'
             onClick={onDelete}
           >
-            <Icon icon='lucide:trash-2' className='size-4'  />
+            <IconTrash className='size-4' />
           </Button>
         )}
         <div className='ml-auto flex items-center gap-2'>

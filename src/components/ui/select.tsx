@@ -3,8 +3,8 @@
 import { mergeProps } from '@base-ui/react/merge-props';
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 import { useRender } from '@base-ui/react/use-render';
+import { IconChevronDown, IconChevronUp, IconSelector } from '@tabler/icons-react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { Icon } from '@iconify/react';
 import type * as React from 'react';
 
 import { cn } from '~/lib/utils';
@@ -50,7 +50,7 @@ export function SelectButton({
         <span className='flex-1 truncate in-data-placeholder:text-muted-foreground/72'>
           {children}
         </span>
-        <Icon icon='lucide:chevrons-up-down' className={selectTriggerIconClassName} />
+        <IconSelector className={selectTriggerIconClassName} />
       </>
     ),
     className: cn(selectTriggerVariants({ size }), 'min-w-0', className),
@@ -79,7 +79,7 @@ export function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon data-slot='select-icon'>
-        <Icon icon='lucide:chevrons-up-down' className={selectTriggerIconClassName} />
+        <IconSelector className={selectTriggerIconClassName} />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   );
@@ -139,7 +139,7 @@ export function SelectPopup({
             className='top-0 z-50 flex h-6 w-full cursor-default items-center justify-center before:pointer-events-none before:absolute before:inset-x-px before:top-px before:h-[200%] before:rounded-t-[calc(var(--radius-lg)-1px)] before:bg-linear-to-b before:from-popover before:from-50%'
             data-slot='select-scroll-up-arrow'
           >
-            <Icon icon='lucide:chevron-up' className='relative size-4.5 sm:size-4' />
+            <IconChevronUp className='relative size-4.5 sm:size-4' />
           </SelectPrimitive.ScrollUpArrow>
           <div className='relative h-full min-w-(--anchor-width) rounded-lg border bg-popover shadow-lg/5 not-dark:bg-clip-padding before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] dark:before:shadow-[0_-1px_--theme(--color-white/6%)]'>
             <SelectPrimitive.List
@@ -153,7 +153,7 @@ export function SelectPopup({
             className='bottom-0 z-50 flex h-6 w-full cursor-default items-center justify-center before:pointer-events-none before:absolute before:inset-x-px before:bottom-px before:h-[200%] before:rounded-b-[calc(var(--radius-lg)-1px)] before:bg-linear-to-t before:from-popover before:from-50%'
             data-slot='select-scroll-down-arrow'
           >
-            <Icon icon='lucide:chevron-down' className='relative size-4.5 sm:size-4' />
+            <IconChevronDown className='relative size-4.5 sm:size-4' />
           </SelectPrimitive.ScrollDownArrow>
         </SelectPrimitive.Popup>
       </SelectPrimitive.Positioner>

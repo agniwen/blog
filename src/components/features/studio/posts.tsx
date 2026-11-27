@@ -1,7 +1,15 @@
+import {
+  IconCopy,
+  IconDots,
+  IconExternalLink,
+  IconEyeOff,
+  IconPencil,
+  IconSend,
+  IconTrash,
+} from '@tabler/icons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { parseResponse } from 'hono/client';
-import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 
 import { PostsSkeleton } from '~/components/features/page-skeletons';
@@ -299,17 +307,17 @@ export function Posts() {
                       <ContextMenuItem
                         render={<Link to='/studio/posts/upsert/$id' params={{ id: post.id }} />}
                       >
-                        <Icon icon='lucide:pencil' className='size-4'  />
+                        <IconPencil className='size-4' />
                         编辑文章
                       </ContextMenuItem>
                       <ContextMenuItem
                         onClick={() => handleTogglePublish(post.id, post.published)}
                       >
-                        {post.published ? <Icon icon='lucide:eye-off' className='size-4'  /> : <Icon icon='lucide:send' className='size-4'  />}
+                        {post.published ? <IconEyeOff className='size-4' /> : <IconSend className='size-4' />}
                         {post.published ? '转为草稿' : '立即发布'}
                       </ContextMenuItem>
                       <ContextMenuItem onClick={() => handleSelectDeletePost(post.id)}>
-                        <Icon icon='lucide:trash-2' className='size-4'  />
+                        <IconTrash className='size-4' />
                         删除文章
                       </ContextMenuItem>
                     </ContextMenuPopup>
@@ -328,14 +336,14 @@ export function Posts() {
                           />
                         }
                       >
-                        <Icon icon='lucide:more-horizontal' className='size-3.5' />
+                        <IconDots className='size-3.5' />
                       </MenuTrigger>
                       <MenuPopup align='end' side='bottom' sideOffset={4} className='min-w-36 rounded-lg'>
                         <MenuItem
                           render={<Link to='/studio/posts/upsert/$id' params={{ id: post.id }} />}
                           className='text-sm'
                         >
-                          <Icon icon='lucide:pencil' className='size-3.5' />
+                          <IconPencil className='size-3.5' />
                           编辑文章
                         </MenuItem>
                         {post.published ? (
@@ -349,7 +357,7 @@ export function Posts() {
                             }
                             className='text-sm'
                           >
-                            <Icon icon='lucide:external-link' className='size-3.5' />
+                            <IconExternalLink className='size-3.5' />
                             查看线上文章
                           </MenuItem>
                         ) : null}
@@ -357,7 +365,7 @@ export function Posts() {
                           onClick={() => handleCopyLink(post.id)}
                           className='text-sm'
                         >
-                          <Icon icon='lucide:copy' className='size-3.5' />
+                          <IconCopy className='size-3.5' />
                           复制链接
                         </MenuItem>
                         <MenuItem
@@ -365,9 +373,9 @@ export function Posts() {
                           className='text-sm'
                         >
                           {post.published ? (
-                            <Icon icon='lucide:eye-off' className='size-3.5' />
+                            <IconEyeOff className='size-3.5' />
                           ) : (
-                            <Icon icon='lucide:send' className='size-3.5' />
+                            <IconSend className='size-3.5' />
                           )}
                           {post.published ? '转为草稿' : '立即发布'}
                         </MenuItem>
@@ -376,7 +384,7 @@ export function Posts() {
                           onClick={() => handleSelectDeletePost(post.id)}
                           className='text-sm text-destructive'
                         >
-                          <Icon icon='lucide:trash-2' className='size-3.5' />
+                          <IconTrash className='size-3.5' />
                           删除文章
                         </MenuItem>
                       </MenuPopup>

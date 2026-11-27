@@ -1,7 +1,7 @@
-import { Icon } from '@iconify/react';
 import { useState } from 'react';
 import type { PropsWithChildren } from 'react';
 
+import { GoogleIcon } from '~/components/features/brand-icons';
 import { Button } from '~/components/ui/button';
 import { toastManager } from '~/components/ui/toast';
 import { authClient } from '~/lib/auth-client';
@@ -51,7 +51,7 @@ export function CommentsMask({ children }: PropsWithChildren) {
             </div>
             <div className='p flex items-center justify-center gap-4'>
               <Button variant='secondary' loading={isSigningIn} onClick={googleSignIn}>
-                <Icon className='mr-1 size-4.5' fill='#fff' icon='logos:google-icon' />
+                <GoogleIcon className='mr-1 size-4.5' />
                 Google
               </Button>
             </div>

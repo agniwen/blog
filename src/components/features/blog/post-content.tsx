@@ -1,4 +1,15 @@
-import { Icon } from '@iconify/react';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconArrowUp,
+  IconCalendar,
+  IconCheck,
+  IconClock,
+  IconLink,
+  IconList,
+  IconSparkles,
+  IconX,
+} from '@tabler/icons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
@@ -114,7 +125,7 @@ export function PostContent({ id }: { id: string }) {
         <h1 className='article-title mb-5'>{data?.title}</h1>
         <div className='flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground'>
           <span className='inline-flex items-center gap-1.5'>
-            <Icon icon='lucide:calendar' className='size-3.5' />
+            <IconCalendar className='size-3.5' />
             <TimeDisplay value={data?.createdAt} options={{ format: 'YYYY年MM月DD日' }} />
           </span>
           {showUpdatedAt ? (
@@ -124,7 +135,7 @@ export function PostContent({ id }: { id: string }) {
           ) : null}
           {wordCount > 0 ? (
             <span className='inline-flex items-center gap-1.5'>
-              <Icon icon='lucide:clock' className='size-3.5' />约 {wordCount.toLocaleString()} 字 ·{' '}
+              <IconClock className='size-3.5' />约 {wordCount.toLocaleString()} 字 ·{' '}
               {estimateReadingMinutes(wordCount)} 分钟
             </span>
           ) : null}
@@ -150,8 +161,7 @@ export function PostContent({ id }: { id: string }) {
           aria-label='文章摘要'
           className='mb-8 border-l-2 border-border/80 py-0.5 pl-3.5 text-sm leading-relaxed text-muted-foreground'
         >
-          <Icon
-            icon='lucide:sparkles'
+          <IconSparkles
             aria-hidden='true'
             className='mr-1.5 inline-block size-3.5 align-[-2px] text-muted-foreground/75'
           />
@@ -167,7 +177,7 @@ export function PostContent({ id }: { id: string }) {
             onClick={() => setTocOpen(true)}
             className='fixed right-5 bottom-[calc(1.5rem+env(safe-area-inset-bottom))] z-30 inline-flex size-9 items-center justify-center rounded-lg bg-popover/75 text-foreground/80 shadow-2xs ring-1 ring-border/50 backdrop-blur-md transition-colors hover:bg-popover/90 hover:text-foreground xl:hidden'
           >
-            <Icon icon='lucide:list' className='size-4.5' />
+            <IconList className='size-4.5' />
           </button>
 
           <Sheet open={tocOpen} onOpenChange={setTocOpen}>
@@ -175,7 +185,7 @@ export function PostContent({ id }: { id: string }) {
               <div className='mx-auto mt-2.5 h-1 w-9 shrink-0 rounded-full bg-border' />
               <SheetHeader className='flex-row items-center justify-between px-5 pt-3 pb-2'>
                 <SheetTitle className='flex items-center gap-2 text-base font-medium'>
-                  <Icon icon='lucide:list' className='size-4 text-muted-foreground' />
+                  <IconList className='size-4 text-muted-foreground' />
                   目录
                 </SheetTitle>
                 <span className='pr-8 text-xs text-muted-foreground tabular-nums'>
@@ -226,7 +236,7 @@ export function PostContent({ id }: { id: string }) {
           className='fixed top-28 right-8 hidden max-h-[calc(100vh-9rem)] w-48 overflow-y-auto xl:block'
         >
           <p className='mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground/80'>
-            <Icon icon='lucide:list' className='size-3' />
+            <IconList className='size-3' />
             目录
           </p>
           <nav className='flex flex-col gap-1 border-l border-border/70 pl-3'>
@@ -267,7 +277,7 @@ export function PostContent({ id }: { id: string }) {
                 className='group flex flex-col gap-1 rounded-lg border border-border/70 bg-card/50 px-3.5 py-2.5 transition-colors hover:bg-accent/50'
               >
                 <span className='inline-flex items-center gap-1 text-[11px] text-muted-foreground'>
-                  <Icon icon='lucide:arrow-left' className='size-3' />
+                  <IconArrowLeft className='size-3' />
                   上一篇
                 </span>
                 <span className='line-clamp-1 text-sm font-medium text-foreground'>
@@ -285,7 +295,7 @@ export function PostContent({ id }: { id: string }) {
               >
                 <span className='inline-flex items-center gap-1 text-[11px] text-muted-foreground'>
                   下一篇
-                  <Icon icon='lucide:arrow-right' className='size-3' />
+                  <IconArrowRight className='size-3' />
                 </span>
                 <span className='line-clamp-1 text-sm font-medium text-foreground'>
                   {nextPost.title}
@@ -312,7 +322,7 @@ export function PostContent({ id }: { id: string }) {
             aria-label='关闭预览'
             className='fixed top-4 right-4 inline-flex size-9 items-center justify-center rounded-lg bg-popover/90 text-foreground shadow-sm transition-colors hover:bg-popover'
           >
-            <Icon icon='lucide:x' className='size-4' />
+            <IconX className='size-4' />
           </button>
           <img
             src={lightboxImage.src}
@@ -389,7 +399,7 @@ function ArticleToolbar({
             aria-label={copiedLink ? '已复制链接' : '复制链接'}
             className={TOOLBAR_BUTTON_CLASS}
           >
-            <Icon icon={copiedLink ? 'lucide:check' : 'lucide:link'} className='size-4' />
+            {copiedLink ? <IconCheck className='size-4' /> : <IconLink className='size-4' />}
           </TooltipTrigger>
           <TooltipPopup side='right'>{copiedLink ? '已复制链接' : '复制链接'}</TooltipPopup>
         </Tooltip>
@@ -401,7 +411,7 @@ function ArticleToolbar({
             aria-label='返回顶部'
             className={TOOLBAR_BUTTON_CLASS}
           >
-            <Icon icon='lucide:arrow-up' className='size-4' />
+            <IconArrowUp className='size-4' />
           </TooltipTrigger>
           <TooltipPopup side='right'>返回顶部</TooltipPopup>
         </Tooltip>

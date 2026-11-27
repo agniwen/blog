@@ -1,4 +1,4 @@
-import { Icon } from '@iconify/react';
+import { IconX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useSearch } from '@tanstack/react-router';
 import {
@@ -20,7 +20,7 @@ const POINTER_OFFSET_Y = 12;
 const VIEWPORT_PADDING = 12;
 const OPEN_DELAY_MS = 180;
 const CLOSE_DELAY_MS = 100;
-const DEFAULT_CARD_SIZE = { width: 304, height: 320 };
+const DEFAULT_CARD_SIZE = { width: 304, height: 260 };
 
 interface Point {
   x: number;
@@ -231,10 +231,10 @@ function PostPreviewOverlay({ ref }: { ref: Ref<PostPreviewController> }) {
     >
       <div
         data-slot='preview-card-content'
-        className='relative flex w-76 origin-top-left flex-col overflow-hidden rounded-lg border bg-popover text-sm text-balance text-popover-foreground shadow-lg/5 transition-[opacity,scale] duration-150 not-dark:bg-clip-padding before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] motion-reduce:transition-none dark:before:shadow-[0_-1px_--theme(--color-white/6%)] starting:scale-98 starting:opacity-0'
+        className='relative flex w-76 origin-top-left flex-col overflow-hidden rounded-lg border bg-popover text-sm text-popover-foreground shadow-lg/5 transition-[opacity,scale] duration-150 not-dark:bg-clip-padding before:pointer-events-none before:absolute before:inset-0 before:rounded-[calc(var(--radius-lg)-1px)] before:shadow-[0_1px_--theme(--color-black/4%)] motion-reduce:transition-none dark:before:shadow-[0_-1px_--theme(--color-white/6%)] starting:scale-98 starting:opacity-0'
       >
         {activePost.banner ? (
-          <div className='aspect-16/10 w-full overflow-hidden border-b border-border/60 bg-muted/40'>
+          <div className='aspect-video w-full overflow-hidden border-b border-border/60 bg-muted/40'>
             <img
               key={activePost.banner}
               src={activePost.banner}
@@ -245,13 +245,8 @@ function PostPreviewOverlay({ ref }: { ref: Ref<PostPreviewController> }) {
             />
           </div>
         ) : null}
-        <div className='w-full space-y-1.5 p-3.5'>
+        <div className='flex w-full flex-col gap-1.5 px-3.5 py-3'>
           <p className='text-sm leading-snug font-medium text-foreground'>{activePost.title}</p>
-          <TimeDisplay
-            value={activePost.createdAt}
-            options={{ format: 'YYYY年MM月DD日' }}
-            className='block text-xs text-muted-foreground/75 tabular-nums'
-          />
           {previewDescription ? (
             <p className='line-clamp-3 text-xs leading-relaxed text-muted-foreground'>
               {previewDescription}
@@ -291,7 +286,7 @@ export function PostList() {
             search={{}}
             className='inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground'
           >
-            <Icon icon='lucide:x' className='size-3.5' />
+            <IconX className='size-3.5' />
             清除
           </Link>
         </div>
