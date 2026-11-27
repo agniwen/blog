@@ -5,16 +5,23 @@ import type React from 'react';
 
 import { cn } from '~/lib/utils';
 
+export const createPreviewCardHandle: typeof PreviewCardPrimitive.createHandle =
+  PreviewCardPrimitive.createHandle;
+
+export const PreviewCardCreateHandle: typeof PreviewCardPrimitive.createHandle =
+  PreviewCardPrimitive.createHandle;
+
 export const PreviewCard: typeof PreviewCardPrimitive.Root = PreviewCardPrimitive.Root;
 
-export function PreviewCardTrigger({
+export function PreviewCardTrigger<Payload = unknown>({
   ...props
-}: PreviewCardPrimitive.Trigger.Props): React.ReactElement {
+}: PreviewCardPrimitive.Trigger.Props<Payload>): React.ReactElement {
   return <PreviewCardPrimitive.Trigger data-slot='preview-card-trigger' {...props} />;
 }
 
 export function PreviewCardPopup({
   className,
+  positionerClassName,
   children,
   align = 'center',
   side = 'bottom',
@@ -27,6 +34,7 @@ export function PreviewCardPopup({
   side?: PreviewCardPrimitive.Positioner.Props['side'];
   sideOffset?: PreviewCardPrimitive.Positioner.Props['sideOffset'];
   anchor?: PreviewCardPrimitive.Positioner.Props['anchor'];
+  positionerClassName?: string;
   portalProps?: PreviewCardPrimitive.Portal.Props;
 }): React.ReactElement {
   return (
@@ -34,7 +42,7 @@ export function PreviewCardPopup({
       <PreviewCardPrimitive.Positioner
         align={align}
         anchor={anchor}
-        className='z-50'
+        className={cn('z-50', positionerClassName)}
         data-slot='preview-card-positioner'
         side={side}
         sideOffset={sideOffset}
