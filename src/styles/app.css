@@ -272,12 +272,17 @@
   background-color: var(--background);
 }
 
-/* Keep the portrait circular overall, with shallow, uneven paper fibers. */
+/* Homepage and article-nav portrait. Both stay circular so the shared view transition matches. */
 .home-avatar {
   position: relative;
   isolation: isolate;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: var(--muted);
   view-transition-name: blog-avatar;
-  filter: drop-shadow(0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--foreground) 10%, transparent),
+    0 1px 2px color-mix(in srgb, var(--foreground) 8%, transparent);
 }
 
 ::view-transition-group(blog-avatar) {
@@ -298,28 +303,11 @@
   }
 }
 
-.home-avatar::before,
-.home-avatar::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.home-avatar::before {
-  z-index: -1;
-  background: var(--muted);
-  mask: url('/paper-avatar-mask.svg') center / 100% 100% no-repeat;
-}
-
 .home-avatar img {
   display: block;
-  mask: url('/paper-avatar-mask.svg') center / 100% 100% no-repeat;
-}
-
-.home-avatar::after {
-  background: var(--border);
-  mask: url('/paper-avatar-outline.svg') center / 100% 100% no-repeat;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* Per-image alpha masks roughen only the edges, preserving image layout/cropping. */
@@ -561,41 +549,27 @@ a[href] :is(button, [role='button']) {
   cursor: pointer;
 }
 
-/* SSR sky placeholder matching HomeAsciiSky's initial frame and 9x11px cell grid. */
+/* Still frame of HomeAsciiSky: sampled cloud field, 9×11 gutters, and glyph stipple. */
 .home-ascii-sky-placeholder {
+  background-color: #7eb2dc;
   background-image:
-    repeating-linear-gradient(
-      to right,
-      rgb(249 248 245 / 0.92) 0 1px,
-      transparent 1px 9px
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      rgb(249 248 245 / 0.92) 0 1px,
-      transparent 1px 11px
-    ),
-    radial-gradient(ellipse 32% 38% at 24% 44%, rgb(254 254 251 / 0.72) 0%, transparent 72%),
-    radial-gradient(ellipse 26% 34% at 6% 72%, rgb(254 254 251 / 0.6) 0%, transparent 70%),
-    radial-gradient(ellipse 24% 32% at 92% 14%, rgb(254 254 251 / 0.56) 0%, transparent 72%),
-    radial-gradient(ellipse 28% 34% at 58% 48%, rgb(254 254 251 / 0.42) 0%, transparent 74%),
-    linear-gradient(to bottom, #7eb2dc 0%, #aed1eb 50%, #dfeaf2 100%);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='77' viewBox='0 0 72 77'%3E%3Cg fill='rgb(40 107 189)' fill-opacity='.34'%3E%3Ccircle cx='4.5' cy='6' r='.75'/%3E%3Ccircle cx='13.5' cy='6.6' r='.45'/%3E%3Crect x='20.8' y='5.65' width='3.4' height='.7'/%3E%3Ccircle cx='31.5' cy='4.4' r='.45'/%3E%3Ccircle cx='31.5' cy='7.4' r='.45'/%3E%3Ccircle cx='40.5' cy='6' r='.7'/%3E%3Crect x='47.8' y='5.65' width='3.4' height='.7'/%3E%3Ccircle cx='58.5' cy='6.7' r='.45'/%3E%3Ccircle cx='67.5' cy='6' r='.75'/%3E%3Ccircle cx='4.5' cy='15.4' r='.45'/%3E%3Ccircle cx='4.5' cy='18.4' r='.45'/%3E%3Crect x='11.8' y='16.65' width='3.4' height='.7'/%3E%3Ccircle cx='22.5' cy='17' r='.7'/%3E%3Ccircle cx='40.5' cy='15.4' r='.45'/%3E%3Ccircle cx='40.5' cy='18.4' r='.45'/%3E%3Crect x='47.8' y='16.65' width='3.4' height='.7'/%3E%3Ccircle cx='58.5' cy='17' r='.75'/%3E%3Ccircle cx='67.5' cy='17.6' r='.45'/%3E%3Ccircle cx='4.5' cy='28' r='.7'/%3E%3Ccircle cx='13.5' cy='28.6' r='.45'/%3E%3Crect x='20.8' y='27.65' width='3.4' height='.7'/%3E%3Ccircle cx='31.5' cy='26.4' r='.45'/%3E%3Ccircle cx='31.5' cy='29.4' r='.45'/%3E%3Ccircle cx='49.5' cy='28' r='.7'/%3E%3Crect x='56.8' y='27.65' width='3.4' height='.7'/%3E%3Ccircle cx='67.5' cy='28' r='.45'/%3E%3Crect x='2.8' y='38.65' width='3.4' height='.7'/%3E%3Ccircle cx='13.5' cy='39' r='.75'/%3E%3Ccircle cx='22.5' cy='37.4' r='.45'/%3E%3Ccircle cx='22.5' cy='40.4' r='.45'/%3E%3Ccircle cx='31.5' cy='39.6' r='.45'/%3E%3Crect x='38.8' y='38.65' width='3.4' height='.7'/%3E%3Ccircle cx='49.5' cy='39' r='.7'/%3E%3Ccircle cx='67.5' cy='37.4' r='.45'/%3E%3Ccircle cx='67.5' cy='40.4' r='.45'/%3E%3Ccircle cx='4.5' cy='50' r='.45'/%3E%3Crect x='11.8' y='49.65' width='3.4' height='.7'/%3E%3Ccircle cx='22.5' cy='50' r='.75'/%3E%3Ccircle cx='31.5' cy='50.6' r='.45'/%3E%3Ccircle cx='40.5' cy='48.4' r='.45'/%3E%3Ccircle cx='40.5' cy='51.4' r='.45'/%3E%3Crect x='47.8' y='49.65' width='3.4' height='.7'/%3E%3Ccircle cx='58.5' cy='50' r='.7'/%3E%3Ccircle cx='4.5' cy='61' r='.7'/%3E%3Ccircle cx='13.5' cy='59.4' r='.45'/%3E%3Ccircle cx='13.5' cy='62.4' r='.45'/%3E%3Crect x='20.8' y='60.65' width='3.4' height='.7'/%3E%3Ccircle cx='31.5' cy='61' r='.75'/%3E%3Ccircle cx='49.5' cy='61.6' r='.45'/%3E%3Crect x='56.8' y='60.65' width='3.4' height='.7'/%3E%3Ccircle cx='67.5' cy='61' r='.7'/%3E%3Crect x='2.8' y='71.65' width='3.4' height='.7'/%3E%3Ccircle cx='13.5' cy='72' r='.45'/%3E%3Ccircle cx='22.5' cy='70.4' r='.45'/%3E%3Ccircle cx='22.5' cy='73.4' r='.45'/%3E%3Ccircle cx='40.5' cy='72' r='.75'/%3E%3Crect x='47.8' y='71.65' width='3.4' height='.7'/%3E%3Ccircle cx='58.5' cy='72.6' r='.45'/%3E%3Ccircle cx='67.5' cy='70.4' r='.45'/%3E%3Ccircle cx='67.5' cy='73.4' r='.45'/%3E%3C/g%3E%3C/svg%3E"),
+    repeating-linear-gradient(to right, #fefefb 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(to bottom, #fefefb 0 1px, transparent 1px 11px),
+    url('/sky-placeholder-light.png');
+  background-repeat: repeat, repeat, repeat, no-repeat;
+  background-size:
+    72px 77px,
+    auto,
+    auto,
+    100% 100%;
 }
 
 .dark .home-ascii-sky-placeholder {
+  background-color: #1d2d3f;
   background-image:
-    repeating-linear-gradient(
-      to right,
-      rgb(38 38 38 / 0.92) 0 1px,
-      transparent 1px 9px
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      rgb(38 38 38 / 0.92) 0 1px,
-      transparent 1px 11px
-    ),
-    radial-gradient(ellipse 32% 38% at 24% 44%, rgb(68 93 120 / 0.55) 0%, transparent 72%),
-    radial-gradient(ellipse 26% 34% at 6% 72%, rgb(68 93 120 / 0.46) 0%, transparent 70%),
-    radial-gradient(ellipse 24% 32% at 92% 14%, rgb(68 93 120 / 0.44) 0%, transparent 72%),
-    radial-gradient(ellipse 28% 34% at 58% 48%, rgb(68 93 120 / 0.34) 0%, transparent 74%),
-    linear-gradient(to bottom, #1d2d3f 0%, #233344 50%, #262b30 100%);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='77' viewBox='0 0 72 77'%3E%3Cg fill='rgb(176 210 245)' fill-opacity='.38'%3E%3Ccircle cx='4.5' cy='6' r='.75'/%3E%3Ccircle cx='13.5' cy='6.6' r='.45'/%3E%3Crect x='20.8' y='5.65' width='3.4' height='.7'/%3E%3Ccircle cx='31.5' cy='4.4' r='.45'/%3E%3Ccircle cx='31.5' cy='7.4' r='.45'/%3E%3Ccircle cx='40.5' cy='6' r='.7'/%3E%3Crect x='47.8' y='5.65' width='3.4' height='.7'/%3E%3Ccircle cx='58.5' cy='6.7' r='.45'/%3E%3Ccircle cx='67.5' cy='6' r='.75'/%3E%3Ccircle cx='4.5' cy='15.4' r='.45'/%3E%3Ccircle cx='4.5' cy='18.4' r='.45'/%3E%3Crect x='11.8' y='16.65' width='3.4' height='.7'/%3E%3Ccircle cx='22.5' cy='17' r='.7'/%3E%3Ccircle cx='40.5' cy='15.4' r='.45'/%3E%3Ccircle cx='40.5' cy='18.4' r='.45'/%3E%3Crect x='47.8' y='16.65' width='3.4' height='.7'/%3E%3Ccircle cx='58.5' cy='17' r='.75'/%3E%3Ccircle cx='67.5' cy='17.6' r='.45'/%3E%3Ccircle cx='4.5' cy='28' r='.7'/%3E%3Ccircle cx='13.5' cy='28.6' r='.45'/%3E%3Crect x='20.8' y='27.65' width='3.4' height='.7'/%3E%3Ccircle cx='31.5' cy='26.4' r='.45'/%3E%3Ccircle cx='31.5' cy='29.4' r='.45'/%3E%3Ccircle cx='49.5' cy='28' r='.7'/%3E%3Crect x='56.8' y='27.65' width='3.4' height='.7'/%3E%3Ccircle cx='67.5' cy='28' r='.45'/%3E%3Crect x='2.8' y='38.65' width='3.4' height='.7'/%3E%3Ccircle cx='13.5' cy='39' r='.75'/%3E%3Ccircle cx='22.5' cy='37.4' r='.45'/%3E%3Ccircle cx='22.5' cy='40.4' r='.45'/%3E%3Ccircle cx='31.5' cy='39.6' r='.45'/%3E%3Crect x='38.8' y='38.65' width='3.4' height='.7'/%3E%3Ccircle cx='49.5' cy='39' r='.7'/%3E%3Ccircle cx='67.5' cy='37.4' r='.45'/%3E%3Ccircle cx='67.5' cy='40.4' r='.45'/%3E%3Ccircle cx='4.5' cy='50' r='.45'/%3E%3Crect x='11.8' y='49.65' width='3.4' height='.7'/%3E%3Ccircle cx='22.5' cy='50' r='.75'/%3E%3Ccircle cx='31.5' cy='50.6' r='.45'/%3E%3Ccircle cx='40.5' cy='48.4' r='.45'/%3E%3Ccircle cx='40.5' cy='51.4' r='.45'/%3E%3Crect x='47.8' y='49.65' width='3.4' height='.7'/%3E%3Ccircle cx='58.5' cy='50' r='.7'/%3E%3Ccircle cx='4.5' cy='61' r='.7'/%3E%3Ccircle cx='13.5' cy='59.4' r='.45'/%3E%3Ccircle cx='13.5' cy='62.4' r='.45'/%3E%3Crect x='20.8' y='60.65' width='3.4' height='.7'/%3E%3Ccircle cx='31.5' cy='61' r='.75'/%3E%3Ccircle cx='49.5' cy='61.6' r='.45'/%3E%3Crect x='56.8' y='60.65' width='3.4' height='.7'/%3E%3Ccircle cx='67.5' cy='61' r='.7'/%3E%3Crect x='2.8' y='71.65' width='3.4' height='.7'/%3E%3Ccircle cx='13.5' cy='72' r='.45'/%3E%3Ccircle cx='22.5' cy='70.4' r='.45'/%3E%3Ccircle cx='22.5' cy='73.4' r='.45'/%3E%3Ccircle cx='40.5' cy='72' r='.75'/%3E%3Crect x='47.8' y='71.65' width='3.4' height='.7'/%3E%3Ccircle cx='58.5' cy='72.6' r='.45'/%3E%3Ccircle cx='67.5' cy='70.4' r='.45'/%3E%3Ccircle cx='67.5' cy='73.4' r='.45'/%3E%3C/g%3E%3C/svg%3E"),
+    repeating-linear-gradient(to right, #1c1c1e 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(to bottom, #1c1c1e 0 1px, transparent 1px 11px),
+    url('/sky-placeholder-dark.png');
 }

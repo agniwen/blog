@@ -102,7 +102,7 @@ export function PostHeader({ title, postId }: { title?: string | null; postId?: 
                 <span className='home-avatar size-6 transition-[opacity,transform] duration-200 group-hover:scale-75 group-hover:opacity-0 group-focus-visible:scale-75 group-focus-visible:opacity-0 group-active:scale-100 group-active:opacity-100 motion-reduce:transition-none'>
                   <img
                     src={clientEnv.NEXT_PUBLIC_AVATAR_URL}
-                    className='pointer-events-none size-full shrink-0 rounded-full object-contain'
+                    className='pointer-events-none size-full shrink-0 object-cover'
                     alt='avatar'
                   />
                 </span>

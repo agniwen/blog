@@ -59,7 +59,7 @@ function Home() {
           <div className='home-avatar size-18'>
             <img
               src={clientEnv.NEXT_PUBLIC_AVATAR_URL}
-              className='pointer-events-none size-full shrink-0 rounded-full object-contain'
+              className='pointer-events-none size-full shrink-0 object-cover'
               alt='avatar'
             />
           </div>
