@@ -1,8 +1,8 @@
 import { clientEnv } from '~/lib/client-env';
 
 /** 全站默认标题、简介、主域名及标准 OG 图尺寸，供页面 head、RSS 与 OG 生成共享。 */
-export const SITE_TITLE = "Wen's Blog";
-export const SITE_DESCRIPTION = '总有一天，我会在这里写下些什么...';
+export const SITE_TITLE = 'wen';
+export const SITE_DESCRIPTION = '如果一个想法够有趣，就把它做出来；做不出来，就写下来。';
 export const SITE_DOMAIN = 'akumanoko.com';
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;

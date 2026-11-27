@@ -7,7 +7,7 @@ import { cn } from '~/lib/utils';
 const socials = [
   {
     name: 'Twitter',
-    url: 'https://twitter.com/wenhouman',
+    url: 'https://x.com/agniwen',
     icon: <Icon className='size-5' icon='ri:twitter-x-fill' />,
   },
   {
@@ -34,7 +34,7 @@ const socials = [
 
 export function Social({ className }: { className?: string }) {
   return (
-    <div className={cn('flex h-8 items-center space-x-4', className)}>
+    <div className={cn('-ml-1.5 flex h-8 items-center space-x-4', className)}>
       <AnimatePresence>
         {socials.map((s) => {
           return (

@@ -5,15 +5,9 @@ export function PostListLoader() {
     <div aria-hidden='true' className='divide-y divide-border/50'>
       {Array.from({ length: 4 }).map((_, index) => (
         <div key={index} className='py-3.5 first:pt-2.5 last:pb-2.5'>
-          <div className='space-y-2.5'>
-            <div className='flex items-baseline justify-between gap-4'>
-              <Skeleton className='h-5 w-2/5 rounded-md' />
-              <Skeleton className='h-3.5 w-24 shrink-0 rounded-md' />
-            </div>
-            <div className='space-y-1.5'>
-              <Skeleton className='h-3.5 w-full rounded-md' />
-              <Skeleton className='h-3.5 w-3/4 rounded-md' />
-            </div>
+          <div className='flex items-baseline justify-between gap-4'>
+            <Skeleton className='h-5 w-2/5 rounded-md' />
+            <Skeleton className='h-3.5 w-24 shrink-0 rounded-md' />
           </div>
         </div>
       ))}

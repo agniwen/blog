@@ -1,5 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query';
 import { Icon } from '@iconify/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
 import { Button } from '~/components/ui/button';
@@ -89,14 +89,7 @@ export function CommentsInput({ id, replyTo, onCancelReply }: CommentsInputProps
             />
             <InputGroupAddon align='block-end'>
               <Separator className='flex-1 bg-transparent' orientation='vertical' />
-              <Button
-                size={'xs'}
-                type='submit'
-                aria-label='发送评论'
-                loading={isPending}
-                variant='default'
-                shape='paper'
-              >
+              <Button type='submit' aria-label='发送评论' loading={isPending} variant='secondary'>
                 <Icon icon='lucide:arrow-up' className='size-4' />发 表
               </Button>
             </InputGroupAddon>

@@ -15,10 +15,10 @@ export function HomeSkeleton() {
       role='status'
       aria-label='正在加载首页'
     >
-      <div className='flex flex-col items-center' aria-hidden='true'>
+      <div className='flex flex-col items-start' aria-hidden='true'>
         <Skeleton className='size-18 rounded-full' />
         <Skeleton className='mt-5 h-7 w-28 rounded-md' />
-        <Skeleton className='mt-2 h-5 w-52 rounded-md' />
+        <Skeleton className='mt-2 h-5 w-72 rounded-md' />
         <div className='mt-5 flex h-8 space-x-5'>
           {Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className='size-8 rounded-md' />
@@ -251,7 +251,9 @@ export function EditorSkeleton() {
           {[false, false, false, true, true, false].map((multiline, i) => (
             <div key={i} className='flex flex-col gap-2'>
               <Skeleton className='h-4 w-20 rounded-sm' />
-              <Skeleton className={multiline ? 'h-20 w-full rounded-lg' : 'h-9 w-full rounded-lg'} />
+              <Skeleton
+                className={multiline ? 'h-20 w-full rounded-lg' : 'h-9 w-full rounded-lg'}
+              />
             </div>
           ))}
         </div>

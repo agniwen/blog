@@ -347,8 +347,39 @@
 }
 
 .button-paper[data-variant='ghost'] {
-  --paper-fill: var(--popover);
-  --paper-hover: color-mix(in srgb, var(--accent) 70%, var(--popover));
+  --paper-fill: transparent;
+  --paper-hover: color-mix(in srgb, var(--accent) 60%, var(--popover));
+  filter: none;
+  transition:
+    color 160ms ease,
+    filter 160ms ease;
+}
+
+.button-paper[data-variant='ghost']::before {
+  opacity: 0;
+  background: var(--paper-hover);
+  transition:
+    opacity 160ms ease,
+    background-color 160ms ease;
+}
+
+.button-paper[data-variant='ghost']:not(:disabled):is(
+    :hover,
+    :active,
+    [data-pressed],
+    :focus-visible
+  ) {
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--foreground) 10%, transparent));
+}
+
+.button-paper[data-variant='ghost']:not(:disabled):is(
+    :hover,
+    :active,
+    [data-pressed],
+    :focus-visible
+  )::before {
+  opacity: 1;
+  background: var(--paper-hover);
 }
 
 .button-paper::before {
@@ -481,6 +512,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .button-paper[data-variant='ghost'],
   .button-paper::before {
     transition: none;
   }
