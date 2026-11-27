@@ -446,6 +446,7 @@ export function HomeAsciiSky() {
 
     resize();
     drawFrame(0);
+    container.dataset.ready = 'true';
     if (!prefersReducedMotion && isVisible) {
       startLoop();
     }
@@ -464,7 +465,7 @@ export function HomeAsciiSky() {
     <div
       ref={containerRef}
       aria-hidden='true'
-      className='pointer-events-none absolute inset-x-0 top-0 z-0 h-[280px] overflow-hidden select-none sm:h-[350px]'
+      className='group pointer-events-none absolute inset-x-0 top-0 z-0 h-[280px] overflow-hidden select-none sm:h-[350px]'
       style={{
         maskImage:
           'linear-gradient(to bottom, black 0%, black 38%, rgb(0 0 0 / 0.55) 68%, transparent 100%)',
@@ -472,7 +473,11 @@ export function HomeAsciiSky() {
           'linear-gradient(to bottom, black 0%, black 38%, rgb(0 0 0 / 0.55) 68%, transparent 100%)',
       }}
     >
-      <canvas ref={canvasRef} className='block size-full' />
+      <div className='home-ascii-sky-placeholder absolute inset-0 opacity-100 transition-opacity duration-300 ease-out group-data-[ready=true]:opacity-0 motion-reduce:transition-none' />
+      <canvas
+        ref={canvasRef}
+        className='relative block size-full opacity-0 transition-opacity duration-300 ease-out group-data-[ready=true]:opacity-100 motion-reduce:transition-none'
+      />
     </div>
   );
 }
