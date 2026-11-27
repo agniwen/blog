@@ -25,7 +25,7 @@ export function HomeSkeleton() {
           ))}
         </div>
       </div>
-      <div className='mt-10 sm:mt-12'>
+      <div className='mt-5 sm:mt-6'>
         <PostListLoader />
       </div>
     </div>

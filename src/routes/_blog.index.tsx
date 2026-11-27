@@ -66,7 +66,7 @@ function Home() {
         <p className='mt-2 text-sm leading-relaxed text-muted-foreground'>{SITE_DESCRIPTION}</p>
         <Social className='mt-5' />
       </header>
-      <section aria-label='文章列表' className='mt-10 sm:mt-12'>
+      <section aria-label='文章列表' className='mt-5 sm:mt-6'>
         <PostList />
       </section>
     </PageContainer>
