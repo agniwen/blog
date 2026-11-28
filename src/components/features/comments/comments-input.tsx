@@ -89,7 +89,13 @@ export function CommentsInput({ id, replyTo, onCancelReply }: CommentsInputProps
             />
             <InputGroupAddon align='block-end'>
               <Separator className='flex-1 bg-transparent' orientation='vertical' />
-              <Button type='submit' aria-label='发送评论' loading={isPending} variant='secondary'>
+              <Button
+                type='submit'
+                size='sm'
+                aria-label='发送评论'
+                loading={isPending}
+                variant='default'
+              >
                 <IconArrowUp className='size-4' />发 表
               </Button>
             </InputGroupAddon>

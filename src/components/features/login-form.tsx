@@ -129,7 +129,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
         <Field>
           <Button
             className='w-full'
-            variant='secondary'
+            variant='default'
             type='button'
             loading={isSigningIn}
             onClick={googleSignIn}

@@ -54,11 +54,11 @@ const DEFAULT_LIGHT_PALETTE: BannerPalette = {
   bgRgb: [250, 249, 245],
   bgHex: '#faf9f5',
   isDark: false,
-  titleColor: '#0b0d0b',
+  titleColor: '#10202c',
   excerptColor: '#595959',
-  brandColor: '#2b2e2b',
-  metaColor: '#7a7d78',
-  dotColor: '#a3a6a1',
+  brandColor: '#1c3a52',
+  metaColor: '#747d86',
+  dotColor: '#9aa3ab',
   avatarRing: 'rgba(24, 24, 27, 0.08)',
 };
 
@@ -487,7 +487,7 @@ export async function renderHomeOgImage(): Promise<Response> {
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: '#f4f2eb',
-            boxShadow: '0 10px 28px rgba(11, 13, 11, 0.10)',
+            boxShadow: '0 10px 28px rgba(16, 32, 44, 0.10)',
             flexShrink: 0,
           }}
         >
@@ -500,7 +500,7 @@ export async function renderHomeOgImage(): Promise<Response> {
               style={{ width: 124, height: 124, objectFit: 'cover', borderRadius: 9999 }}
             />
           ) : (
-            <span style={{ fontSize: 48, fontWeight: 500, color: '#2f372f' }}>W</span>
+            <span style={{ fontSize: 48, fontWeight: 500, color: '#1c3a52' }}>W</span>
           )}
         </div>
 
@@ -515,7 +515,7 @@ export async function renderHomeOgImage(): Promise<Response> {
             style={{
               fontSize: 58,
               fontWeight: 500,
-              color: '#0b0d0b',
+              color: '#10202c',
               letterSpacing: '-0.03em',
               lineHeight: 1.1,
             }}

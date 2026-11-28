@@ -4,7 +4,7 @@ Color reference: [Amp's signed-in application](https://ampcode.com/), inspected 
 
 Scope: adapt colors, corner radii, borders and restrained shadows. The homepage renders a centered profile header above a compact (`max-w-[30rem]`) editorial article list with baseline-aligned titles and dates; preserve existing layout, content order, copy, typography sizes and spacing elsewhere. Do not add navigation, archive grouping, or move the article cover/header without an explicit request.
 
-Keep the original paper surfaces: light background/popover `#fefefb`, public paper/sidebar/cards `#f9f8f5`; dark background `#1c1c1e` and surfaces `#262626`. Borders retain their original 10% neutral ink/white alpha. Amp's app supplies ink `#0b0d0b` / light text `#f6fff5`, inverse primary buttons (95% foreground mixed with background), secondary gray-green `#d6dcd6` / `#2f372f`, muted text `#595959` / `#9ca49c`, and subtle neutral hover fills. Links use blue `#286bbd` / `#6ca0e0`; focus rings use foreground. Preserve the noise texture and layout.
+Keep the original paper surfaces: light background/popover `#fefefb`, public paper/sidebar/cards `#f9f8f5`; dark background `#1c1c1e` and surfaces `#262626`. Borders retain their original 10% neutral ink/white alpha. Ink is cool blue-black `#10202c` / sky-tinted text `#e7f3fb`. Light primary buttons use the pale sky wash `#d7e6f2` with navy labels `#1c3a52`. Dark primary is `#8ec8e8` with `#0c2434`. Light secondary is `#f1f2ef`, a neutral step darker than the ghost hover wash. Dark secondary is `#243848`. Muted text is `#595959` / `#9aafc0`, and subtle neutral hover fills. Links use blue `#286bbd` / `#6ca0e0`; focus rings use foreground. Preserve the noise texture and layout.
 
 Use 6px corners for buttons, 8px for cards, 12px for dialogs and a 16px cap for large media. Keep circular avatars. Borders use a 10% neutral ink alpha; shadows are low-opacity and soft. No heavy avatar drop shadow.
 
@@ -22,7 +22,7 @@ Do not introduce document-wide font/background resets from editor stylesheets. R
 
 Keep the original frosted/noise background, including its 5% light-mode opacity and 2% dark-mode opacity. Content links use the theme-specific blue tokens; comment surfaces and selection colors follow the semantic theme.
 
-Primary buttons and sidebar primary controls use the same inverse neutral fill and background-colored labels. Links use the separate readable blue token.
+Primary buttons (the `default` variant), including Google sign-in and comment publish, use the pale sky wash in light mode (`#d7e6f2` / `#1c3a52`) and `#8ec8e8` / `#0c2434` in dark mode. Sidebar primary controls share that fill. Links use the separate readable blue token.
 
 Form controls (Input, Textarea, Select, NativeSelect, Combobox, InputGroup and OTP groups) use the same `rounded-lg` corner token (8px). Avoid pill-shaped `rounded-full` / `rounded-4xl` for form fields; matching field skeletons use the same radius.
 
