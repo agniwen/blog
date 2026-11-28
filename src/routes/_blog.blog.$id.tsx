@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router';
 
 import { PostContent } from '~/components/features/blog/post-content';
@@ -5,12 +6,7 @@ import { PostHeader } from '~/components/features/blog/post-header';
 import { Comments } from '~/components/features/comments';
 import { BlogPostSkeleton } from '~/components/features/page-skeletons';
 import { PageContainer } from '~/components/ui/page-container';
-import {
-  fetchPublicComments,
-  fetchPublicPost,
-  type PostDetail,
-  type PostSummary,
-} from '~/lib/api';
+import { fetchPublicComments, fetchPublicPost, type PostDetail, type PostSummary } from '~/lib/api';
 import {
   buildPostOgUrl,
   getSiteOrigin,
@@ -24,7 +20,7 @@ export const Route = createFileRoute('/_blog/blog/$id')({
   // 三级数据回退策略，兼顾秒开体验与 SSR 直达 404 状态码：
   // 1. 已有完整详情缓存时直接返回并后台预取评论；
   // 2. 从首页跳入且命中 `post-list` 摘要时立即放行渲染，同时异步预取正文与评论；
-  // 3. 首次直达文章 URL 时阻塞查询，未找到则抛出真实 404。
+  // 3. 首次直达文章 URL 时等待正文；评论同时开始拉，未找到则抛出真实 404。
   loader: async ({ context, params }) => {
     const cachedDetail = context.queryClient.getQueryData<PostDetail>(['post-detail', params.id]);
     if (cachedDetail) {
@@ -50,17 +46,26 @@ export const Route = createFileRoute('/_blog/blog/$id')({
       return cachedSummary;
     }
 
+    const comments = context.queryClient.prefetchQuery({
+      queryKey: ['comments', params.id],
+      queryFn: () => fetchPublicComments(params.id),
+    });
     const post = await context.queryClient.query({
       queryKey: ['post-detail', params.id],
       queryFn: () => fetchPublicPost(params.id),
     });
-    if (!post) throw notFound();
-    await context.queryClient.query({
-      queryKey: ['comments', params.id],
-      queryFn: () => fetchPublicComments(params.id),
-    });
+    if (!post) {
+      void comments.catch(() => undefined);
+      throw notFound();
+    }
+    await comments.catch(() => undefined);
     return post;
   },
+  headers: ({ loaderData }) => ({
+    'Cache-Control': loaderData
+      ? 'public, max-age=0, s-maxage=60, stale-while-revalidate=300'
+      : 'private, no-store',
+  }),
   head: ({ loaderData, params }) => {
     const origin = getSiteOrigin();
     const postTitle = loaderData?.title || SITE_TITLE;
@@ -110,11 +115,17 @@ export const Route = createFileRoute('/_blog/blog/$id')({
 function BlogPage() {
   const { id } = Route.useParams();
   const post = Route.useLoaderData();
+  const { data: detail } = useQuery({
+    queryKey: ['post-detail', id],
+    queryFn: () => fetchPublicPost(id),
+  });
+  const articleReady = detail?.htmlContent != null;
+
   return (
     <PageContainer className='article-container pt-20 sm:pt-24'>
       <PostHeader title={post.title ?? SITE_TITLE} postId={id} />
       <PostContent id={id} />
-      <Comments id={id} />
+      {articleReady ? <Comments id={id} /> : null}
     </PageContainer>
   );
 }

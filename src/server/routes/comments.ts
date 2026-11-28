@@ -44,12 +44,16 @@ export const commentsRouter = factory
       where: { id: postId, published: true },
       columns: { id: true },
     });
-    if (!post) return c.json(success([]));
+    if (!post) {
+      c.header('Cache-Control', 'private, no-store');
+      return c.json(success([]));
+    }
     const list = await c.var.db.query.comments.findMany({
       where: { postId },
       orderBy: { createdAt: 'asc' },
       with: { user: { columns: { id: true, name: true, image: true, role: true } } },
     });
+    c.header('Cache-Control', 'public, max-age=30, s-maxage=60, stale-while-revalidate=300');
     return c.json(success(list));
   })
   // 登录用户发表评论或回复

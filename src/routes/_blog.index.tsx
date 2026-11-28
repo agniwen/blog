@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { Suspense } from 'react';
 import { z } from 'zod';
 
 import { HomeAsciiSky } from '~/components/features/blog/home-ascii-sky';
 import { PostList } from '~/components/features/blog/post-list';
 import { HomeSkeleton } from '~/components/features/page-skeletons';
+import { PostListLoader } from '~/components/features/post-loader';
 import { Social } from '~/components/features/social';
 import { PageContainer } from '~/components/ui/page-container';
 import { fetchPublicPosts } from '~/lib/api';
@@ -21,8 +23,16 @@ export const Route = createFileRoute('/_blog/')({
   validateSearch: z.object({
     tag: z.string().optional(),
   }),
-  loader: ({ context }) =>
-    context.queryClient.query({ queryKey: ['post-list'], queryFn: () => fetchPublicPosts() }),
+  // 列表在组件里用 Suspense 接上：文档先返回头像和 slogan，列表骨架随后被正文替换。
+  loader: ({ context }) => {
+    void context.queryClient.prefetchQuery({
+      queryKey: ['post-list'],
+      queryFn: () => fetchPublicPosts(),
+    });
+  },
+  headers: () => ({
+    'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=300',
+  }),
   head: () => {
     const origin = getSiteOrigin();
     const ogImage = buildHomeOgUrl(origin);
@@ -70,7 +80,15 @@ function Home() {
           <Social className='mt-2' />
         </header>
         <section aria-label='文章列表' className='mt-5 sm:mt-6'>
-          <PostList />
+          <Suspense
+            fallback={
+              <div role='status' aria-label='正在加载文章'>
+                <PostListLoader />
+              </div>
+            }
+          >
+            <PostList />
+          </Suspense>
         </section>
       </PageContainer>
     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { Skeleton } from '~/components/ui/skeleton';
 import { paperImageStyle } from '~/lib/paper-image-style';
 import { cn } from '~/lib/utils';
 
@@ -157,10 +158,12 @@ function fillWetField(
 export function BannerBloom({ src, alt, seed }: { src: string; alt: string; seed: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [seenSrc, setSeenSrc] = useState(src);
+  const [imageReady, setImageReady] = useState(false);
   const [settled, setSettled] = useState(false);
   const [shadowReady, setShadowReady] = useState(true);
   if (src !== seenSrc) {
     setSeenSrc(src);
+    setImageReady(false);
     setSettled(false);
     setShadowReady(false);
   }
@@ -267,11 +270,20 @@ export function BannerBloom({ src, alt, seed }: { src: string; alt: string; seed
     const begin = () => {
       if (started || stopped || image.naturalWidth === 0 || canvas.clientWidth === 0) return;
       started = true;
+      setImageReady(true);
       play();
     };
 
-    if (image.complete) begin();
-    else image.addEventListener('load', begin, { once: true });
+    const fail = () => {
+      if (!stopped) setImageReady(true);
+    };
+    if (image.complete) {
+      if (image.naturalWidth > 0) begin();
+      else fail();
+    } else {
+      image.addEventListener('load', begin, { once: true });
+      image.addEventListener('error', fail, { once: true });
+    }
 
     const observer = new ResizeObserver(() => {
       if (!started) begin();
@@ -283,19 +295,24 @@ export function BannerBloom({ src, alt, seed }: { src: string; alt: string; seed
       stopped = true;
       cancelAnimationFrame(frame);
       image.removeEventListener('load', begin);
+      image.removeEventListener('error', fail);
       observer.disconnect();
     };
   }, [src]);
 
   return (
-    <div className='pointer-events-none relative mb-8 aspect-16/10 bg-background *:select-none'>
+    <div
+      className='pointer-events-none relative mb-8 aspect-16/10 bg-background *:select-none'
+      aria-busy={!imageReady}
+    >
       <canvas
         ref={canvasRef}
         className='paper-image absolute inset-0 z-2 h-full w-full'
         style={paperImageStyle(seed)}
         role='img'
-        aria-label={alt}
+        aria-label={imageReady ? alt : undefined}
       />
+      {imageReady ? null : <Skeleton className='absolute inset-0 z-3 h-full w-full rounded-none' />}
       <img
         className={cn(
           'pointer-events-none absolute top-10 left-0 z-1 aspect-16/10 rounded-xs object-cover opacity-0 blur-3xl',

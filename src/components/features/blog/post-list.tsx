@@ -1,5 +1,5 @@
 import { IconX } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useSearch } from '@tanstack/react-router';
 import {
   type Ref,
@@ -261,17 +261,15 @@ function PostPreviewOverlay({ ref }: { ref: Ref<PostPreviewController> }) {
 
 export function PostList() {
   const { tag } = useSearch({ from: '/_blog/' });
-  const { data } = useQuery({
+  const { data } = useSuspenseQuery({
     queryKey: ['post-list'],
-    async queryFn() {
-      return fetchPublicPosts();
-    },
+    queryFn: () => fetchPublicPosts(),
   });
 
   const previewRef = useRef<PostPreviewController>(null);
 
   const filteredPosts = tag
-    ? data?.filter((post) => post.tags?.some((item) => item.name === tag))
+    ? data.filter((post) => post.tags?.some((item) => item.name === tag))
     : data;
 
   return (

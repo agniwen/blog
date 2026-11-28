@@ -36,6 +36,7 @@ export const postsRouter = factory
         tags: { columns: { id: true, name: true } },
       },
     });
+    c.header('Cache-Control', 'public, max-age=30, s-maxage=60, stale-while-revalidate=300');
     return c.json(success(list));
   })
   // 公开文章详情查询：仅返回已发布文章正文，草稿或缺失返回 404
@@ -52,6 +53,7 @@ export const postsRouter = factory
       c.header('Cache-Control', 'private, no-store');
       return c.json(fail('Post not found'), 404);
     }
+    c.header('Cache-Control', 'public, max-age=30, s-maxage=60, stale-while-revalidate=300');
     return c.json(success(post));
   })
   // 创建文章
@@ -66,9 +68,7 @@ export const postsRouter = factory
           .insert(posts)
           .values({ id, ...data })
           .returning(),
-        c.var.db
-          .insert(postTags)
-          .values(uniqueTagIds.map((tagId) => ({ postId: id, tagId }))),
+        c.var.db.insert(postTags).values(uniqueTagIds.map((tagId) => ({ postId: id, tagId }))),
       ]);
       return c.json(success(res));
     }
@@ -95,9 +95,7 @@ export const postsRouter = factory
         const [[res]] = await c.var.db.batch([
           updateQuery,
           deleteTagsQuery,
-          c.var.db
-            .insert(postTags)
-            .values(uniqueTagIds.map((tagId) => ({ postId: id, tagId }))),
+          c.var.db.insert(postTags).values(uniqueTagIds.map((tagId) => ({ postId: id, tagId }))),
         ]);
         return c.json(success(res));
       }
