@@ -312,6 +312,7 @@
 
 /* Per-image alpha masks roughen only the edges, preserving image layout/cropping. */
 .post-content img.paper-image,
+.post-content canvas.paper-image,
 .post-content .tiptap.ProseMirror img.paper-image {
   border-radius: 0;
   mask: var(--paper-image-mask) center / 100% 100% no-repeat;

@@ -67,7 +67,7 @@ function Home() {
             Hi, I&apos;m {SITE_TITLE}
           </h1>
           <p className='mt-2 text-sm leading-relaxed text-muted-foreground'>{SITE_DESCRIPTION}</p>
-          <Social className='mt-5' />
+          <Social className='mt-2' />
         </header>
         <section aria-label='文章列表' className='mt-5 sm:mt-6'>
           <PostList />

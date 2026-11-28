@@ -14,7 +14,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react';
 
-import { PaperImage } from '~/components/features/blog/paper-image';
+import { BannerBloom } from '~/components/features/blog/banner-bloom';
 import { PostBodyLoader } from '~/components/features/post-loader';
 import { Badge } from '~/components/ui/badge';
 import { Sheet, SheetHeader, SheetPanel, SheetPopup, SheetTitle } from '~/components/ui/sheet';
@@ -106,19 +106,11 @@ export function PostContent({ id }: { id: string }) {
   return (
     <div className='post-content relative'>
       {data?.banner ? (
-        <div className='pointer-events-none relative mb-8 aspect-16/10 *:select-none'>
-          <PaperImage
-            seed={`banner:${data.id}:${data.banner}`}
-            className='relative z-2 aspect-16/10 object-cover'
-            src={data.banner}
-            alt={data.title ?? ''}
-          />
-          <img
-            className='pointer-events-none absolute top-10 left-0 z-1 aspect-16/10 rounded-xs object-cover opacity-30 blur-3xl'
-            src={data.banner}
-            alt={data.title ?? ''}
-          />
-        </div>
+        <BannerBloom
+          src={data.banner}
+          alt={data.title ?? ''}
+          seed={`banner:${data.id}:${data.banner}`}
+        />
       ) : null}
 
       <div className='mt-12 mb-8'>

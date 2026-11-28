@@ -19,7 +19,7 @@ export function HomeSkeleton() {
         <Skeleton className='size-18 rounded-full' />
         <Skeleton className='mt-5 h-7 w-28 rounded-md' />
         <Skeleton className='mt-2 h-5 w-72 rounded-md' />
-        <div className='mt-5 flex h-8 space-x-5'>
+        <div className='mt-2 flex h-8 space-x-5'>
           {Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className='size-8 rounded-md' />
           ))}
