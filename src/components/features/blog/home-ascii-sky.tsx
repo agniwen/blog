@@ -310,10 +310,10 @@ export function HomeAsciiSky() {
           'linear-gradient(to bottom, black 0%, black 38%, rgb(0 0 0 / 0.55) 68%, transparent 100%)',
       }}
     >
-      <div className='home-ascii-sky-placeholder absolute inset-0 opacity-100 transition-opacity duration-300 ease-out group-data-[ready=true]:opacity-0 motion-reduce:transition-none' />
+      <div className='home-ascii-sky-placeholder absolute inset-0' />
       <canvas
         ref={canvasRef}
-        className='relative block size-full opacity-0 transition-opacity duration-300 ease-out group-data-[ready=true]:opacity-100 motion-reduce:transition-none'
+        className='relative block size-full bg-background opacity-0 transition-opacity duration-300 ease-out group-data-[ready=true]:opacity-100 motion-reduce:transition-none'
       />
     </div>
   );
