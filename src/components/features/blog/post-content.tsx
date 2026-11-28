@@ -55,7 +55,7 @@ export function PostContent({ id }: { id: string }) {
     .getQueryData<PostSummary[]>(['post-list'])
     ?.find((item) => item.id === id);
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, isPlaceholderData } = useQuery({
     queryKey: ['post-detail', id],
     queryFn() {
       return fetchPublicPost(id);
@@ -70,8 +70,8 @@ export function PostContent({ id }: { id: string }) {
     queryFn: () => fetchPublicPosts(),
   });
 
-  const isBodyPending = isPending || data?.htmlContent === null;
-  const showBodySkeleton = useDelayedPending(isBodyPending && !data?.htmlContent);
+  const isBodyPending = isPending || isPlaceholderData;
+  const showBodySkeleton = useDelayedPending(isBodyPending);
 
   const { tocItems, activeId, lightboxImage, closeLightbox } = useArticleEnhancements(
     bodyRef,
@@ -107,6 +107,7 @@ export function PostContent({ id }: { id: string }) {
     <div className='post-content relative'>
       {data?.banner ? (
         <BannerBloom
+          key={data.banner}
           src={data.banner}
           alt={data.title ?? ''}
           seed={`banner:${data.id}:${data.banner}`}

@@ -16,9 +16,16 @@ async function request(path, expectedStatus, init = {}) {
 test.skipIf(!baseUrl)(
   'HTTP smoke checks against TEST_BASE_URL',
   async () => {
-    const home = await (await request('/', 200)).text();
+    const [homeResponse, postsResponse] = await Promise.all([
+      request('/', 200),
+      request('/api/posts/public', 200),
+    ]);
+    assert.match(homeResponse.headers.get('cache-control'), /\bno-store\b/);
+    assert.match(postsResponse.headers.get('cache-control'), /\bno-store\b/);
+    const home = await homeResponse.text();
+    const { data: posts } = await postsResponse.json();
     assert.match(home, /<html[^>]*\blang="zh-CN"/);
-    assert.match(home, /<title>Wen(?:&#x27;|&#39;|')s Blog<\/title>/);
+    assert.match(home, /<title>wen<\/title>/);
     assert.match(home, /property="og:image"/);
     assert.match(home, /name="twitter:card"\s+content="summary_large_image"/);
     assert.match(home, /rel="canonical"/);
@@ -35,33 +42,49 @@ test.skipIf(!baseUrl)(
     assert.equal(cssResponse.status, 200);
     assert.match(cssResponse.headers.get('content-type'), /text\/css/);
     assert.match(await cssResponse.text(), /--color-background/);
-    assert.match(home, /Wen(?:&#x27;|&#39;|')s Blog/);
+    assert.match(home, /<h1\b[^>]*>Hi, I(?:&#x27;|&#39;|&apos;|')m (?:<!-- -->)?wen<\/h1>/);
     assert.match(home, /home-avatar/);
-    assert.match(home, /button-paper/);
+    assert.match(home, /<a\b[^>]*href="\/rss\.xml"[^>]*aria-label="RSS"/);
     const blogRedirect = await request('/blog', 308);
     assert.equal(blogRedirect.headers.get('location'), '/');
     const ids = [
       ...new Set([...home.matchAll(/href="\/blog\/([^"?#]+)"/g)].map((match) => match[1])),
     ];
+    assert.deepEqual(
+      ids,
+      posts.map((post) => encodeURIComponent(post.id)),
+      'SSR must stream the published post list',
+    );
     const sitemap = await request('/sitemap.xml', 200);
     assert.match(sitemap.headers.get('content-type'), /application\/xml/);
     const xml = await sitemap.text();
     assert.doesNotMatch(xml, /\/blog<\/loc>/);
     assert.doesNotMatch(xml, /\/studio/);
-    for (const id of ids) {
-      const article = await (await request(`/blog/${id}`, 200)).text();
+    for (const { id, banner } of posts) {
+      const encodedId = encodeURIComponent(id);
+      const [articleResponse, postResponse, commentsResponse] = await Promise.all([
+        request(`/blog/${encodedId}`, 200),
+        request(`/api/posts/public/${encodedId}`, 200),
+        request(`/api/comments/public/${encodedId}`, 200),
+      ]);
+      for (const response of [articleResponse, postResponse, commentsResponse]) {
+        assert.match(response.headers.get('cache-control'), /\bno-store\b/);
+      }
+      const article = await articleResponse.text();
       assert.match(article, /<h1[^>]*>[^<]+<\/h1>/);
       assert.match(article, /<meta name="description" content="/);
       assert.match(article, /property="og:type"\s+content="article"/);
       assert.match(
         article,
-        new RegExp(`property="og:image"[^>]*content="[^"]*\\/og\\?id=${encodeURIComponent(id)}`),
+        new RegExp(`property="og:image"[^>]*content="[^"]*\\/og\\?id=${encodedId}`),
       );
       assert.match(article, /name="twitter:card"\s+content="summary_large_image"/);
       assert.match(article, /rel="canonical"/);
       assert.match(article, /class="tiptap ProseMirror"/);
       assert.match(article, /article-sticky-header/);
-      assert.ok(xml.includes(`/blog/${id}</loc>`), 'published article missing from sitemap');
+      assert.match(article, /name="comment"/);
+      if (banner) assert.match(article, /<img\b[^>]*data-slot="article-banner-image"/);
+      assert.ok(xml.includes(`/blog/${encodedId}</loc>`), 'published article missing from sitemap');
     }
     const homeOg = await request('/og', 200);
     assert.match(homeOg.headers.get('content-type'), /image\/png/);
@@ -135,7 +158,8 @@ test.skipIf(!baseUrl)(
       method: 'POST',
       headers: { Origin: 'https://other.invalid' },
     });
-    await request('/favicon.ico', 200);
+    assert.match(home, /href="\/favicon\.svg"/);
+    await request('/favicon.svg', 200);
     console.log(`All smoke checks passed (${ids.length} published articles).`);
   },
   60000,

@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, notFound } from '@tanstack/react-router';
+import { Await, createFileRoute, notFound } from '@tanstack/react-router';
 
 import { PostContent } from '~/components/features/blog/post-content';
 import { PostHeader } from '~/components/features/blog/post-header';
 import { Comments } from '~/components/features/comments';
 import { BlogPostSkeleton } from '~/components/features/page-skeletons';
+import { CommentsLoader } from '~/components/features/post-loader';
 import { PageContainer } from '~/components/ui/page-container';
 import { fetchPublicComments, fetchPublicPost, type PostDetail, type PostSummary } from '~/lib/api';
 import {
@@ -20,15 +21,15 @@ export const Route = createFileRoute('/_blog/blog/$id')({
   // 三级数据回退策略，兼顾秒开体验与 SSR 直达 404 状态码：
   // 1. 已有完整详情缓存时直接返回并后台预取评论；
   // 2. 从首页跳入且命中 `post-list` 摘要时立即放行渲染，同时异步预取正文与评论；
-  // 3. 首次直达文章 URL 时等待正文；评论同时开始拉，未找到则抛出真实 404。
+  // 3. 首次直达仅等待正文来判断 404，评论随后通过独立边界流式输出。
   loader: async ({ context, params }) => {
+    const commentsReady = context.queryClient.prefetchQuery({
+      queryKey: ['comments', params.id],
+      queryFn: () => fetchPublicComments(params.id),
+    });
     const cachedDetail = context.queryClient.getQueryData<PostDetail>(['post-detail', params.id]);
     if (cachedDetail) {
-      void context.queryClient.prefetchQuery({
-        queryKey: ['comments', params.id],
-        queryFn: () => fetchPublicComments(params.id),
-      });
-      return cachedDetail;
+      return { post: cachedDetail };
     }
 
     const cachedSummary = context.queryClient
@@ -39,41 +40,28 @@ export const Route = createFileRoute('/_blog/blog/$id')({
         queryKey: ['post-detail', params.id],
         queryFn: () => fetchPublicPost(params.id),
       });
-      void context.queryClient.prefetchQuery({
-        queryKey: ['comments', params.id],
-        queryFn: () => fetchPublicComments(params.id),
-      });
-      return cachedSummary;
+      return { post: cachedSummary };
     }
 
-    const comments = context.queryClient.prefetchQuery({
-      queryKey: ['comments', params.id],
-      queryFn: () => fetchPublicComments(params.id),
-    });
     const post = await context.queryClient.query({
       queryKey: ['post-detail', params.id],
       queryFn: () => fetchPublicPost(params.id),
     });
-    if (!post) {
-      void comments.catch(() => undefined);
-      throw notFound();
-    }
-    await comments.catch(() => undefined);
-    return post;
+    if (!post) throw notFound({ headers: { 'Cache-Control': 'no-store' } });
+    return { post, commentsReady };
   },
-  headers: ({ loaderData }) => ({
-    'Cache-Control': loaderData
-      ? 'public, max-age=0, s-maxage=60, stale-while-revalidate=300'
-      : 'private, no-store',
+  headers: () => ({
+    'Cache-Control': 'no-store',
   }),
   head: ({ loaderData, params }) => {
+    const post = loaderData?.post;
     const origin = getSiteOrigin();
-    const postTitle = loaderData?.title || SITE_TITLE;
-    const description = loaderData?.description || loaderData?.summary || SITE_DESCRIPTION;
+    const postTitle = post?.title || SITE_TITLE;
+    const description = post?.description || post?.summary || SITE_DESCRIPTION;
     const url = `${origin}/blog/${encodeURIComponent(params.id)}`;
-    const ogImage = buildPostOgUrl(origin, params.id, loaderData?.updatedAt);
+    const ogImage = buildPostOgUrl(origin, params.id, post?.updatedAt);
     const meta: Array<Record<string, string>> = [
-      { title: loaderData?.title ? `${loaderData.title} · ${SITE_TITLE}` : SITE_TITLE },
+      { title: post?.title ? `${post.title} · ${SITE_TITLE}` : SITE_TITLE },
       { name: 'description', content: description },
       { property: 'og:site_name', content: SITE_TITLE },
       { property: 'og:locale', content: 'zh_CN' },
@@ -91,16 +79,16 @@ export const Route = createFileRoute('/_blog/blog/$id')({
       { name: 'twitter:description', content: description },
       { name: 'twitter:image', content: ogImage },
     ];
-    if (loaderData?.createdAt) {
+    if (post?.createdAt) {
       meta.push({
         property: 'article:published_time',
-        content: new Date(loaderData.createdAt).toISOString(),
+        content: new Date(post.createdAt).toISOString(),
       });
     }
-    if (loaderData?.updatedAt) {
+    if (post?.updatedAt) {
       meta.push({
         property: 'article:modified_time',
-        content: new Date(loaderData.updatedAt).toISOString(),
+        content: new Date(post.updatedAt).toISOString(),
       });
     }
     return {
@@ -114,18 +102,32 @@ export const Route = createFileRoute('/_blog/blog/$id')({
 
 function BlogPage() {
   const { id } = Route.useParams();
-  const post = Route.useLoaderData();
-  const { data: detail } = useQuery({
+  const { post, commentsReady } = Route.useLoaderData();
+  const { data: hasPost } = useQuery({
     queryKey: ['post-detail', id],
     queryFn: () => fetchPublicPost(id),
+    select: (detail) => Boolean(detail),
   });
-  const articleReady = detail?.htmlContent != null;
+  const comments = hasPost ? <Comments key={id} id={id} /> : null;
 
   return (
     <PageContainer className='article-container pt-20 sm:pt-24'>
       <PostHeader title={post.title ?? SITE_TITLE} postId={id} />
       <PostContent id={id} />
-      {articleReady ? <Comments id={id} /> : null}
+      {comments && commentsReady ? (
+        <Await
+          promise={commentsReady}
+          fallback={
+            <section aria-busy='true' aria-label='正在加载评论'>
+              <CommentsLoader />
+            </section>
+          }
+        >
+          {() => comments}
+        </Await>
+      ) : (
+        comments
+      )}
     </PageContainer>
   );
 }

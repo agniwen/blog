@@ -31,7 +31,7 @@ export const Route = createFileRoute('/_blog/')({
     });
   },
   headers: () => ({
-    'Cache-Control': 'public, max-age=0, s-maxage=60, stale-while-revalidate=300',
+    'Cache-Control': 'no-store',
   }),
   head: () => {
     const origin = getSiteOrigin();

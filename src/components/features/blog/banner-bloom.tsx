@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { PaperImage } from '~/components/features/blog/paper-image';
 import { Skeleton } from '~/components/ui/skeleton';
 import { paperImageStyle } from '~/lib/paper-image-style';
 import { cn } from '~/lib/utils';
@@ -121,9 +122,9 @@ function drawCover(
   width: number,
   height: number,
 ): void {
-  const scale = Math.max(width / image.width, height / image.height);
-  const drawnWidth = image.width * scale;
-  const drawnHeight = image.height * scale;
+  const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+  const drawnWidth = image.naturalWidth * scale;
+  const drawnHeight = image.naturalHeight * scale;
   ctx.drawImage(
     image,
     (width - drawnWidth) / 2,
@@ -152,67 +153,36 @@ function fillWetField(
 }
 
 /**
- * 文章封面：先是纸色，照片从中心带着毛边晕开。分享图仍用完整的 banner 地址。
- * `prefers-reduced-motion` 时直接画完整照片。
+ * 图片由 HTML 直接渲染。支持动画时，用同一张图在 Canvas 上完成晕染，再交还给图片。
  */
 export function BannerBloom({ src, alt, seed }: { src: string; alt: string; seed: string }) {
+  const imageRef = useRef<HTMLImageElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [seenSrc, setSeenSrc] = useState(src);
-  const [imageReady, setImageReady] = useState(false);
-  const [settled, setSettled] = useState(false);
-  const [shadowReady, setShadowReady] = useState(true);
-  if (src !== seenSrc) {
-    setSeenSrc(src);
-    setImageReady(false);
-    setSettled(false);
-    setShadowReady(false);
-  }
+  const [phase, setPhase] = useState<'static' | 'loading' | 'blooming' | 'ready'>('static');
 
   useEffect(() => {
-    if (shadowReady) return;
-    const frame = requestAnimationFrame(() => setShadowReady(true));
-    return () => cancelAnimationFrame(frame);
-  }, [shadowReady]);
-
-  useEffect(() => {
+    const image = imageRef.current;
     const canvas = canvasRef.current;
     const parent = canvas?.parentElement;
-    if (!canvas || !parent) return;
+    if (!image || !canvas || !parent) return;
 
-    let frame = 0;
-    let stopped = false;
-    let done = false;
+    if (image.complete) {
+      // A cover that already painted keeps its static image through hydration.
+      if (image.naturalWidth === 0) return;
+      const frame = requestAnimationFrame(() => setPhase('ready'));
+      return () => cancelAnimationFrame(frame);
+    }
+
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const image = new Image();
-    image.decoding = 'async';
-    image.src = src;
+    const ctx = reduced ? null : canvas.getContext('2d');
+    let frame = ctx ? requestAnimationFrame(() => setPhase('loading')) : 0;
 
-    const drawFinished = () => {
-      if (stopped || image.naturalWidth === 0) return;
-      const ctx = canvas.getContext('2d');
-      if (!ctx || canvas.clientWidth === 0) return;
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
-      const width = Math.round(canvas.clientWidth * ratio);
-      const height = Math.round(canvas.clientHeight * ratio);
-      canvas.width = width;
-      canvas.height = height;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      const paper = getComputedStyle(parent).backgroundColor;
-      ctx.fillStyle = paper;
-      ctx.fillRect(0, 0, width, height);
-      drawCover(ctx, image, width, height);
-      done = true;
-      setSettled(true);
-    };
-
-    const play = () => {
-      if (stopped || image.naturalWidth === 0 || canvas.clientWidth === 0) return;
-      if (reduced) {
-        drawFinished();
+    const begin = () => {
+      cancelAnimationFrame(frame);
+      if (!ctx || canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+        setPhase('ready');
         return;
       }
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
       const ratio = Math.min(window.devicePixelRatio || 1, 2);
       const width = Math.round(canvas.clientWidth * ratio);
       const height = Math.round(canvas.clientHeight * ratio);
@@ -226,7 +196,10 @@ export function BannerBloom({ src, alt, seed }: { src: string; alt: string; seed
       const field = makeLayer(maskSize.width, maskSize.height);
       const scratch = makeLayer(width, height);
       const scratchCtx = scratch.getContext('2d');
-      if (!sourceCtx || !scratchCtx) return;
+      if (!sourceCtx || !scratchCtx) {
+        setPhase('ready');
+        return;
+      }
       sourceCtx.fillStyle = paper;
       sourceCtx.fillRect(0, 0, width, height);
       drawCover(sourceCtx, image, width, height);
@@ -235,7 +208,6 @@ export function BannerBloom({ src, alt, seed }: { src: string; alt: string; seed
       const started = performance.now();
 
       const draw = (now: number) => {
-        if (stopped) return;
         const time = (now - started) / 1000;
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.globalAlpha = 1;
@@ -245,8 +217,7 @@ export function BannerBloom({ src, alt, seed }: { src: string; alt: string; seed
         ctx.fillRect(0, 0, width, height);
         if (time >= BLOOM_SECONDS) {
           ctx.drawImage(source, 0, 0);
-          done = true;
-          setSettled(true);
+          setPhase('ready');
           return;
         }
         const eased = bloomProgress(time / BLOOM_SECONDS);
@@ -263,61 +234,56 @@ export function BannerBloom({ src, alt, seed }: { src: string; alt: string; seed
         ctx.drawImage(scratch, 0, 0);
         frame = requestAnimationFrame(draw);
       };
+      setPhase('blooming');
       frame = requestAnimationFrame(draw);
     };
 
-    let started = false;
-    const begin = () => {
-      if (started || stopped || image.naturalWidth === 0 || canvas.clientWidth === 0) return;
-      started = true;
-      setImageReady(true);
-      play();
-    };
-
     const fail = () => {
-      if (!stopped) setImageReady(true);
+      cancelAnimationFrame(frame);
+      setPhase('static');
     };
-    if (image.complete) {
-      if (image.naturalWidth > 0) begin();
-      else fail();
-    } else {
-      image.addEventListener('load', begin, { once: true });
-      image.addEventListener('error', fail, { once: true });
-    }
-
-    const observer = new ResizeObserver(() => {
-      if (!started) begin();
-      else if (done) drawFinished();
-    });
-    observer.observe(canvas);
+    image.addEventListener('load', begin, { once: true });
+    image.addEventListener('error', fail, { once: true });
 
     return () => {
-      stopped = true;
       cancelAnimationFrame(frame);
       image.removeEventListener('load', begin);
       image.removeEventListener('error', fail);
-      observer.disconnect();
     };
-  }, [src]);
+  }, []);
 
   return (
     <div
       className='pointer-events-none relative mb-8 aspect-16/10 bg-background *:select-none'
-      aria-busy={!imageReady}
+      aria-busy={phase === 'loading'}
     >
+      <PaperImage
+        ref={imageRef}
+        data-slot='article-banner-image'
+        seed={seed}
+        className={cn(
+          'absolute inset-0 z-2 h-full w-full object-cover',
+          phase === 'blooming' && 'opacity-0',
+        )}
+        src={src}
+        alt={alt}
+      />
       <canvas
         ref={canvasRef}
-        className='paper-image absolute inset-0 z-2 h-full w-full'
+        className={cn(
+          'paper-image absolute inset-0 z-2 h-full w-full bg-background',
+          phase !== 'blooming' && 'invisible',
+        )}
         style={paperImageStyle(seed)}
-        role='img'
-        aria-label={imageReady ? alt : undefined}
+        aria-hidden='true'
       />
-      {imageReady ? null : <Skeleton className='absolute inset-0 z-3 h-full w-full rounded-none' />}
+      {phase === 'loading' ? (
+        <Skeleton className='absolute inset-0 z-3 h-full w-full rounded-none' />
+      ) : null}
       <img
         className={cn(
-          'pointer-events-none absolute top-10 left-0 z-1 aspect-16/10 rounded-xs object-cover opacity-0 blur-3xl',
-          shadowReady && 'transition-opacity duration-700 ease-out motion-reduce:transition-none',
-          settled && 'opacity-30',
+          'pointer-events-none absolute top-10 left-0 z-1 aspect-16/10 rounded-xs object-cover blur-3xl transition-opacity duration-700 ease-out motion-reduce:transition-none',
+          phase === 'ready' ? 'opacity-30' : 'opacity-0',
         )}
         src={src}
         alt=''

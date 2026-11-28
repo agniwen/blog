@@ -53,7 +53,7 @@ export const commentsRouter = factory
       orderBy: { createdAt: 'asc' },
       with: { user: { columns: { id: true, name: true, image: true, role: true } } },
     });
-    c.header('Cache-Control', 'public, max-age=30, s-maxage=60, stale-while-revalidate=300');
+    c.header('Cache-Control', 'no-store');
     return c.json(success(list));
   })
   // 登录用户发表评论或回复
